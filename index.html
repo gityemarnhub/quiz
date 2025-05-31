@@ -133,6 +133,9 @@
             transition: background-color 0.3s ease, transform 0.2s ease; /* Add transform for animation */
             font-weight: 600;
             border: none; /* Remove default button border */
+            display: flex; /* Enable flexbox for content alignment */
+            align-items: center;
+            justify-content: center;
         }
 
         .nav-button:hover:not(:disabled) {
@@ -145,8 +148,9 @@
         }
 
         .nav-button:disabled {
-            opacity: 0.5;
+            opacity: 0.7; /* Slightly more visible when disabled */
             cursor: not-allowed;
+            background-color: #a0aec0; /* Grey out when disabled */
         }
 
         .score-display {
@@ -161,45 +165,6 @@
             font-weight: 800;
             color: #2d3748;
             margin-bottom: 1.5rem;
-        }
-
-        .loading-spinner {
-            border: 4px solid #f3f3f3; /* Light grey */
-            border-top: 4px solid #3498db; /* Blue */
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 2rem auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-            width: 100%;
-        }
-
-        .input-group label {
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #4a5568;
-        }
-
-        .input-group select,
-        .input-group input[type="text"] {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #cbd5e0;
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            background-color: #f7fafc;
         }
 
         /* Animations */
@@ -277,6 +242,69 @@
             height: 24px;
             fill: currentColor; /* Use button's text color for SVG */
         }
+
+        /* New Loading Animation Styles (Bouncing Bars) */
+        .loading-bars {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 0.5rem; /* Space between text and bars */
+            height: 16px; /* Ensure enough height for bars to bounce */
+        }
+
+        .loading-bar {
+            width: 6px;
+            height: 2px; /* Starting height */
+            background-color: white;
+            margin: 0 2px;
+            border-radius: 1px; /* Slightly rounded bars */
+            animation: stretch 1.2s infinite ease-in-out;
+        }
+
+        .loading-bar:nth-child(1) { animation-delay: -1.2s; }
+        .loading-bar:nth-child(2) { animation-delay: -1.1s; }
+        .loading-bar:nth-child(3) { animation-delay: -1.0s; }
+        .loading-bar:nth-child(4) { animation-delay: -0.9s; }
+        .loading-bar:nth-child(5) { animation-delay: -0.8s; }
+
+        @keyframes stretch {
+            0%, 40%, 100% {
+                transform: scaleY(0.4);
+                background-color: white;
+            }
+            20% {
+                transform: scaleY(1);
+                background-color: #a0d9ff; /* Lighter blue when stretched */
+            }
+        }
+
+        /* Refined Input Box and Select Styles */
+        .input-group select,
+        .input-group input[type="text"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db; /* Softer border color */
+            border-radius: 0.75rem; /* More rounded corners for inputs */
+            font-size: 1rem;
+            background-color: #fcfcfc; /* Slightly whiter background */
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle inner shadow */
+            transition: border-color 0.2s ease, box-shadow 0.2s ease; /* Smooth transition for focus */
+            -webkit-appearance: none; /* Remove default browser styling for select */
+            -moz-appearance: none; /* Remove default browser styling for select */
+            appearance: none; /* Remove default browser styling for select */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%234a5568'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E"); /* Custom SVG arrow */
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1.25em; /* Size of the arrow */
+            padding-right: 2.5rem; /* Make space for the custom arrow */
+        }
+
+        .input-group select:focus,
+        .input-group input[type="text"]:focus {
+            outline: none; /* Remove default outline */
+            border-color: #60a5fa; /* A more vibrant blue on focus */
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3); /* Softer, more spread focus shadow */
+        }
     </style>
 </head>
 <body>
@@ -316,8 +344,16 @@
                 </select>
             </div>
 
-            <button id="start-quiz-button" class="nav-button w-full">Start Quiz</button>
-            <div id="loading-indicator" class="loading-spinner hidden"></div>
+            <button id="start-quiz-button" class="nav-button w-full">
+                <span id="start-button-text">Start Quiz</span>
+                <div id="loading-bars" class="loading-bars hidden">
+                    <div class="loading-bar"></div>
+                    <div class="loading-bar"></div>
+                    <div class="loading-bar"></div>
+                    <div class="loading-bar"></div>
+                    <div class="loading-bar"></div>
+                </div>
+            </button>
             <p id="error-message" class="text-red-500 text-sm mt-2 hidden"></p>
         </div>
 
@@ -346,11 +382,12 @@
         const numQuestionsSelect = document.getElementById('num-questions');
         const difficultyLevelSelect = document.getElementById('difficulty-level');
         const startQuizButton = document.getElementById('start-quiz-button');
-        const loadingIndicator = document.getElementById('loading-indicator');
+        const startButtonText = document.getElementById('start-button-text');
+        const loadingBars = document.getElementById('loading-bars');
         const errorMessage = document.getElementById('error-message');
 
         const quizSection = document.getElementById('quiz-section');
-        const quitButton = document.getElementById('quit-button'); // New quit button element
+        const quitButton = document.getElementById('quit-button');
         const questionTextElement = document.getElementById('question-text');
         const answerButtonsElement = document.getElementById('answer-buttons');
         const feedbackMessageElement = document.getElementById('feedback-message');
@@ -363,10 +400,10 @@
         const questionProgressElement = document.getElementById('question-progress');
 
         // Game state variables
-        let questions = []; // This will be populated by the AI
+        let questions = [];
         let currentQuestionIndex = 0;
         let score = 0;
-        let answerSelected = false; // Flag to check if an answer has been selected for the current question
+        let answerSelected = false;
 
         /**
          * Shuffles an array in place (Fisher-Yates algorithm).
@@ -380,15 +417,34 @@
         }
 
         /**
+         * Shows the loading animation on the start button.
+         */
+        function showLoadingAnimation() {
+            startButtonText.classList.add('hidden');
+            loadingBars.classList.remove('hidden');
+            startQuizButton.disabled = true;
+            startQuizButton.style.cursor = 'wait';
+        }
+
+        /**
+         * Hides the loading animation and restores the start button.
+         */
+        function hideLoadingAnimation() {
+            startButtonText.classList.remove('hidden');
+            loadingBars.classList.add('hidden');
+            startQuizButton.disabled = false;
+            startQuizButton.style.cursor = 'pointer';
+        }
+
+        /**
          * Fetches quiz questions from the Gemini API based on the provided topic, number of questions, and difficulty.
          * @param {string} topic - The user-defined topic for the quiz.
          * @param {number} numQuestions - The number of questions to generate.
          * @param {string} difficulty - The difficulty level (beginner, easy, medium, hard, expert).
          */
         async function fetchQuestions(topic, numQuestions, difficulty) {
-            loadingIndicator.classList.remove('hidden');
+            showLoadingAnimation();
             errorMessage.classList.add('hidden');
-            startQuizButton.disabled = true;
             topicInput.disabled = true;
             numQuestionsSelect.disabled = true;
             difficultyLevelSelect.disabled = true;
@@ -469,8 +525,7 @@
                 quizSection.classList.add('hidden'); // Ensure quiz section is hidden if error occurs
                 topicInputSection.classList.remove('hidden'); // Show topic input again
             } finally {
-                loadingIndicator.classList.add('hidden');
-                startQuizButton.disabled = false;
+                hideLoadingAnimation();
                 topicInput.disabled = false;
                 numQuestionsSelect.disabled = false;
                 difficultyLevelSelect.disabled = false;
@@ -651,14 +706,14 @@
         });
         nextButton.addEventListener('click', nextQuestion);
         playAgainButton.addEventListener('click', restartQuiz);
-        quitButton.addEventListener('click', restartQuiz); // Quit button now uses restartQuiz
+        quitButton.addEventListener('click', restartQuiz);
 
         // Initial setup - hide quiz and results sections, show topic input
         document.addEventListener('DOMContentLoaded', () => {
             quizSection.classList.add('hidden');
             resultsSection.classList.add('hidden');
             topicInputSection.classList.remove('hidden');
-            quitButton.classList.add('hidden'); // Ensure quit button is hidden on initial load
+            quitButton.classList.add('hidden');
         });
     </script>
 </body>

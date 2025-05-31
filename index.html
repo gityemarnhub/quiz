@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Dynamic Quiz</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for better aesthetics and responsiveness */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light blue-gray background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem; /* Add some padding for smaller screens */
+            box-sizing: border-box;
+        }
+
+        .quiz-container {
+            background-color: #ffffff;
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Softer shadow */
+            padding: 2.5rem; /* Increased padding */
+            width: 100%;
+            max-width: 600px; /* Max width for larger screens */
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem; /* Space between sections */
+            overflow: hidden; /* Hide overflow for animations */
+            position: relative; /* Needed for absolute positioning of quit button */
+        }
+
+        .question-text {
+            font-size: 1.75rem; /* Larger font for questions */
+            font-weight: 700; /* Bold question text */
+            color: #2d3748; /* Darker text color */
+            margin-bottom: 1.5rem;
+        }
+
+        .answer-buttons {
+            display: grid;
+            grid-template-columns: 1fr; /* Single column for mobile */
+            gap: 1rem; /* Space between buttons */
+        }
+
+        @media (min-width: 640px) { /* Tailwind's sm breakpoint */
+            .answer-buttons {
+                grid-template-columns: 1fr 1fr; /* Two columns for larger screens */
+            }
+        }
+
+        .answer-button {
+            background-color: #e2e8f0; /* Light gray button background */
+            color: #4a5568; /* Dark gray text */
+            border: 2px solid #cbd5e0; /* Light border */
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem; /* Rounded button corners */
+            font-size: 1.125rem;
+            cursor: pointer;
+            transition: all 0.3s ease; /* Smooth transitions */
+            font-weight: 600;
+        }
+
+        .answer-button:hover:not(.correct):not(.incorrect):not(.disabled) {
+            background-color: #d1d5db; /* Darker hover */
+            border-color: #a0aec0;
+        }
+
+        .answer-button.selected {
+            border-color: #4299e1; /* Blue border for selected */
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5); /* Blue shadow for selected */
+        }
+
+        .answer-button.correct {
+            background-color: #48bb78; /* Green for correct */
+            color: white;
+            border-color: #38a169;
+        }
+
+        .answer-button.incorrect {
+            background-color: #ef4444; /* Red for incorrect */
+            color: white;
+            border-color: #dc2626;
+        }
+
+        .answer-button.disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .feedback-message {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            min-height: 2rem; /* Ensure space even when empty */
+        }
+
+        .feedback-message.correct-feedback {
+            color: #38a169; /* Green text for correct feedback */
+        }
+
+        .feedback-message.incorrect-feedback {
+            color: #dc2626; /* Red text for incorrect feedback */
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .nav-button {
+            background-color: #4299e1; /* Blue navigation button */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-size: 1.125rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease; /* Add transform for animation */
+            font-weight: 600;
+            border: none; /* Remove default button border */
+        }
+
+        .nav-button:hover:not(:disabled) {
+            background-color: #3182ce; /* Darker blue on hover */
+            transform: translateY(-2px); /* Slight lift on hover */
+        }
+
+        .nav-button:active:not(:disabled) {
+            transform: translateY(0); /* Press effect */
+        }
+
+        .nav-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .score-display {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-top: 1rem;
+        }
+
+        .final-results {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #2d3748;
+            margin-bottom: 1.5rem;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            width: 100%;
+        }
+
+        .input-group label {
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .input-group select,
+        .input-group input[type="text"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #cbd5e0;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            background-color: #f7fafc;
+        }
+
+        /* Animations */
+        /* Fade in for quiz section */
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Fade out for quiz section */
+        .fade-out {
+            animation: fadeOut 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+
+        /* Answer button click animation */
+        .answer-button.clicked {
+            animation: buttonClick 0.2s ease-out;
+        }
+
+        @keyframes buttonClick {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        /* Score update animation */
+        .score-update-animation {
+            animation: scoreUpdate 0.5s ease-out;
+        }
+
+        @keyframes scoreUpdate {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Quit button specific styles */
+        .quit-button {
+            position: absolute;
+            top: 1.5rem; /* Adjust as needed */
+            right: 1.5rem; /* Adjust as needed */
+            background-color: #ef4444; /* Red color for quit */
+            color: white;
+            padding: 0.5rem;
+            border-radius: 9999px; /* Fully rounded */
+            font-size: 1.25rem;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px; /* Fixed size for circular button */
+            height: 40px; /* Fixed size for circular button */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .quit-button:hover {
+            background-color: #dc2626; /* Darker red on hover */
+            transform: scale(1.05);
+        }
+
+        .quit-button svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor; /* Use button's text color for SVG */
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1 class="text-4xl font-extrabold text-gray-800 mb-6">AI-Powered Dynamic Quiz</h1>
+
+        <div id="topic-input-section">
+            <div class="input-group">
+                <label for="topic-input">Enter a quiz topic:</label>
+                <input type="text" id="topic-input" placeholder="e.g., World History, Science, Pop Culture">
+            </div>
+
+            <div class="input-group">
+                <label for="num-questions">Number of Questions:</label>
+                <select id="num-questions" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="difficulty-level">Difficulty:</label>
+                <select id="difficulty-level" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4">
+                    <option value="beginner">Beginner</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                    <option value="expert">Expert</option>
+                </select>
+            </div>
+
+            <button id="start-quiz-button" class="nav-button w-full">Start Quiz</button>
+            <div id="loading-indicator" class="loading-spinner hidden"></div>
+            <p id="error-message" class="text-red-500 text-sm mt-2 hidden"></p>
+        </div>
+
+        <div id="quiz-section" class="hidden">
+            <button id="quit-button" class="quit-button">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+            </button>
+
+            <p id="question-progress" class="text-gray-600 text-lg font-semibold mb-4"></p>
+            <p id="question-text" class="question-text"></p>
+            <div id="answer-buttons" class="answer-buttons">
+                </div>
+            <p id="feedback-message" class="feedback-message"></p>
+            <div class="navigation-buttons">
+                <button id="next-button" class="nav-button" disabled>Next Question</button>
+                <button id="restart-button" class="nav-button hidden">Restart Quiz</button>
+            </div>
+        </div>
+
+        <div id="results-section" class="hidden">
+            <p id="final-score" class="final-results"></p>
+            <button id="play-again-button" class="nav-button">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const topicInputSection = document.getElementById('topic-input-section');
+        const topicInput = document.getElementById('topic-input');
+        const numQuestionsSelect = document.getElementById('num-questions');
+        const difficultyLevelSelect = document.getElementById('difficulty-level');
+        const startQuizButton = document.getElementById('start-quiz-button');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const errorMessage = document.getElementById('error-message');
+
+        const quizSection = document.getElementById('quiz-section');
+        const quitButton = document.getElementById('quit-button'); // New quit button element
+        const questionTextElement = document.getElementById('question-text');
+        const answerButtonsElement = document.getElementById('answer-buttons');
+        const feedbackMessageElement = document.getElementById('feedback-message');
+        const nextButton = document.getElementById('next-button');
+        const restartButton = document.getElementById('restart-button');
+
+        const resultsSection = document.getElementById('results-section');
+        const finalScoreElement = document.getElementById('final-score');
+        const playAgainButton = document.getElementById('play-again-button');
+        const questionProgressElement = document.getElementById('question-progress');
+
+        // Game state variables
+        let questions = []; // This will be populated by the AI
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answerSelected = false; // Flag to check if an answer has been selected for the current question
+
+        /**
+         * Shuffles an array in place (Fisher-Yates algorithm).
+         * @param {Array} array - The array to shuffle.
+         */
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        /**
+         * Fetches quiz questions from the Gemini API based on the provided topic, number of questions, and difficulty.
+         * @param {string} topic - The user-defined topic for the quiz.
+         * @param {number} numQuestions - The number of questions to generate.
+         * @param {string} difficulty - The difficulty level (beginner, easy, medium, hard, expert).
+         */
+        async function fetchQuestions(topic, numQuestions, difficulty) {
+            loadingIndicator.classList.remove('hidden');
+            errorMessage.classList.add('hidden');
+            startQuizButton.disabled = true;
+            topicInput.disabled = true;
+            numQuestionsSelect.disabled = true;
+            difficultyLevelSelect.disabled = true;
+
+            try {
+                let chatHistory = [];
+                const prompt = `Generate ${numQuestions} multiple-choice quiz questions about "${topic}" at a ${difficulty} difficulty level. Each question should have 4 choices, and one correct answer. Provide the output as a JSON array of objects, where each object has 'question', 'choices' (an array of strings), and 'correctAnswer' (a string matching one of the choices).`;
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+
+                const payload = {
+                    contents: chatHistory,
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "ARRAY",
+                            items: {
+                                type: "OBJECT",
+                                properties: {
+                                    "question": { "type": "STRING" },
+                                    "choices": {
+                                        "type": "ARRAY",
+                                        "items": { "type": "STRING" }
+                                    },
+                                    "correctAnswer": { "type": "STRING" }
+                                },
+                                "propertyOrdering": ["question", "choices", "correctAnswer"]
+                            }
+                        }
+                    }
+                };
+
+                const apiKey = ""; // Canvas will automatically provide this
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`API error: ${response.status} - ${errorData.error.message || response.statusText}`);
+                }
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const jsonString = result.candidates[0].content.parts[0].text;
+                    const parsedQuestions = JSON.parse(jsonString);
+
+                    if (Array.isArray(parsedQuestions) && parsedQuestions.length > 0) {
+                        questions = parsedQuestions;
+                        // Apply fade-out to input section, then fade-in quiz section
+                        topicInputSection.classList.add('fade-out');
+                        topicInputSection.addEventListener('animationend', () => {
+                            topicInputSection.classList.add('hidden');
+                            topicInputSection.classList.remove('fade-out'); // Clean up class
+                            quizSection.classList.remove('hidden');
+                            quizSection.classList.add('fade-in');
+                            loadQuestion();
+                        }, { once: true }); // Ensure listener is removed after one use
+
+                    } else {
+                        throw new Error("AI did not return valid questions. Please try a different topic or settings.");
+                    }
+                } else {
+                    throw new Error("Failed to generate questions. Please try again.");
+                }
+
+            } catch (error) {
+                console.error("Error fetching questions:", error);
+                errorMessage.textContent = `Error: ${error.message}. Please try again.`;
+                errorMessage.classList.remove('hidden');
+                quizSection.classList.add('hidden'); // Ensure quiz section is hidden if error occurs
+                topicInputSection.classList.remove('hidden'); // Show topic input again
+            } finally {
+                loadingIndicator.classList.add('hidden');
+                startQuizButton.disabled = false;
+                topicInput.disabled = false;
+                numQuestionsSelect.disabled = false;
+                difficultyLevelSelect.disabled = false;
+            }
+        }
+
+        /**
+         * Loads and displays the current question and its choices.
+         */
+        function loadQuestion() {
+            // Reset feedback and button states
+            feedbackMessageElement.textContent = '';
+            feedbackMessageElement.className = 'feedback-message'; // Reset classes
+            nextButton.disabled = true;
+            answerSelected = false;
+
+            // Clear previous answer buttons
+            answerButtonsElement.innerHTML = '';
+
+            if (questions.length === 0) {
+                errorMessage.textContent = "No questions available. Please generate a new quiz.";
+                errorMessage.classList.remove('hidden');
+                quizSection.classList.add('hidden');
+                topicInputSection.classList.remove('hidden');
+                return;
+            }
+
+            const currentQuestion = questions[currentQuestionIndex];
+            questionTextElement.textContent = currentQuestion.question;
+
+            // Update question progress and apply animation
+            questionProgressElement.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+            questionProgressElement.classList.add('score-update-animation');
+            questionProgressElement.addEventListener('animationend', () => {
+                questionProgressElement.classList.remove('score-update-animation');
+            }, { once: true });
+
+
+            // Create a shuffled copy of choices for display
+            const shuffledChoices = [...currentQuestion.choices];
+            shuffleArray(shuffledChoices);
+
+            // Create buttons for each choice
+            shuffledChoices.forEach((choice) => {
+                const button = document.createElement('button');
+                button.textContent = choice;
+                button.classList.add('answer-button');
+                button.addEventListener('click', (event) => selectAnswer(button, choice, currentQuestion.correctAnswer, event));
+                answerButtonsElement.appendChild(button);
+            });
+        }
+
+        /**
+         * Handles the selection of an answer.
+         * @param {HTMLButtonElement} selectedButton - The button element that was clicked.
+         * @param {string} selectedChoice - The text of the selected choice.
+         * @param {string} correctAnswer - The correct answer for the current question.
+         * @param {Event} event - The click event object.
+         */
+        function selectAnswer(selectedButton, selectedChoice, correctAnswer, event) {
+            // Only allow selection if an answer hasn't been chosen yet for this question
+            if (answerSelected) {
+                return;
+            }
+
+            answerSelected = true; // Mark an answer as selected
+
+            // Add click animation to the selected button
+            selectedButton.classList.add('clicked');
+            selectedButton.addEventListener('animationend', () => {
+                selectedButton.classList.remove('clicked');
+            }, { once: true });
+
+
+            // Disable all answer buttons after selection
+            Array.from(answerButtonsElement.children).forEach(button => {
+                button.classList.add('disabled');
+                button.disabled = true; // Truly disable the button
+            });
+
+            // Mark the selected button
+            selectedButton.classList.add('selected');
+
+            // Check if the selected answer is correct
+            if (selectedChoice === correctAnswer) {
+                score++;
+                selectedButton.classList.add('correct');
+                feedbackMessageElement.textContent = 'Correct!';
+                feedbackMessageElement.classList.add('correct-feedback');
+            } else {
+                selectedButton.classList.add('incorrect');
+                feedbackMessageElement.textContent = `Incorrect. The correct answer was: ${correctAnswer}`;
+                feedbackMessageElement.classList.add('incorrect-feedback');
+
+                // Highlight the correct answer
+                Array.from(answerButtonsElement.children).forEach(button => {
+                    if (button.textContent === correctAnswer) {
+                        button.classList.add('correct');
+                    }
+                });
+            }
+            nextButton.disabled = false; // Enable the next button
+        }
+
+        /**
+         * Moves to the next question or shows the final results.
+         */
+        function nextQuestion() {
+            // Apply fade-out to current quiz section
+            quizSection.classList.add('fade-out');
+            quizSection.addEventListener('animationend', () => {
+                quizSection.classList.add('hidden');
+                quizSection.classList.remove('fade-out'); // Clean up class
+
+                currentQuestionIndex++;
+                if (currentQuestionIndex < questions.length) {
+                    quizSection.classList.remove('hidden');
+                    quizSection.classList.add('fade-in'); // Fade in next question
+                    loadQuestion();
+                } else {
+                    showResults();
+                }
+            }, { once: true });
+        }
+
+        /**
+         * Displays the final score and the "Play Again" button.
+         */
+        function showResults() {
+            quizSection.classList.add('hidden');
+            resultsSection.classList.remove('hidden');
+            resultsSection.classList.add('fade-in'); // Fade in results section
+            finalScoreElement.textContent = `You scored ${score} out of ${questions.length}!`;
+        }
+
+        /**
+         * Resets the quiz to its initial state and starts over.
+         */
+        function restartQuiz() {
+            const currentActiveSection = resultsSection.classList.contains('hidden') ? quizSection : resultsSection;
+
+            // Apply fade-out to current active section, then reset
+            currentActiveSection.classList.add('fade-out');
+            currentActiveSection.addEventListener('animationend', () => {
+                currentActiveSection.classList.add('hidden');
+                currentActiveSection.classList.remove('fade-out'); // Clean up class
+
+                currentQuestionIndex = 0;
+                score = 0;
+                answerSelected = false;
+                questions = []; // Clear questions
+                quizSection.classList.add('hidden'); // Ensure quiz section is hidden
+                resultsSection.classList.add('hidden'); // Ensure results section is hidden
+                topicInputSection.classList.remove('hidden'); // Show topic input again
+                topicInputSection.classList.add('fade-in'); // Fade in topic input
+                topicInput.value = ''; // Clear topic input
+                numQuestionsSelect.value = '5'; // Reset dropdowns
+                difficultyLevelSelect.value = 'easy'; // Reset dropdowns
+                errorMessage.classList.add('hidden'); // Hide any previous error messages
+            }, { once: true });
+        }
+
+        // Event Listeners
+        startQuizButton.addEventListener('click', () => {
+            const topic = topicInput.value.trim();
+            const numQuestions = parseInt(numQuestionsSelect.value);
+            const difficulty = difficultyLevelSelect.value;
+
+            if (topic) {
+                fetchQuestions(topic, numQuestions, difficulty);
+            } else {
+                errorMessage.textContent = "Please enter a topic to start the quiz.";
+                errorMessage.classList.remove('hidden');
+            }
+        });
+        nextButton.addEventListener('click', nextQuestion);
+        playAgainButton.addEventListener('click', restartQuiz);
+        quitButton.addEventListener('click', restartQuiz); // Quit button now uses restartQuiz
+
+        // Initial setup - hide quiz and results sections, show topic input
+        document.addEventListener('DOMContentLoaded', () => {
+            quizSection.classList.add('hidden');
+            resultsSection.classList.add('hidden');
+            topicInputSection.classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>

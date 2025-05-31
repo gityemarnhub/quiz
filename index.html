@@ -9,238 +9,244 @@
         /* Custom styles for better aesthetics and responsiveness */
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%); /* Subtle gradient background */
+            /* New background gradient: soft blues and greens */
+            background: linear-gradient(135deg, #e0f2f7 0%, #c8e6c9 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 1rem; /* Add some padding for smaller screens */
+            padding: 1rem;
             box-sizing: border-box;
         }
 
         .quiz-container {
             background-color: #ffffff;
-            border-radius: 1.5rem; /* More rounded corners */
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15); /* Slightly stronger, more diffused shadow */
-            padding: 2.5rem; /* Increased padding */
+            border-radius: 2rem; /* Even more rounded corners */
+            /* Softer, more diffused shadow */
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 3rem; /* Increased padding for a spacious feel */
             width: 100%;
-            max-width: 600px; /* Max width for larger screens */
-            text-align: center;
+            max-width: 650px; /* Slightly wider max-width */
+            text-align: center; /* Center text content within the container */
             display: flex;
             flex-direction: column;
-            gap: 1.5rem; /* Space between sections */
-            overflow: hidden; /* Hide overflow for animations */
-            position: relative; /* Needed for absolute positioning of quit button */
-            border: 1px solid #e2e8f0; /* Subtle border */
+            align-items: center; /* Center items horizontally within the container */
+            gap: 1.75rem; /* More space between sections */
+            overflow: hidden;
+            position: relative;
+            border: 1px solid #e0e0e0; /* Lighter, subtle border */
         }
 
         .main-title {
-            font-size: 2.5rem; /* Slightly larger title */
-            font-weight: 800; /* Extra bold */
-            color: #2d3748; /* Darker text color */
-            margin-bottom: 1.5rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.05); /* Subtle text shadow */
+            font-size: 2.8rem; /* Larger, bolder title */
+            font-weight: 900; /* Extra bold */
+            color: #3f4c6b; /* Deep blue-grey for main titles */
+            margin-bottom: 1.75rem;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.08); /* More prominent text shadow */
+            width: 100%; /* Ensure title takes full width for its own text-align */
+            text-align: center; /* Keep the main title centered */
         }
 
         .question-text {
-            font-size: 1.75rem; /* Larger font for questions */
-            font-weight: 700; /* Bold question text */
-            color: #2d3748; /* Darker text color */
-            margin-bottom: 1.5rem;
+            font-size: 1.85rem; /* Slightly larger question font */
+            font-weight: 700;
+            color: #3f4c6b; /* Deep blue-grey for questions */
+            margin-bottom: 1.75rem;
+            width: 100%; /* Ensure question text takes full width */
+            text-align: center; /* Keep question text centered */
         }
 
         .answer-buttons {
             display: grid;
-            grid-template-columns: 1fr; /* Single column for mobile */
-            gap: 1rem; /* Space between buttons */
+            grid-template-columns: 1fr;
+            gap: 1.25rem; /* More space between buttons */
+            width: 100%; /* Ensure buttons take full width */
         }
 
-        @media (min-width: 640px) { /* Tailwind's sm breakpoint */
+        @media (min-width: 640px) {
             .answer-buttons {
-                grid-template-columns: 1fr 1fr; /* Two columns for larger screens */
+                grid-template-columns: 1fr 1fr;
             }
         }
 
         .answer-button {
-            background-color: #e2e8f0; /* Light gray button background */
-            color: #4a5568; /* Dark gray text */
-            border: 2px solid #cbd5e0; /* Light border */
-            padding: 1rem 1.5rem;
-            border-radius: 0.75rem; /* Rounded button corners */
-            font-size: 1.125rem;
+            background-color: #f0f4f8; /* Lighter background for answer buttons */
+            color: #5a6a8a; /* Softer dark text */
+            border: 1px solid #dbe2ea; /* Softer border */
+            padding: 1.1rem 1.8rem; /* More padding */
+            border-radius: 1rem; /* More rounded button corners */
+            font-size: 1.15rem;
             cursor: pointer;
-            transition: all 0.3s ease; /* Smooth transitions */
+            transition: all 0.3s ease;
             font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* Subtle button shadow */
         }
 
         .answer-button:hover:not(.correct):not(.incorrect):not(.disabled) {
-            background-color: #d1d5db; /* Darker hover */
-            border-color: #a0aec0;
+            background-color: #e2e8f0; /* Darker hover */
+            border-color: #c0cddb;
+            transform: translateY(-2px); /* Slight lift */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .answer-button.selected {
-            border-color: #4299e1; /* Blue border for selected */
-            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5); /* Blue shadow for selected */
+            border-color: #5a80e0; /* New primary blue border for selected */
+            box-shadow: 0 0 0 4px rgba(90, 128, 224, 0.4); /* More prominent blue shadow for selected */
         }
 
         .answer-button.correct {
-            background-color: #48bb78; /* Green for correct */
+            background-color: #4CAF50; /* Classic green for correct */
             color: white;
-            border-color: #38a169;
+            border-color: #388E3C;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .answer-button.incorrect {
-            background-color: #ef4444; /* Red for incorrect */
+            background-color: #E53935; /* Classic red for incorrect */
             color: white;
-            border-color: #dc2626;
+            border-color: #D32F2F;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .answer-button.disabled {
             cursor: not-allowed;
-            opacity: 0.7;
+            opacity: 0.6; /* Slightly more opaque when disabled */
         }
 
         .feedback-message {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin-top: 1rem;
-            min-height: 2rem; /* Ensure space even when empty */
+            font-size: 1.35rem; /* Larger feedback text */
+            font-weight: 700; /* Bolder feedback text */
+            margin-top: 1.5rem;
+            min-height: 2.5rem; /* Ensure more space */
+            width: 100%; /* Ensure feedback message takes full width */
+            text-align: center; /* Keep feedback message centered */
         }
 
         .feedback-message.correct-feedback {
-            color: #38a169; /* Green text for correct feedback */
+            color: #388E3C; /* Darker green for correct feedback */
         }
 
         .feedback-message.incorrect-feedback {
-            color: #dc2626; /* Red text for incorrect feedback */
+            color: #D32F2F; /* Darker red for incorrect feedback */
         }
 
         .navigation-buttons {
             display: flex;
             justify-content: center;
-            gap: 1rem;
-            margin-top: 1.5rem;
+            gap: 1.25rem; /* More space between nav buttons */
+            margin-top: 2rem;
+            width: 100%; /* Ensure nav buttons take full width */
         }
 
         .nav-button {
-            background-color: #4299e1; /* Blue navigation button */
+            background-color: #5a80e0; /* New primary blue navigation button */
             color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem;
-            font-size: 1.125rem;
+            padding: 0.9rem 2rem; /* More padding */
+            border-radius: 1rem; /* More rounded */
+            font-size: 1.2rem; /* Larger font */
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease; /* Add transform for animation */
-            font-weight: 600;
-            border: none; /* Remove default button border */
-            display: flex; /* Enable flexbox for content alignment */
-            align-items: center;
-            justify-content: center;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            font-weight: 700; /* Bolder */
+            border: none;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Button shadow */
         }
 
         .nav-button:hover:not(:disabled) {
-            background-color: #3182ce; /* Darker blue on hover */
-            transform: translateY(-2px); /* Slight lift on hover */
+            background-color: #4a6ec5; /* Darker primary blue on hover */
+            transform: translateY(-3px); /* More pronounced lift */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
         }
 
         .nav-button:active:not(:disabled) {
-            transform: translateY(0); /* Press effect */
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .nav-button:disabled {
-            opacity: 0.7; /* Slightly more visible when disabled */
+            opacity: 0.5;
             cursor: not-allowed;
-            background-color: #a0aec0; /* Grey out when disabled */
+            background-color: #a0aec0;
+            box-shadow: none;
         }
 
         .score-display {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #2d3748;
-            margin-top: 1rem;
+            font-size: 1.8rem; /* Larger score display */
+            font-weight: 800;
+            color: #3f4c6b;
+            margin-top: 1.5rem;
+            width: 100%; /* Ensure score display takes full width */
+            text-align: center; /* Keep score display centered */
         }
 
         .final-results {
-            font-size: 2rem;
-            font-weight: 800;
-            color: #2d3748;
-            margin-bottom: 1.5rem;
+            font-size: 2.5rem; /* Larger final results */
+            font-weight: 900;
+            color: #3f4c6b;
+            margin-bottom: 2rem;
+            width: 100%; /* Ensure final results take full width */
+            text-align: center; /* Keep final results centered */
         }
 
         /* Animations */
-        /* Fade in for quiz section */
-        .fade-in {
-            animation: fadeIn 0.5s ease-out forwards;
-        }
-
+        .fade-in { animation: fadeIn 0.6s ease-out forwards; }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Fade out for quiz section */
-        .fade-out {
-            animation: fadeOut 0.5s ease-out forwards;
-        }
-
+        .fade-out { animation: fadeOut 0.6s ease-out forwards; }
         @keyframes fadeOut {
             from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 0; transform: translateY(-20px); }
         }
 
-        /* Answer button click animation */
-        .answer-button.clicked {
-            animation: buttonClick 0.2s ease-out;
-        }
-
+        .answer-button.clicked { animation: buttonClick 0.2s ease-out; }
         @keyframes buttonClick {
             0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
+            50% { transform: scale(1.03); }
             100% { transform: scale(1); }
         }
 
-        /* Score update animation */
-        .score-update-animation {
-            animation: scoreUpdate 0.5s ease-out;
-        }
-
+        .score-update-animation { animation: scoreUpdate 0.6s ease-out; }
         @keyframes scoreUpdate {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.8; }
+            0% { transform: scale(0.9); opacity: 0.7; }
+            50% { transform: scale(1.05); opacity: 1; }
             100% { transform: scale(1); opacity: 1; }
         }
 
         /* Quit button specific styles */
         .quit-button {
             position: absolute;
-            top: 1.5rem; /* Adjust as needed */
-            right: 1.5rem; /* Adjust as needed */
-            background-color: #ef4444; /* Red color for quit */
+            top: 1.8rem; /* Adjusted position */
+            right: 1.8rem; /* Adjusted position */
+            background-color: #E53935; /* New error red */
             color: white;
-            padding: 0.5rem;
-            border-radius: 9999px; /* Fully rounded */
-            font-size: 1.25rem;
+            padding: 0.6rem; /* Slightly larger padding */
+            border-radius: 9999px;
+            font-size: 1.35rem; /* Slightly larger icon */
             cursor: pointer;
             border: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 40px; /* Fixed size for circular button */
-            height: 40px; /* Fixed size for circular button */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            z-index: 10; /* Ensure it's above other content */
+            width: 45px; /* Slightly larger button */
+            height: 45px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* More prominent shadow */
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            z-index: 10;
         }
 
         .quit-button:hover {
-            background-color: #dc2626; /* Darker red on hover */
-            transform: scale(1.05);
+            background-color: #C62828; /* Darker red on hover */
+            transform: scale(1.1); /* More pronounced scale */
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
         }
 
         .quit-button svg {
-            width: 24px;
-            height: 24px;
-            fill: currentColor; /* Use button's text color for SVG */
+            width: 26px; /* Larger SVG icon */
+            height: 26px;
+            fill: currentColor;
         }
 
         /* Refined Loading Animation Styles (Bouncing Bars) */
@@ -248,64 +254,86 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-left: 0.5rem; /* Space between text and bars */
-            height: 16px; /* Ensure enough height for bars to bounce */
+            margin-left: 0.75rem; /* More space between text and bars */
+            height: 20px; /* Ensure enough height for bars to bounce */
         }
 
         .loading-bar {
-            width: 8px; /* Slightly wider bars */
-            height: 4px; /* Starting height */
-            background-color: #a0d9ff; /* Lighter blue color for bars */
-            margin: 0 3px; /* More space between bars */
-            border-radius: 2px; /* More rounded bars */
-            animation: stretchAndFade 1.5s infinite ease-in-out; /* New animation name and duration */
+            width: 10px; /* Wider bars */
+            height: 5px; /* Starting height */
+            background-color: #a8c0ff; /* Lighter blue color for bars */
+            margin: 0 4px; /* More space between bars */
+            border-radius: 3px; /* More rounded bars */
+            animation: stretchAndFade 1.6s infinite ease-in-out; /* Adjusted duration */
         }
 
-        .loading-bar:nth-child(1) { animation-delay: -1.5s; } /* Adjust delays for new duration */
-        .loading-bar:nth-child(2) { animation-delay: -1.35s; }
-        .loading-bar:nth-child(3) { animation-delay: -1.2s; }
-        .loading-bar:nth-child(4) { animation-delay: -1.05s; }
-        .loading-bar:nth-child(5) { animation-delay: -0.9s; }
+        .loading-bar:nth-child(1) { animation-delay: -1.6s; }
+        .loading-bar:nth-child(2) { animation-delay: -1.45s; }
+        .loading-bar:nth-child(3) { animation-delay: -1.3s; }
+        .loading-bar:nth-child(4) { animation-delay: -1.15s; }
+        .loading-bar:nth-child(5) { animation-delay: -1.0s; }
 
         @keyframes stretchAndFade {
             0%, 100% {
-                transform: scaleY(0.4);
-                background-color: #a0d9ff; /* Initial color */
-                opacity: 0.7;
+                transform: scaleY(0.3); /* More subtle initial height */
+                background-color: #a8c0ff;
+                opacity: 0.6;
             }
             50% {
-                transform: scaleY(1.2); /* More pronounced stretch */
-                background-color: #4299e1; /* Darker blue when stretched */
+                transform: scaleY(1.5); /* More pronounced stretch */
+                background-color: #5a80e0; /* Primary blue when stretched */
                 opacity: 1;
             }
         }
 
         /* Refined Input Box and Select Styles */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Keeps label left-aligned within the group */
+            margin-bottom: 1rem;
+            width: 100%; /* Allows it to take full width of its parent */
+            max-width: 400px; /* Limit the maximum width of the input group */
+            margin-left: auto; /* Center the input group horizontally */
+            margin-right: auto; /* Center the input group horizontally */
+        }
+
+        /* Common styles for both select and text input fields */
         .input-group select,
         .input-group input[type="text"] {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #d1d5db; /* Softer border color */
-            border-radius: 0.75rem; /* More rounded corners for inputs */
-            font-size: 1rem;
-            background-color: #fcfcfc; /* Slightly whiter background */
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle inner shadow */
-            transition: border-color 0.2s ease, box-shadow 0.2s ease; /* Smooth transition for focus */
-            -webkit-appearance: none; /* Remove default browser styling for select */
-            -moz-appearance: none; /* Remove default browser styling for select */
-            appearance: none; /* Remove default browser styling for select */
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%234a5568'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E"); /* Custom SVG arrow */
+            width: 100%; /* Ensures input field takes full width of its parent .input-group */
+            padding: 0.9rem 1.25rem; /* Base padding */
+            border: 1px solid #c0cddb;
+            border-radius: 1rem;
+            font-size: 1.1rem;
+            background-color: #fcfcfc;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Styles specifically for select (dropdowns) - retains the arrow */
+        .input-group select {
+            -webkit-appearance: none; /* Remove default browser styling */
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%237b89a8'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E"); /* Custom SVG arrow */
             background-repeat: no-repeat;
-            background-position: right 0.75rem center;
-            background-size: 1.25em; /* Size of the arrow */
-            padding-right: 2.5rem; /* Make space for the custom arrow */
+            background-position: right 1rem center;
+            background-size: 1.4em;
+            padding-right: 3rem; /* Add space for the custom arrow */
+        }
+
+        /* Styles specifically for text input - removes the arrow */
+        .input-group input[type="text"] {
+            background-image: none; /* Remove the custom arrow */
+            padding-right: 1.25rem; /* Revert padding as no arrow is present */
         }
 
         .input-group select:focus,
         .input-group input[type="text"]:focus {
-            outline: none; /* Remove default outline */
-            border-color: #60a5fa; /* A more vibrant blue on focus */
-            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3); /* Softer, more spread focus shadow */
+            outline: none;
+            border-color: #5a80e0;
+            box-shadow: 0 0 0 4px rgba(90, 128, 224, 0.4);
         }
     </style>
 </head>

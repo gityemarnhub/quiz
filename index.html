@@ -9,7 +9,7 @@
         /* Custom styles for better aesthetics and responsiveness */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f4f8; /* Light blue-gray background */
+            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%); /* Subtle gradient background */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -22,7 +22,7 @@
         .quiz-container {
             background-color: #ffffff;
             border-radius: 1.5rem; /* More rounded corners */
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Softer shadow */
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15); /* Slightly stronger, more diffused shadow */
             padding: 2.5rem; /* Increased padding */
             width: 100%;
             max-width: 600px; /* Max width for larger screens */
@@ -32,6 +32,15 @@
             gap: 1.5rem; /* Space between sections */
             overflow: hidden; /* Hide overflow for animations */
             position: relative; /* Needed for absolute positioning of quit button */
+            border: 1px solid #e2e8f0; /* Subtle border */
+        }
+
+        .main-title {
+            font-size: 2.5rem; /* Slightly larger title */
+            font-weight: 800; /* Extra bold */
+            color: #2d3748; /* Darker text color */
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.05); /* Subtle text shadow */
         }
 
         .question-text {
@@ -272,7 +281,13 @@
 </head>
 <body>
     <div class="quiz-container">
-        <h1 class="text-4xl font-extrabold text-gray-800 mb-6">AI-Powered Dynamic Quiz</h1>
+        <h1 class="main-title">AI-Powered Dynamic Quiz</h1>
+
+        <button id="quit-button" class="quit-button hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg>
+        </button>
 
         <div id="topic-input-section">
             <div class="input-group">
@@ -306,12 +321,7 @@
             <p id="error-message" class="text-red-500 text-sm mt-2 hidden"></p>
         </div>
 
-        <div id="quiz-section" class="hidden pt-16"> <button id="quit-button" class="quit-button">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                </svg>
-            </button>
-
+        <div id="quiz-section" class="hidden">
             <p id="question-progress" class="text-gray-600 text-lg font-semibold mb-4"></p>
             <p id="question-text" class="question-text"></p>
             <div id="answer-buttons" class="answer-buttons">
@@ -441,6 +451,7 @@
                             topicInputSection.classList.remove('fade-out'); // Clean up class
                             quizSection.classList.remove('hidden');
                             quizSection.classList.add('fade-in');
+                            quitButton.classList.remove('hidden'); // Show quit button
                             loadQuestion();
                         }, { once: true }); // Ensure listener is removed after one use
 
@@ -484,6 +495,7 @@
                 errorMessage.classList.remove('hidden');
                 quizSection.classList.add('hidden');
                 topicInputSection.classList.remove('hidden');
+                quitButton.classList.add('hidden'); // Hide quit button if no questions
                 return;
             }
 
@@ -520,7 +532,7 @@
          * @param {Event} event - The click event object.
          */
         function selectAnswer(selectedButton, selectedChoice, correctAnswer, event) {
-            // Only allow selection if an answr hasn't been chosen yet for this question
+            // Only allow selection if an answer hasn't been chosen yet for this question
             if (answerSelected) {
                 return;
             }
@@ -592,6 +604,7 @@
             quizSection.classList.add('hidden');
             resultsSection.classList.remove('hidden');
             resultsSection.classList.add('fade-in'); // Fade in results section
+            quitButton.classList.add('hidden'); // Hide quit button on results screen
             finalScoreElement.textContent = `You scored ${score} out of ${questions.length}!`;
         }
 
@@ -619,6 +632,7 @@
                 numQuestionsSelect.value = '5'; // Reset dropdowns
                 difficultyLevelSelect.value = 'easy'; // Reset dropdowns
                 errorMessage.classList.add('hidden'); // Hide any previous error messages
+                quitButton.classList.add('hidden'); // Ensure quit button is hidden
             }, { once: true });
         }
 
@@ -644,6 +658,7 @@
             quizSection.classList.add('hidden');
             resultsSection.classList.add('hidden');
             topicInputSection.classList.remove('hidden');
+            quitButton.classList.add('hidden'); // Ensure quit button is hidden on initial load
         });
     </script>
 </body>

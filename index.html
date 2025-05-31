@@ -410,7 +410,7 @@
                     }
                 };
 
-                const apiKey = "AIzaSyDx1ZjGvvA5N-HGyfqYSX_sbtyb23ZIrjE"; // Canvas will automatically provide this
+                const apiKey = "AIzaSyDx1ZjGvvA5N-HGyfqYSX_sbtyb23ZIrjE"; // Using the provided API key
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
                 const response = await fetch(apiUrl, {
@@ -520,7 +520,7 @@
          * @param {Event} event - The click event object.
          */
         function selectAnswer(selectedButton, selectedChoice, correctAnswer, event) {
-            // Only allow selection if an answer hasn't been chosen yet for this question
+            // Only allow selection if an answr hasn't been chosen yet for this question
             if (answerSelected) {
                 return;
             }

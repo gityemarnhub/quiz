@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI-Powered Dynamic Quiz</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
         /* Custom styles for better aesthetics and responsiveness */
         body {
@@ -15,39 +17,39 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 2rem; /* Increased padding for full screen */
+            padding: 2rem;
             box-sizing: border-box;
         }
 
         .quiz-container {
             background-color: #ffffff;
-            border-radius: 2rem; /* Consistent rounded corners */
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); /* More prominent shadow for larger size */
-            padding: 3rem; /* Increased padding for spacious feel */
+            border-radius: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            padding: 3rem;
             width: 100%;
-            max-width: 800px; /* Increased max-width for full screen */
+            max-width: 800px;
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2rem; /* Increased space between sections */
+            gap: 2rem;
             overflow: hidden;
             position: relative;
             border: 1px solid #e0e0e0;
         }
 
         .main-title {
-            font-size: 3.5rem; /* Larger title for full screen */
+            font-size: 3.5rem;
             font-weight: 900;
             color: #3f4c6b;
             margin-bottom: 2rem;
-            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08); /* More prominent text shadow */
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08);
             width: 100%;
             text-align: center;
         }
 
         .question-text {
-            font-size: 2.2rem; /* Larger question font */
+            font-size: 2.2rem;
             font-weight: 700;
             color: #3f4c6b;
             margin-bottom: 2rem;
@@ -58,13 +60,13 @@
         .answer-buttons {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 1.5rem; /* Increased space between buttons */
+            gap: 1.5rem;
             width: 100%;
         }
 
         @media (min-width: 640px) {
             .answer-buttons {
-                grid-template-columns: 1fr 1fr; /* Two columns for wider screens */
+                grid-template-columns: 1fr 1fr;
             }
         }
 
@@ -72,25 +74,25 @@
             background-color: #f0f4f8;
             color: #5a6a8a;
             border: 1px solid #dbe2ea;
-            padding: 1.2rem 2rem; /* Increased padding */
-            border-radius: 1rem; /* Consistent rounded corners */
-            font-size: 1.3rem; /* Larger font */
+            padding: 1.2rem 2rem;
+            border-radius: 1rem;
+            font-size: 1.3rem;
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 600;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05); /* Adjusted shadow */
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
         }
 
         .answer-button:hover:not(.correct):not(.incorrect):not(.disabled) {
             background-color: #e2e8f0;
             border-color: #c0cddb;
-            transform: translateY(-3px); /* More pronounced lift */
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* More prominent shadow */
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
         }
 
         .answer-button.selected {
             border-color: #5a80e0;
-            box-shadow: 0 0 0 5px rgba(90, 128, 224, 0.4); /* More prominent blue shadow */
+            box-shadow: 0 0 0 5px rgba(90, 128, 224, 0.4);
         }
 
         .answer-button.correct {
@@ -112,10 +114,10 @@
         }
 
         .feedback-message {
-            font-size: 1.6rem; /* Larger feedback text */
+            font-size: 1.6rem;
             font-weight: 700;
             margin-top: 1.8rem;
-            min-height: 3rem; /* Ensure more space */
+            min-height: 3rem;
             width: 100%;
             text-align: center;
         }
@@ -131,7 +133,7 @@
         .navigation-buttons {
             display: flex;
             justify-content: center;
-            gap: 1.5rem; /* Increased space between nav buttons */
+            gap: 1.5rem;
             margin-top: 2.5rem;
             width: 100%;
         }
@@ -139,19 +141,19 @@
         .nav-button {
             background-color: #5a80e0;
             color: white;
-            padding: 1rem 2.5rem; /* Increased padding */
+            padding: 1rem 2.5rem;
             border-radius: 1rem;
-            font-size: 1.4rem; /* Larger font */
+            font-size: 1.4rem;
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
             font-weight: 700;
             border: none;
-            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1); /* Adjusted shadow */
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1);
         }
 
         .nav-button:hover:not(:disabled) {
             background-color: #4a6ec5;
-            transform: translateY(-4px); /* More pronounced lift */
+            transform: translateY(-4px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
 
@@ -168,7 +170,7 @@
         }
 
         .score-display {
-            font-size: 2.2rem; /* Larger score display */
+            font-size: 2.2rem;
             font-weight: 800;
             color: #3f4c6b;
             margin-top: 1.8rem;
@@ -177,7 +179,7 @@
         }
 
         .final-results {
-            font-size: 3rem; /* Larger final results */
+            font-size: 3rem;
             font-weight: 900;
             color: #3f4c6b;
             margin-bottom: 2.5rem;
@@ -219,17 +221,17 @@
             right: 2rem;
             background-color: #E53935;
             color: white;
-            padding: 0.8rem; /* Increased padding */
+            padding: 0.8rem;
             border-radius: 9999px;
-            font-size: 1.6rem; /* Larger icon */
+            font-size: 1.6rem;
             cursor: pointer;
             border: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 50px; /* Larger button */
+            width: 50px;
             height: 50px;
-            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15); /* More prominent shadow */
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
             z-index: 10;
         }
@@ -241,7 +243,7 @@
         }
 
         .quit-button svg {
-            width: 30px; /* Larger SVG icon */
+            width: 30px;
             height: 30px;
             fill: currentColor;
         }
@@ -251,16 +253,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-left: 1rem; /* Increased space */
-            height: 30px; /* Increased height */
+            margin-left: 1rem;
+            height: 30px;
         }
 
         .loading-bar {
-            width: 15px; /* Wider bars */
-            height: 7.5px; /* Taller bars */
+            width: 15px;
+            height: 7.5px;
             background-color: #a8c0ff;
-            margin: 0 6px; /* More space between bars */
-            border-radius: 4px; /* More rounded bars */
+            margin: 0 6px;
+            border-radius: 4px;
             animation: stretchAndFade 1.6s infinite ease-in-out;
         }
 
@@ -282,30 +284,30 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            margin-bottom: 1rem; /* Increased margin */
+            margin-bottom: 1rem;
             width: 100%;
-            max-width: 500px; /* Increased max-width for input groups */
+            max-width: 500px;
             margin-left: auto;
             margin-right: auto;
         }
 
         .input-group label {
-            margin-bottom: 0.5rem; /* Increased margin */
+            margin-bottom: 0.5rem;
             font-weight: 500;
             color: #4a5568;
-            font-size: 1.1rem; /* Larger font */
+            font-size: 1.1rem;
         }
 
         /* Common styles for both select and text input fields */
         .input-group select,
         .input-group input[type="text"] {
             width: 100%;
-            padding: 1rem 1.25rem; /* Increased padding */
+            padding: 1rem 1.25rem;
             border: 1px solid #c0cddb;
-            border-radius: 1rem; /* Consistent rounded corners */
-            font-size: 1.2rem; /* Larger font */
+            border-radius: 1rem;
+            font-size: 1.2rem;
             background-color: #fcfcfc;
-            box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.06); /* More prominent inner shadow */
+            box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.06);
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
@@ -318,13 +320,13 @@
             background-repeat: no-repeat;
             background-position: right 1rem center;
             background-size: 1.4em;
-            padding-right: 3rem; /* Increased space for the custom arrow */
+            padding-right: 3rem;
         }
 
         /* Styles specifically for text input - removes the arrow */
         .input-group input[type="text"] {
             background-image: none;
-            padding-right: 1.25rem; /* Revert padding as no arrow is present */
+            padding-right: 1.25rem;
         }
 
         .input-group select:focus,
@@ -404,6 +406,17 @@
     </div>
 
     <script>
+        // Configure MathJax to use inline ($...$) and block ($$...$$) LaTeX
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+
         // DOM elements
         const topicInputSection = document.getElementById('topic-input-section');
         const topicInput = document.getElementById('topic-input');
@@ -479,7 +492,13 @@
 
             try {
                 let chatHistory = [];
-                const prompt = `Generate ${numQuestions} multiple-choice quiz questions about "${topic}" at a ${difficulty} difficulty level. Each question should have 4 choices, and one correct answer. Provide the output as a JSON array of objects, where each object has 'question', 'choices' (an array of strings), and 'correctAnswer' (a string matching one of the choices).`;
+                // Updated prompt to request Markdown and LaTeX
+                const prompt = `Generate ${numQuestions} multiple-choice quiz questions about "${topic}" at a ${difficulty} difficulty level. Each question should have 4 choices, and one correct answer.
+                
+                For text formatting, use **Markdown** (e.g., **bold**, *italics*, lists).
+                For mathematical expressions, use **LaTeX** enclosed in single dollar signs for inline math (e.g., $E=mc^2$) or double dollar signs for block math (e.g., $$x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}$$).
+                
+                Provide the output as a JSON array of objects, where each object has 'question', 'choices' (an array of strings), and 'correctAnswer' (a string matching one of the choices).`;
                 chatHistory.push({ role: "user", parts: [{ text: prompt }] });
 
                 const payload = {
@@ -504,7 +523,7 @@
                     }
                 };
 
-                const apiKey = "AIzaSyDx1ZjGvvA5N-HGyfqYSX_sbtyb23ZIrjE"; // Using the provided API key
+                const apiKey = "AIzaSyDx1ZjGvvA5N-HGyfqYSX_sbtyb23ZIrjE";
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
                 const response = await fetch(apiUrl, {
@@ -528,16 +547,15 @@
 
                     if (Array.isArray(parsedQuestions) && parsedQuestions.length > 0) {
                         questions = parsedQuestions;
-                        // Apply fade-out to input section, then fade-in quiz section
                         topicInputSection.classList.add('fade-out');
                         topicInputSection.addEventListener('animationend', () => {
                             topicInputSection.classList.add('hidden');
-                            topicInputSection.classList.remove('fade-out'); // Clean up class
+                            topicInputSection.classList.remove('fade-out');
                             quizSection.classList.remove('hidden');
                             quizSection.classList.add('fade-in');
-                            quitButton.classList.remove('hidden'); // Show quit button
+                            quitButton.classList.remove('hidden');
                             loadQuestion();
-                        }, { once: true }); // Ensure listener is removed after one use
+                        }, { once: true });
 
                     } else {
                         throw new Error("AI did not return valid questions. Please try a different topic or settings.");
@@ -550,8 +568,9 @@
                 console.error("Error fetching questions:", error);
                 errorMessage.textContent = `Error: ${error.message}. Please try again.`;
                 errorMessage.classList.remove('hidden');
-                quizSection.classList.add('hidden'); // Ensure quiz section is hidden if error occurs
-                topicInputSection.classList.remove('hidden'); // Show topic input again
+                quizSection.classList.add('hidden');
+                topicInputSection.classList.remove('hidden');
+                quitButton.classList.add('hidden');
             } finally {
                 hideLoadingAnimation();
                 topicInput.disabled = false;
@@ -564,13 +583,10 @@
          * Loads and displays the current question and its choices.
          */
         function loadQuestion() {
-            // Reset feedback and button states
             feedbackMessageElement.textContent = '';
-            feedbackMessageElement.className = 'feedback-message'; // Reset classes
+            feedbackMessageElement.className = 'feedback-message';
             nextButton.disabled = true;
             answerSelected = false;
-
-            // Clear previous answer buttons
             answerButtonsElement.innerHTML = '';
 
             if (questions.length === 0) {
@@ -578,101 +594,101 @@
                 errorMessage.classList.remove('hidden');
                 quizSection.classList.add('hidden');
                 topicInputSection.classList.remove('hidden');
-                quitButton.classList.add('hidden'); // Hide quit button if no questions
+                quitButton.classList.add('hidden');
                 return;
             }
 
             const currentQuestion = questions[currentQuestionIndex];
-            questionTextElement.textContent = currentQuestion.question;
+            // Render Markdown and then let MathJax process LaTeX
+            questionTextElement.innerHTML = marked.parse(currentQuestion.question);
+            MathJax.typesetPromise([questionTextElement]).catch((err) => console.error("MathJax typesetting error:", err));
 
-            // Update question progress and apply animation
+
             questionProgressElement.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
             questionProgressElement.classList.add('score-update-animation');
             questionProgressElement.addEventListener('animationend', () => {
                 questionProgressElement.classList.remove('score-update-animation');
             }, { once: true });
 
-
-            // Create a shuffled copy of choices for display
             const shuffledChoices = [...currentQuestion.choices];
             shuffleArray(shuffledChoices);
 
-            // Create buttons for each choice
             shuffledChoices.forEach((choice) => {
                 const button = document.createElement('button');
-                button.textContent = choice;
+                // Render Markdown and then let MathJax process LaTeX for choices
+                button.innerHTML = marked.parse(choice);
                 button.classList.add('answer-button');
                 button.addEventListener('click', (event) => selectAnswer(button, choice, currentQuestion.correctAnswer, event));
                 answerButtonsElement.appendChild(button);
             });
+            // Typeset MathJax for all new answer buttons as well
+            MathJax.typesetPromise(Array.from(answerButtonsElement.children)).catch((err) => console.error("MathJax typesetting error:", err));
         }
 
         /**
          * Handles the selection of an answer.
          * @param {HTMLButtonElement} selectedButton - The button element that was clicked.
-         * @param {string} selectedChoice - The text of the selected choice.
-         * @param {string} correctAnswer - The correct answer for the current question.
+         * @param {string} selectedChoice - The raw text of the selected choice (before Markdown/LaTeX rendering).
+         * @param {string} correctAnswer - The raw text of the correct answer.
          * @param {Event} event - The click event object.
          */
         function selectAnswer(selectedButton, selectedChoice, correctAnswer, event) {
-            // Only allow selection if an answer hasn't been chosen yet for this question
             if (answerSelected) {
                 return;
             }
 
-            answerSelected = true; // Mark an answer as selected
-
-            // Add click animation to the selected button
+            answerSelected = true;
             selectedButton.classList.add('clicked');
             selectedButton.addEventListener('animationend', () => {
                 selectedButton.classList.remove('clicked');
             }, { once: true });
 
-
-            // Disable all answer buttons after selection
             Array.from(answerButtonsElement.children).forEach(button => {
                 button.classList.add('disabled');
-                button.disabled = true; // Truly disable the button
+                button.disabled = true;
             });
 
-            // Mark the selected button
             selectedButton.classList.add('selected');
 
-            // Check if the selected answer is correct
+            // Compare raw text for correctness
             if (selectedChoice === correctAnswer) {
                 score++;
-                selectedButton.classList.add('correct');
-                feedbackMessageElement.textContent = 'Correct!';
+                feedbackMessageElement.innerHTML = marked.parse('Correct!');
                 feedbackMessageElement.classList.add('correct-feedback');
             } else {
-                selectedButton.classList.add('incorrect');
-                feedbackMessageElement.textContent = `Incorrect. The correct answer was: ${correctAnswer}`;
+                feedbackMessageElement.innerHTML = marked.parse(`Incorrect. The correct answer was: ${correctAnswer}`);
                 feedbackMessageElement.classList.add('incorrect-feedback');
 
-                // Highlight the correct answer
+                // Highlight the correct answer (after rendering potential Markdown/LaTeX)
                 Array.from(answerButtonsElement.children).forEach(button => {
-                    if (button.textContent === correctAnswer) {
+                    // To reliably highlight, we need to compare the *rendered* text content.
+                    // This uses a simple text comparison after parsing and stripping HTML.
+                    // For more complex LaTeX, a more robust solution might involve
+                    // storing the correct answer's button reference directly.
+                    if (button.textContent.trim() === marked.parse(correctAnswer).replace(/<[^>]*>/g, '').trim()) {
                         button.classList.add('correct');
                     }
                 });
             }
-            nextButton.disabled = false; // Enable the next button
+            // Typeset MathJax for the feedback message after its content is updated
+            MathJax.typesetPromise([feedbackMessageElement]).catch((err) => console.error("MathJax typesetting error for feedback:", err));
+
+            nextButton.disabled = false;
         }
 
         /**
          * Moves to the next question or shows the final results.
          */
         function nextQuestion() {
-            // Apply fade-out to current quiz section
             quizSection.classList.add('fade-out');
             quizSection.addEventListener('animationend', () => {
                 quizSection.classList.add('hidden');
-                quizSection.classList.remove('fade-out'); // Clean up class
+                quizSection.classList.remove('fade-out');
 
                 currentQuestionIndex++;
                 if (currentQuestionIndex < questions.length) {
                     quizSection.classList.remove('hidden');
-                    quizSection.classList.add('fade-in'); // Fade in next question
+                    quizSection.classList.add('fade-in');
                     loadQuestion();
                 } else {
                     showResults();
@@ -686,8 +702,8 @@
         function showResults() {
             quizSection.classList.add('hidden');
             resultsSection.classList.remove('hidden');
-            resultsSection.classList.add('fade-in'); // Fade in results section
-            quitButton.classList.add('hidden'); // Hide quit button on results screen
+            resultsSection.classList.add('fade-in');
+            quitButton.classList.add('hidden');
             finalScoreElement.textContent = `You scored ${score} out of ${questions.length}!`;
         }
 
@@ -697,25 +713,24 @@
         function restartQuiz() {
             const currentActiveSection = resultsSection.classList.contains('hidden') ? quizSection : resultsSection;
 
-            // Apply fade-out to current active section, then reset
             currentActiveSection.classList.add('fade-out');
             currentActiveSection.addEventListener('animationend', () => {
                 currentActiveSection.classList.add('hidden');
-                currentActiveSection.classList.remove('fade-out'); // Clean up class
+                currentActiveSection.classList.remove('fade-out');
 
                 currentQuestionIndex = 0;
                 score = 0;
                 answerSelected = false;
-                questions = []; // Clear questions
-                quizSection.classList.add('hidden'); // Ensure quiz section is hidden
-                resultsSection.classList.add('hidden'); // Ensure results section is hidden
-                topicInputSection.classList.remove('hidden'); // Show topic input again
-                topicInputSection.classList.add('fade-in'); // Fade in topic input
-                topicInput.value = ''; // Clear topic input
-                numQuestionsSelect.value = '5'; // Reset dropdowns
-                difficultyLevelSelect.value = 'easy'; // Reset dropdowns
-                errorMessage.classList.add('hidden'); // Hide any previous error messages
-                quitButton.classList.add('hidden'); // Ensure quit button is hidden
+                questions = [];
+                quizSection.classList.add('hidden');
+                resultsSection.classList.add('hidden');
+                topicInputSection.classList.remove('hidden');
+                topicInputSection.classList.add('fade-in');
+                topicInput.value = '';
+                numQuestionsSelect.value = '5';
+                difficultyLevelSelect.value = 'easy';
+                errorMessage.classList.add('hidden');
+                quitButton.classList.add('hidden');
             }, { once: true });
         }
 

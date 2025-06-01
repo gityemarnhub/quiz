@@ -15,42 +15,42 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 0.3rem; /* Reduced from 0.65rem */
+            padding: 2rem; /* Increased padding for full screen */
             box-sizing: border-box;
         }
 
         .quiz-container {
             background-color: #ffffff;
-            border-radius: 0.78rem;
-            box-shadow: 0 7.8px 18.2px rgba(0, 0, 0, 0.15);
-            padding: 1.56rem 1rem; /* Reduced horizontal padding from 1.56rem */
+            border-radius: 2rem; /* Consistent rounded corners */
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); /* More prominent shadow for larger size */
+            padding: 3rem; /* Increased padding for spacious feel */
             width: 100%;
-            max-width: 300px; /* Increased from 260px */
+            max-width: 800px; /* Increased max-width for full screen */
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.91rem;
+            gap: 2rem; /* Increased space between sections */
             overflow: hidden;
             position: relative;
             border: 1px solid #e0e0e0;
         }
 
         .main-title {
-            font-size: 1.092rem;
+            font-size: 3.5rem; /* Larger title for full screen */
             font-weight: 900;
             color: #3f4c6b;
-            margin-bottom: 0.91rem;
-            text-shadow: 1.3px 1.3px 2.6px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08); /* More prominent text shadow */
             width: 100%;
             text-align: center;
         }
 
         .question-text {
-            font-size: 0.975rem;
+            font-size: 2.2rem; /* Larger question font */
             font-weight: 700;
             color: #3f4c6b;
-            margin-bottom: 0.91rem;
+            margin-bottom: 2rem;
             width: 100%;
             text-align: center;
         }
@@ -58,13 +58,13 @@
         .answer-buttons {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 0.65rem;
+            gap: 1.5rem; /* Increased space between buttons */
             width: 100%;
         }
 
         @media (min-width: 640px) {
             .answer-buttons {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr; /* Two columns for wider screens */
             }
         }
 
@@ -72,39 +72,39 @@
             background-color: #f0f4f8;
             color: #5a6a8a;
             border: 1px solid #dbe2ea;
-            padding: 0.585rem 0.7rem; /* Reduced horizontal padding from 0.91rem */
-            border-radius: 0.52rem;
-            font-size: 0.598rem;
+            padding: 1.2rem 2rem; /* Increased padding */
+            border-radius: 1rem; /* Consistent rounded corners */
+            font-size: 1.3rem; /* Larger font */
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 600;
-            box-shadow: 0 1.3px 2.6px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05); /* Adjusted shadow */
         }
 
         .answer-button:hover:not(.correct):not(.incorrect):not(.disabled) {
             background-color: #e2e8f0;
             border-color: #c0cddb;
-            transform: translateY(-1.3px);
-            box-shadow: 0 2.6px 5.2px rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px); /* More pronounced lift */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* More prominent shadow */
         }
 
         .answer-button.selected {
             border-color: #5a80e0;
-            box-shadow: 0 0 0 1.95px rgba(90, 128, 224, 0.4);
+            box-shadow: 0 0 0 5px rgba(90, 128, 224, 0.4); /* More prominent blue shadow */
         }
 
         .answer-button.correct {
             background-color: #4CAF50;
             color: white;
             border-color: #388E3C;
-            box-shadow: 0 1.3px 2.6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
         }
 
         .answer-button.incorrect {
             background-color: #E53935;
             color: white;
             border-color: #D32F2F;
-            box-shadow: 0 1.3px 2.6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
         }
 
         .answer-button.disabled {
@@ -112,10 +112,10 @@
         }
 
         .feedback-message {
-            font-size: 0.702rem;
+            font-size: 1.6rem; /* Larger feedback text */
             font-weight: 700;
-            margin-top: 0.78rem;
-            min-height: 1.3rem;
+            margin-top: 1.8rem;
+            min-height: 3rem; /* Ensure more space */
             width: 100%;
             text-align: center;
         }
@@ -131,33 +131,33 @@
         .navigation-buttons {
             display: flex;
             justify-content: center;
-            gap: 0.65rem;
-            margin-top: 1.04rem;
+            gap: 1.5rem; /* Increased space between nav buttons */
+            margin-top: 2.5rem;
             width: 100%;
         }
 
         .nav-button {
             background-color: #5a80e0;
             color: white;
-            padding: 0.468rem 0.8rem; /* Reduced horizontal padding from 1.04rem */
-            border-radius: 0.52rem;
-            font-size: 0.624rem;
+            padding: 1rem 2.5rem; /* Increased padding */
+            border-radius: 1rem;
+            font-size: 1.4rem; /* Larger font */
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
             font-weight: 700;
             border: none;
-            box-shadow: 0 2.08px 5.2px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1); /* Adjusted shadow */
         }
 
         .nav-button:hover:not(:disabled) {
             background-color: #4a6ec5;
-            transform: translateY(-1.56px);
-            box-shadow: 0 3.12px 7.8px rgba(0, 0, 0, 0.15);
+            transform: translateY(-4px); /* More pronounced lift */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
 
         .nav-button:active:not(:disabled) {
             transform: translateY(0);
-            box-shadow: 0 1.04px 2.6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
         }
 
         .nav-button:disabled {
@@ -168,19 +168,19 @@
         }
 
         .score-display {
-            font-size: 0.936rem;
+            font-size: 2.2rem; /* Larger score display */
             font-weight: 800;
             color: #3f4c6b;
-            margin-top: 0.78rem;
+            margin-top: 1.8rem;
             width: 100%;
             text-align: center;
         }
 
         .final-results {
-            font-size: 1.3rem;
+            font-size: 3rem; /* Larger final results */
             font-weight: 900;
             color: #3f4c6b;
-            margin-bottom: 1.04rem;
+            margin-bottom: 2.5rem;
             width: 100%;
             text-align: center;
         }
@@ -188,61 +188,61 @@
         /* Animations */
         .fade-in { animation: fadeIn 0.6s ease-out forwards; }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10.4px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .fade-out { animation: fadeOut 0.6s ease-out forwards; }
         @keyframes fadeOut {
             from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-10.4px); }
+            to { opacity: 0; transform: translateY(-20px); }
         }
 
         .answer-button.clicked { animation: buttonClick 0.2s ease-out; }
         @keyframes buttonClick {
             0% { transform: scale(1); }
-            50% { transform: scale(1.013); }
+            50% { transform: scale(1.02); }
             100% { transform: scale(1); }
         }
 
         .score-update-animation { animation: scoreUpdate 0.6s ease-out; }
         @keyframes scoreUpdate {
-            0% { transform: scale(0.965); opacity: 0.7; }
-            50% { transform: scale(1.026); opacity: 1; }
+            0% { transform: scale(0.9); opacity: 0.7; }
+            50% { transform: scale(1.05); opacity: 1; }
             100% { transform: scale(1); opacity: 1; }
         }
 
         /* Quit button specific styles */
         .quit-button {
             position: absolute;
-            top: 0.936rem;
-            right: 0.936rem;
+            top: 2rem;
+            right: 2rem;
             background-color: #E53935;
             color: white;
-            padding: 0.312rem;
+            padding: 0.8rem; /* Increased padding */
             border-radius: 9999px;
-            font-size: 0.702rem;
+            font-size: 1.6rem; /* Larger icon */
             cursor: pointer;
             border: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 23.4px;
-            height: 23.4px;
-            box-shadow: 0 2.08px 5.2px rgba(0, 0, 0, 0.15);
+            width: 50px; /* Larger button */
+            height: 50px;
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15); /* More prominent shadow */
             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
             z-index: 10;
         }
 
         .quit-button:hover {
             background-color: #C62828;
-            transform: scale(1.065);
-            box-shadow: 0 3.12px 7.8px rgba(0, 0, 0, 0.2);
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
         }
 
         .quit-button svg {
-            width: 13.52px;
-            height: 13.52px;
+            width: 30px; /* Larger SVG icon */
+            height: 30px;
             fill: currentColor;
         }
 
@@ -251,16 +251,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-left: 0.975rem;
-            height: 26px;
+            margin-left: 1rem; /* Increased space */
+            height: 30px; /* Increased height */
         }
 
         .loading-bar {
-            width: 13px;
-            height: 6.5px;
+            width: 15px; /* Wider bars */
+            height: 7.5px; /* Taller bars */
             background-color: #a8c0ff;
-            margin: 0 5.2px;
-            border-radius: 3.9px;
+            margin: 0 6px; /* More space between bars */
+            border-radius: 4px; /* More rounded bars */
             animation: stretchAndFade 1.6s infinite ease-in-out;
         }
 
@@ -282,30 +282,30 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            margin-bottom: 0.52rem;
+            margin-bottom: 1rem; /* Increased margin */
             width: 100%;
-            max-width: 240px; /* Increased from 208px */
+            max-width: 500px; /* Increased max-width for input groups */
             margin-left: auto;
             margin-right: auto;
         }
 
         .input-group label {
-            margin-bottom: 0.26rem;
+            margin-bottom: 0.5rem; /* Increased margin */
             font-weight: 500;
             color: #4a5568;
-            font-size: 0.572rem;
+            font-size: 1.1rem; /* Larger font */
         }
 
         /* Common styles for both select and text input fields */
         .input-group select,
         .input-group input[type="text"] {
             width: 100%;
-            padding: 0.468rem 0.5rem; /* Horizontal padding reduced from 0.65rem */
+            padding: 1rem 1.25rem; /* Increased padding */
             border: 1px solid #c0cddb;
-            border-radius: 0.52rem;
-            font-size: 0.572rem;
+            border-radius: 1rem; /* Consistent rounded corners */
+            font-size: 1.2rem; /* Larger font */
             background-color: #fcfcfc;
-            box-shadow: inset 0 1.04px 2.08px rgba(0, 0, 0, 0.06);
+            box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.06); /* More prominent inner shadow */
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
@@ -316,22 +316,22 @@
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%237b89a8'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 0.4rem center;
-            background-size: 0.728em;
-            padding-right: 1.2rem; /* Reduced from 1.56rem */
+            background-position: right 1rem center;
+            background-size: 1.4em;
+            padding-right: 3rem; /* Increased space for the custom arrow */
         }
 
         /* Styles specifically for text input - removes the arrow */
         .input-group input[type="text"] {
             background-image: none;
-            padding-right: 0.5rem;
+            padding-right: 1.25rem; /* Revert padding as no arrow is present */
         }
 
         .input-group select:focus,
         .input-group input[type="text"]:focus {
             outline: none;
             border-color: #5a80e0;
-            box-shadow: 0 0 0 2.08px rgba(90, 128, 224, 0.4);
+            box-shadow: 0 0 0 4px rgba(90, 128, 224, 0.4);
         }
     </style>
 </head>

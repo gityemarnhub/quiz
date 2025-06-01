@@ -15,42 +15,42 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 0.65rem; /* 0.5rem * 1.3 */
+            padding: 0.3rem; /* Reduced from 0.65rem */
             box-sizing: border-box;
         }
 
         .quiz-container {
             background-color: #ffffff;
-            border-radius: 0.78rem; /* 0.6rem * 1.3 */
-            box-shadow: 0 7.8px 18.2px rgba(0, 0, 0, 0.15); /* 6px * 1.3, 14px * 1.3 */
-            padding: 1.56rem; /* 1.2rem * 1.3 */
+            border-radius: 0.78rem;
+            box-shadow: 0 7.8px 18.2px rgba(0, 0, 0, 0.15);
+            padding: 1.56rem 1rem; /* Reduced horizontal padding from 1.56rem */
             width: 100%;
-            max-width: 260px; /* 200px * 1.3 */
+            max-width: 300px; /* Increased from 260px */
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.91rem; /* 0.7rem * 1.3 */
+            gap: 0.91rem;
             overflow: hidden;
             position: relative;
             border: 1px solid #e0e0e0;
         }
 
         .main-title {
-            font-size: 1.092rem; /* 0.84rem * 1.3 */
+            font-size: 1.092rem;
             font-weight: 900;
             color: #3f4c6b;
-            margin-bottom: 0.91rem; /* 0.7rem * 1.3 */
-            text-shadow: 1.3px 1.3px 2.6px rgba(0, 0, 0, 0.08); /* 1px * 1.3, 2px * 1.3 */
+            margin-bottom: 0.91rem;
+            text-shadow: 1.3px 1.3px 2.6px rgba(0, 0, 0, 0.08);
             width: 100%;
             text-align: center;
         }
 
         .question-text {
-            font-size: 0.975rem; /* 0.75rem * 1.3 */
+            font-size: 0.975rem;
             font-weight: 700;
             color: #3f4c6b;
-            margin-bottom: 0.91rem; /* 0.7rem * 1.3 */
+            margin-bottom: 0.91rem;
             width: 100%;
             text-align: center;
         }
@@ -58,7 +58,7 @@
         .answer-buttons {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 0.65rem; /* 0.5rem * 1.3 */
+            gap: 0.65rem;
             width: 100%;
         }
 
@@ -72,25 +72,25 @@
             background-color: #f0f4f8;
             color: #5a6a8a;
             border: 1px solid #dbe2ea;
-            padding: 0.585rem 0.91rem; /* 0.45rem * 1.3, 0.7rem * 1.3 */
-            border-radius: 0.52rem; /* 0.4rem * 1.3 */
-            font-size: 0.598rem; /* 0.46rem * 1.3 */
+            padding: 0.585rem 0.7rem; /* Reduced horizontal padding from 0.91rem */
+            border-radius: 0.52rem;
+            font-size: 0.598rem;
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 600;
-            box-shadow: 0 1.3px 2.6px rgba(0, 0, 0, 0.05); /* 1px * 1.3, 2px * 1.3 */
+            box-shadow: 0 1.3px 2.6px rgba(0, 0, 0, 0.05);
         }
 
         .answer-button:hover:not(.correct):not(.incorrect):not(.disabled) {
             background-color: #e2e8f0;
             border-color: #c0cddb;
-            transform: translateY(-1.3px); /* 1px * 1.3 */
-            box-shadow: 0 2.6px 5.2px rgba(0, 0, 0, 0.1); /* 2px * 1.3, 4px * 1.3 */
+            transform: translateY(-1.3px);
+            box-shadow: 0 2.6px 5.2px rgba(0, 0, 0, 0.1);
         }
 
         .answer-button.selected {
             border-color: #5a80e0;
-            box-shadow: 0 0 0 1.95px rgba(90, 128, 224, 0.4); /* 1.5px * 1.3 */
+            box-shadow: 0 0 0 1.95px rgba(90, 128, 224, 0.4);
         }
 
         .answer-button.correct {
@@ -112,10 +112,10 @@
         }
 
         .feedback-message {
-            font-size: 0.702rem; /* 0.54rem * 1.3 */
+            font-size: 0.702rem;
             font-weight: 700;
-            margin-top: 0.78rem; /* 0.6rem * 1.3 */
-            min-height: 1.3rem; /* 1rem * 1.3 */
+            margin-top: 0.78rem;
+            min-height: 1.3rem;
             width: 100%;
             text-align: center;
         }
@@ -131,33 +131,33 @@
         .navigation-buttons {
             display: flex;
             justify-content: center;
-            gap: 0.65rem; /* 0.5rem * 1.3 */
-            margin-top: 1.04rem; /* 0.8rem * 1.3 */
+            gap: 0.65rem;
+            margin-top: 1.04rem;
             width: 100%;
         }
 
         .nav-button {
             background-color: #5a80e0;
             color: white;
-            padding: 0.468rem 1.04rem; /* 0.36rem * 1.3, 0.8rem * 1.3 */
-            border-radius: 0.52rem; /* 0.4rem * 1.3 */
-            font-size: 0.624rem; /* 0.48rem * 1.3 */
+            padding: 0.468rem 0.8rem; /* Reduced horizontal padding from 1.04rem */
+            border-radius: 0.52rem;
+            font-size: 0.624rem;
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
             font-weight: 700;
             border: none;
-            box-shadow: 0 2.08px 5.2px rgba(0, 0, 0, 0.1); /* 1.6px * 1.3, 4px * 1.3 */
+            box-shadow: 0 2.08px 5.2px rgba(0, 0, 0, 0.1);
         }
 
         .nav-button:hover:not(:disabled) {
             background-color: #4a6ec5;
-            transform: translateY(-1.56px); /* 1.2px * 1.3 */
-            box-shadow: 0 3.12px 7.8px rgba(0, 0, 0, 0.15); /* 2.4px * 1.3, 6px * 1.3 */
+            transform: translateY(-1.56px);
+            box-shadow: 0 3.12px 7.8px rgba(0, 0, 0, 0.15);
         }
 
         .nav-button:active:not(:disabled) {
             transform: translateY(0);
-            box-shadow: 0 1.04px 2.6px rgba(0, 0, 0, 0.1); /* 0.8px * 1.3, 2px * 1.3 */
+            box-shadow: 0 1.04px 2.6px rgba(0, 0, 0, 0.1);
         }
 
         .nav-button:disabled {
@@ -168,19 +168,19 @@
         }
 
         .score-display {
-            font-size: 0.936rem; /* 0.72rem * 1.3 */
+            font-size: 0.936rem;
             font-weight: 800;
             color: #3f4c6b;
-            margin-top: 0.78rem; /* 0.6rem * 1.3 */
+            margin-top: 0.78rem;
             width: 100%;
             text-align: center;
         }
 
         .final-results {
-            font-size: 1.3rem; /* 1rem * 1.3 */
+            font-size: 1.3rem;
             font-weight: 900;
             color: #3f4c6b;
-            margin-bottom: 1.04rem; /* 0.8rem * 1.3 */
+            margin-bottom: 1.04rem;
             width: 100%;
             text-align: center;
         }
@@ -188,61 +188,61 @@
         /* Animations */
         .fade-in { animation: fadeIn 0.6s ease-out forwards; }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10.4px); } /* 8px * 1.3 */
+            from { opacity: 0; transform: translateY(10.4px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .fade-out { animation: fadeOut 0.6s ease-out forwards; }
         @keyframes fadeOut {
             from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-10.4px); } /* 8px * 1.3 */
+            to { opacity: 0; transform: translateY(-10.4px); }
         }
 
         .answer-button.clicked { animation: buttonClick 0.2s ease-out; }
         @keyframes buttonClick {
             0% { transform: scale(1); }
-            50% { transform: scale(1.013); } /* 1.01 * 1.3, adjusted for subtle effect */
+            50% { transform: scale(1.013); }
             100% { transform: scale(1); }
         }
 
         .score-update-animation { animation: scoreUpdate 0.6s ease-out; }
         @keyframes scoreUpdate {
-            0% { transform: scale(0.965); opacity: 0.7; } /* 0.95 * 1.3, adjusted */
-            50% { transform: scale(1.026); opacity: 1; } /* 1.02 * 1.3, adjusted */
+            0% { transform: scale(0.965); opacity: 0.7; }
+            50% { transform: scale(1.026); opacity: 1; }
             100% { transform: scale(1); opacity: 1; }
         }
 
         /* Quit button specific styles */
         .quit-button {
             position: absolute;
-            top: 0.936rem; /* 0.72rem * 1.3 */
-            right: 0.936rem; /* 0.72rem * 1.3 */
+            top: 0.936rem;
+            right: 0.936rem;
             background-color: #E53935;
             color: white;
-            padding: 0.312rem; /* 0.24rem * 1.3 */
+            padding: 0.312rem;
             border-radius: 9999px;
-            font-size: 0.702rem; /* 0.54rem * 1.3 */
+            font-size: 0.702rem;
             cursor: pointer;
             border: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 23.4px; /* 18px * 1.3 */
-            height: 23.4px; /* 18px * 1.3 */
-            box-shadow: 0 2.08px 5.2px rgba(0, 0, 0, 0.15); /* 1.6px * 1.3, 4px * 1.3 */
+            width: 23.4px;
+            height: 23.4px;
+            box-shadow: 0 2.08px 5.2px rgba(0, 0, 0, 0.15);
             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
             z-index: 10;
         }
 
         .quit-button:hover {
             background-color: #C62828;
-            transform: scale(1.065); /* 1.05 * 1.3, adjusted */
-            box-shadow: 0 3.12px 7.8px rgba(0, 0, 0, 0.2); /* 2.4px * 1.3, 6px * 1.3 */
+            transform: scale(1.065);
+            box-shadow: 0 3.12px 7.8px rgba(0, 0, 0, 0.2);
         }
 
         .quit-button svg {
-            width: 13.52px; /* 10.4px * 1.3 */
-            height: 13.52px; /* 10.4px * 1.3 */
+            width: 13.52px;
+            height: 13.52px;
             fill: currentColor;
         }
 
@@ -251,16 +251,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-left: 0.975rem; /* 0.75rem * 1.3 */
-            height: 26px; /* 20px * 1.3 */
+            margin-left: 0.975rem;
+            height: 26px;
         }
 
         .loading-bar {
-            width: 13px; /* 10px * 1.3 */
-            height: 6.5px; /* 5px * 1.3 */
+            width: 13px;
+            height: 6.5px;
             background-color: #a8c0ff;
-            margin: 0 5.2px; /* 4px * 1.3 */
-            border-radius: 3.9px; /* 3px * 1.3 */
+            margin: 0 5.2px;
+            border-radius: 3.9px;
             animation: stretchAndFade 1.6s infinite ease-in-out;
         }
 
@@ -282,30 +282,30 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            margin-bottom: 0.52rem; /* 0.4rem * 1.3 */
+            margin-bottom: 0.52rem;
             width: 100%;
-            max-width: 208px; /* 160px * 1.3 */
+            max-width: 240px; /* Increased from 208px */
             margin-left: auto;
             margin-right: auto;
         }
 
         .input-group label {
-            margin-bottom: 0.26rem; /* 0.2rem * 1.3 */
+            margin-bottom: 0.26rem;
             font-weight: 500;
             color: #4a5568;
-            font-size: 0.572rem; /* 0.44rem * 1.3 */
+            font-size: 0.572rem;
         }
 
         /* Common styles for both select and text input fields */
         .input-group select,
         .input-group input[type="text"] {
             width: 100%;
-            padding: 0.468rem 0.65rem; /* 0.36rem * 1.3, 0.5rem * 1.3 */
+            padding: 0.468rem 0.5rem; /* Horizontal padding reduced from 0.65rem */
             border: 1px solid #c0cddb;
-            border-radius: 0.52rem; /* 0.4rem * 1.3 */
-            font-size: 0.572rem; /* 0.44rem * 1.3 */
+            border-radius: 0.52rem;
+            font-size: 0.572rem;
             background-color: #fcfcfc;
-            box-shadow: inset 0 1.04px 2.08px rgba(0, 0, 0, 0.06); /* 0.8px * 1.3, 1.6px * 1.3 */
+            box-shadow: inset 0 1.04px 2.08px rgba(0, 0, 0, 0.06);
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
@@ -316,22 +316,22 @@
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%237b89a8'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 0.52rem center; /* 0.4rem * 1.3 */
-            background-size: 0.728em; /* 0.56em * 1.3 */
-            padding-right: 1.56rem; /* 1.2rem * 1.3 */
+            background-position: right 0.4rem center;
+            background-size: 0.728em;
+            padding-right: 1.2rem; /* Reduced from 1.56rem */
         }
 
         /* Styles specifically for text input - removes the arrow */
         .input-group input[type="text"] {
             background-image: none;
-            padding-right: 0.65rem; /* 0.5rem * 1.3 */
+            padding-right: 0.5rem;
         }
 
         .input-group select:focus,
         .input-group input[type="text"]:focus {
             outline: none;
             border-color: #5a80e0;
-            box-shadow: 0 0 0 2.08px rgba(90, 128, 224, 0.4); /* 1.6px * 1.3 */
+            box-shadow: 0 0 0 2.08px rgba(90, 128, 224, 0.4);
         }
     </style>
 </head>
@@ -504,4 +504,245 @@
                     }
                 };
 
-                const apiKey = "AIzaSyDx1ZjGvvA5N-HGyfqYSX_sbtyb23ZIrjE"; // U
+                const apiKey = "AIzaSyDx1ZjGvvA5N-HGyfqYSX_sbtyb23ZIrjE"; // Using the provided API key
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`API error: ${response.status} - ${errorData.error.message || response.statusText}`);
+                }
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const jsonString = result.candidates[0].content.parts[0].text;
+                    const parsedQuestions = JSON.parse(jsonString);
+
+                    if (Array.isArray(parsedQuestions) && parsedQuestions.length > 0) {
+                        questions = parsedQuestions;
+                        // Apply fade-out to input section, then fade-in quiz section
+                        topicInputSection.classList.add('fade-out');
+                        topicInputSection.addEventListener('animationend', () => {
+                            topicInputSection.classList.add('hidden');
+                            topicInputSection.classList.remove('fade-out'); // Clean up class
+                            quizSection.classList.remove('hidden');
+                            quizSection.classList.add('fade-in');
+                            quitButton.classList.remove('hidden'); // Show quit button
+                            loadQuestion();
+                        }, { once: true }); // Ensure listener is removed after one use
+
+                    } else {
+                        throw new Error("AI did not return valid questions. Please try a different topic or settings.");
+                    }
+                } else {
+                    throw new Error("Failed to generate questions. Please try again.");
+                }
+
+            } catch (error) {
+                console.error("Error fetching questions:", error);
+                errorMessage.textContent = `Error: ${error.message}. Please try again.`;
+                errorMessage.classList.remove('hidden');
+                quizSection.classList.add('hidden'); // Ensure quiz section is hidden if error occurs
+                topicInputSection.classList.remove('hidden'); // Show topic input again
+            } finally {
+                hideLoadingAnimation();
+                topicInput.disabled = false;
+                numQuestionsSelect.disabled = false;
+                difficultyLevelSelect.disabled = false;
+            }
+        }
+
+        /**
+         * Loads and displays the current question and its choices.
+         */
+        function loadQuestion() {
+            // Reset feedback and button states
+            feedbackMessageElement.textContent = '';
+            feedbackMessageElement.className = 'feedback-message'; // Reset classes
+            nextButton.disabled = true;
+            answerSelected = false;
+
+            // Clear previous answer buttons
+            answerButtonsElement.innerHTML = '';
+
+            if (questions.length === 0) {
+                errorMessage.textContent = "No questions available. Please generate a new quiz.";
+                errorMessage.classList.remove('hidden');
+                quizSection.classList.add('hidden');
+                topicInputSection.classList.remove('hidden');
+                quitButton.classList.add('hidden'); // Hide quit button if no questions
+                return;
+            }
+
+            const currentQuestion = questions[currentQuestionIndex];
+            questionTextElement.textContent = currentQuestion.question;
+
+            // Update question progress and apply animation
+            questionProgressElement.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+            questionProgressElement.classList.add('score-update-animation');
+            questionProgressElement.addEventListener('animationend', () => {
+                questionProgressElement.classList.remove('score-update-animation');
+            }, { once: true });
+
+
+            // Create a shuffled copy of choices for display
+            const shuffledChoices = [...currentQuestion.choices];
+            shuffleArray(shuffledChoices);
+
+            // Create buttons for each choice
+            shuffledChoices.forEach((choice) => {
+                const button = document.createElement('button');
+                button.textContent = choice;
+                button.classList.add('answer-button');
+                button.addEventListener('click', (event) => selectAnswer(button, choice, currentQuestion.correctAnswer, event));
+                answerButtonsElement.appendChild(button);
+            });
+        }
+
+        /**
+         * Handles the selection of an answer.
+         * @param {HTMLButtonElement} selectedButton - The button element that was clicked.
+         * @param {string} selectedChoice - The text of the selected choice.
+         * @param {string} correctAnswer - The correct answer for the current question.
+         * @param {Event} event - The click event object.
+         */
+        function selectAnswer(selectedButton, selectedChoice, correctAnswer, event) {
+            // Only allow selection if an answer hasn't been chosen yet for this question
+            if (answerSelected) {
+                return;
+            }
+
+            answerSelected = true; // Mark an answer as selected
+
+            // Add click animation to the selected button
+            selectedButton.classList.add('clicked');
+            selectedButton.addEventListener('animationend', () => {
+                selectedButton.classList.remove('clicked');
+            }, { once: true });
+
+
+            // Disable all answer buttons after selection
+            Array.from(answerButtonsElement.children).forEach(button => {
+                button.classList.add('disabled');
+                button.disabled = true; // Truly disable the button
+            });
+
+            // Mark the selected button
+            selectedButton.classList.add('selected');
+
+            // Check if the selected answer is correct
+            if (selectedChoice === correctAnswer) {
+                score++;
+                selectedButton.classList.add('correct');
+                feedbackMessageElement.textContent = 'Correct!';
+                feedbackMessageElement.classList.add('correct-feedback');
+            } else {
+                selectedButton.classList.add('incorrect');
+                feedbackMessageElement.textContent = `Incorrect. The correct answer was: ${correctAnswer}`;
+                feedbackMessageElement.classList.add('incorrect-feedback');
+
+                // Highlight the correct answer
+                Array.from(answerButtonsElement.children).forEach(button => {
+                    if (button.textContent === correctAnswer) {
+                        button.classList.add('correct');
+                    }
+                });
+            }
+            nextButton.disabled = false; // Enable the next button
+        }
+
+        /**
+         * Moves to the next question or shows the final results.
+         */
+        function nextQuestion() {
+            // Apply fade-out to current quiz section
+            quizSection.classList.add('fade-out');
+            quizSection.addEventListener('animationend', () => {
+                quizSection.classList.add('hidden');
+                quizSection.classList.remove('fade-out'); // Clean up class
+
+                currentQuestionIndex++;
+                if (currentQuestionIndex < questions.length) {
+                    quizSection.classList.remove('hidden');
+                    quizSection.classList.add('fade-in'); // Fade in next question
+                    loadQuestion();
+                } else {
+                    showResults();
+                }
+            }, { once: true });
+        }
+
+        /**
+         * Displays the final score and the "Play Again" button.
+         */
+        function showResults() {
+            quizSection.classList.add('hidden');
+            resultsSection.classList.remove('hidden');
+            resultsSection.classList.add('fade-in'); // Fade in results section
+            quitButton.classList.add('hidden'); // Hide quit button on results screen
+            finalScoreElement.textContent = `You scored ${score} out of ${questions.length}!`;
+        }
+
+        /**
+         * Resets the quiz to its initial state and starts over.
+         */
+        function restartQuiz() {
+            const currentActiveSection = resultsSection.classList.contains('hidden') ? quizSection : resultsSection;
+
+            // Apply fade-out to current active section, then reset
+            currentActiveSection.classList.add('fade-out');
+            currentActiveSection.addEventListener('animationend', () => {
+                currentActiveSection.classList.add('hidden');
+                currentActiveSection.classList.remove('fade-out'); // Clean up class
+
+                currentQuestionIndex = 0;
+                score = 0;
+                answerSelected = false;
+                questions = []; // Clear questions
+                quizSection.classList.add('hidden'); // Ensure quiz section is hidden
+                resultsSection.classList.add('hidden'); // Ensure results section is hidden
+                topicInputSection.classList.remove('hidden'); // Show topic input again
+                topicInputSection.classList.add('fade-in'); // Fade in topic input
+                topicInput.value = ''; // Clear topic input
+                numQuestionsSelect.value = '5'; // Reset dropdowns
+                difficultyLevelSelect.value = 'easy'; // Reset dropdowns
+                errorMessage.classList.add('hidden'); // Hide any previous error messages
+                quitButton.classList.add('hidden'); // Ensure quit button is hidden
+            }, { once: true });
+        }
+
+        // Event Listeners
+        startQuizButton.addEventListener('click', () => {
+            const topic = topicInput.value.trim();
+            const numQuestions = parseInt(numQuestionsSelect.value);
+            const difficulty = difficultyLevelSelect.value;
+
+            if (topic) {
+                fetchQuestions(topic, numQuestions, difficulty);
+            } else {
+                errorMessage.textContent = "Please enter a topic to start the quiz.";
+                errorMessage.classList.remove('hidden');
+            }
+        });
+        nextButton.addEventListener('click', nextQuestion);
+        playAgainButton.addEventListener('click', restartQuiz);
+        quitButton.addEventListener('click', restartQuiz);
+
+        // Initial setup - hide quiz and results sections, show topic input
+        document.addEventListener('DOMContentLoaded', () => {
+            quizSection.classList.add('hidden');
+            resultsSection.classList.add('hidden');
+            topicInputSection.classList.remove('hidden');
+            quitButton.classList.add('hidden');
+        });
+    </script>
+</body>
+</html>

@@ -8,121 +8,190 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
-        /* Custom styles for better aesthetics and responsiveness */
+        /* Ensure html and body take full viewport height and width */
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: auto; /* Allow scrolling if content exceeds viewport */
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #e0f2f7 0%, #c8e6c9 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 1rem; /* Adjusted padding for mobile */
+            /* Removed flex properties from body to prevent centering the container */
+            display: block; /* Revert to default block display */
             box-sizing: border-box;
         }
 
         .quiz-container {
             background-color: #ffffff;
-            border-radius: 1.5rem; /* Slightly smaller rounded corners for mobile */
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15); /* Adjusted shadow */
-            padding: 2rem; /* Adjusted padding for mobile */
+            border-radius: 0; /* Remove border-radius for full-page effect */
+            box-shadow: none; /* Remove shadow for full-page effect */
+            padding: 3rem; /* Generous padding inside the container */
             width: 100%;
-            max-width: 95vw; /* Max width based on viewport width */
-            min-width: 300px; /* Ensure a minimum width for very small screens */
-            text-align: center;
+            min-height: 100vh; /* Ensure it always takes full viewport height */
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 1.5rem; /* Adjusted space between sections */
+            align-items: center; /* Center content horizontally */
+            justify-content: flex-start; /* Align content to the top initially */
+            gap: 2.5rem;
             overflow: hidden;
             position: relative;
-            border: 1px solid #e0e0e0;
+            border: none; /* Remove border */
         }
 
-        /* Further constrain max-width for larger mobile devices / smaller tablets */
-        @media (min-width: 450px) {
+        /* Adjustments for smaller screens to ensure responsiveness */
+        @media (max-width: 768px) {
             .quiz-container {
-                max-width: 450px;
+                padding: 1.5rem;
+                gap: 1.5rem;
+            }
+            .main-title {
+                font-size: 2rem;
+                margin-bottom: 1rem;
+            }
+            .question-text {
+                font-size: 1.3rem;
+                margin-bottom: 1rem;
+            }
+            .answer-buttons {
+                gap: 0.8rem;
+            }
+            .answer-button {
+                padding: 0.7rem 1.2rem;
+                font-size: 0.9rem;
+            }
+            .feedback-message {
+                font-size: 1rem;
+                margin-top: 1rem;
+                min-height: 2rem;
+            }
+            .navigation-buttons {
+                gap: 0.8rem;
+                margin-top: 1.5rem;
+            }
+            .nav-button {
+                padding: 0.6rem 1.5rem;
+                font-size: 1rem;
+            }
+            .score-display, .final-results {
+                font-size: 1.5rem;
+                margin-top: 1rem;
+            }
+            .quit-button {
+                top: 1rem;
+                right: 1rem;
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+            .quit-button svg {
+                width: 20px;
+                height: 20px;
+            }
+            .loading-bars {
+                height: 20px;
+            }
+            .loading-bar {
+                width: 10px;
+                height: 5px;
+                margin: 0 4px;
+            }
+            .input-group {
+                max-width: 100%;
+                margin-bottom: 0.8rem;
+            }
+            .input-group label {
+                font-size: 0.9rem;
+                margin-bottom: 0.3rem;
+            }
+            .input-group select,
+            .input-group input[type="text"] {
+                padding: 0.7rem 0.8rem;
+                font-size: 1rem;
+                border-radius: 0.75rem;
+            }
+            .input-group select {
+                background-position: right 0.6rem center;
+                background-size: 1em;
+                padding-right: 2rem;
+            }
+            .input-group input[type="text"] {
+                padding-right: 0.8rem;
             }
         }
 
         .main-title {
-            font-size: 2.2rem; /* Adjusted for mobile */
+            font-size: 3.5rem;
             font-weight: 900;
             color: #3f4c6b;
-            margin-bottom: 1.5rem;
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08);
             width: 100%;
             text-align: center;
         }
 
         .question-text {
-            font-size: 1.5rem; /* Adjusted for mobile */
+            font-size: 2.2rem;
             font-weight: 700;
             color: #3f4c6b;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             width: 100%;
             text-align: center;
         }
 
         .answer-buttons {
             display: grid;
-            grid-template-columns: 1fr; /* Always single column for mobile */
-            gap: 1rem; /* Adjusted space between buttons */
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
             width: 100%;
         }
 
-        /* Keep single column for mobile, even on slightly wider screens */
-        @media (min-width: 640px) {
-            .answer-buttons {
-                grid-template-columns: 1fr; /* Explicitly keep single column for mobile-first */
-            }
-        }
-        /* For larger screens (e.g., tablets in landscape, desktops), allow two columns */
         @media (min-width: 768px) {
             .answer-buttons {
                 grid-template-columns: 1fr 1fr;
             }
         }
 
-
         .answer-button {
             background-color: #f0f4f8;
             color: #5a6a8a;
             border: 1px solid #dbe2ea;
-            padding: 0.8rem 1.5rem; /* Adjusted padding for mobile */
-            border-radius: 0.75rem; /* Adjusted rounded corners */
-            font-size: 1rem; /* Adjusted font size */
+            padding: 1.2rem 2rem;
+            border-radius: 1rem;
+            font-size: 1.3rem;
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 600;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
         }
 
         .answer-button:hover:not(.correct):not(.incorrect):not(.disabled) {
             background-color: #e2e8f0;
             border-color: #c0cddb;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
         }
 
         .answer-button.selected {
             border-color: #5a80e0;
-            box-shadow: 0 0 0 3px rgba(90, 128, 224, 0.4);
+            box-shadow: 0 0 0 5px rgba(90, 128, 224, 0.4);
         }
 
         .answer-button.correct {
             background-color: #4CAF50;
             color: white;
             border-color: #388E3C;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
         }
 
         .answer-button.incorrect {
             background-color: #E53935;
             color: white;
             border-color: #D32F2F;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
         }
 
         .answer-button.disabled {
@@ -130,10 +199,10 @@
         }
 
         .feedback-message {
-            font-size: 1.2rem; /* Adjusted for mobile */
+            font-size: 1.6rem;
             font-weight: 700;
-            margin-top: 1.2rem;
-            min-height: 2.5rem;
+            margin-top: 1.8rem;
+            min-height: 3rem;
             width: 100%;
             text-align: center;
         }
@@ -149,33 +218,33 @@
         .navigation-buttons {
             display: flex;
             justify-content: center;
-            gap: 1rem; /* Adjusted space */
-            margin-top: 1.8rem;
+            gap: 1.5rem;
+            margin-top: 2.5rem;
             width: 100%;
         }
 
         .nav-button {
             background-color: #5a80e0;
             color: white;
-            padding: 0.75rem 1.8rem; /* Adjusted padding */
-            border-radius: 0.75rem;
-            font-size: 1.1rem; /* Adjusted font size */
+            padding: 1rem 2.5rem;
+            border-radius: 1rem;
+            font-size: 1.4rem;
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
             font-weight: 700;
             border: none;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1);
         }
 
         .nav-button:hover:not(:disabled) {
             background-color: #4a6ec5;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
 
         .nav-button:active:not(:disabled) {
             transform: translateY(0);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
         }
 
         .nav-button:disabled {
@@ -186,24 +255,24 @@
         }
 
         .score-display {
-            font-size: 1.6rem; /* Adjusted for mobile */
+            font-size: 2.2rem;
             font-weight: 800;
             color: #3f4c6b;
-            margin-top: 1.2rem;
+            margin-top: 1.8rem;
             width: 100%;
             text-align: center;
         }
 
         .final-results {
-            font-size: 2rem; /* Adjusted for mobile */
+            font-size: 3rem;
             font-weight: 900;
             color: #3f4c6b;
-            margin-bottom: 1.8rem;
+            margin-bottom: 2.5rem;
             width: 100%;
             text-align: center;
         }
 
-        /* Animations (keeping existing values as they are relative) */
+        /* Animations */
         .fade-in { animation: fadeIn 0.6s ease-out forwards; }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
@@ -233,21 +302,21 @@
         /* Quit button specific styles */
         .quit-button {
             position: absolute;
-            top: 1.2rem; /* Adjusted for mobile */
-            right: 1.2rem; /* Adjusted for mobile */
+            top: 2rem;
+            right: 2rem;
             background-color: #E53935;
             color: white;
-            padding: 0.6rem; /* Adjusted padding */
+            padding: 0.8rem;
             border-radius: 9999px;
-            font-size: 1.2rem; /* Adjusted icon size */
+            font-size: 1.6rem;
             cursor: pointer;
             border: none;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 40px; /* Adjusted size */
-            height: 40px; /* Adjusted size */
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            width: 50px;
+            height: 50px;
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
             transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
             z-index: 10;
         }
@@ -255,12 +324,12 @@
         .quit-button:hover {
             background-color: #C62828;
             transform: scale(1.1);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
         }
 
         .quit-button svg {
-            width: 24px; /* Adjusted SVG icon size */
-            height: 24px; /* Adjusted SVG icon size */
+            width: 30px;
+            height: 30px;
             fill: currentColor;
         }
 
@@ -269,16 +338,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-left: 0.8rem; /* Adjusted space */
-            height: 24px; /* Adjusted height */
+            margin-left: 1rem;
+            height: 30px;
         }
 
         .loading-bar {
-            width: 12px; /* Adjusted width */
-            height: 6px; /* Adjusted height */
+            width: 15px;
+            height: 7.5px;
             background-color: #a8c0ff;
-            margin: 0 5px; /* Adjusted space */
-            border-radius: 3px;
+            margin: 0 6px;
+            border-radius: 4px;
             animation: stretchAndFade 1.6s infinite ease-in-out;
         }
 
@@ -300,30 +369,30 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            margin-bottom: 0.8rem; /* Adjusted margin */
+            margin-bottom: 1rem;
             width: 100%;
-            max-width: 350px; /* Adjusted max-width for input groups */
+            max-width: 500px;
             margin-left: auto;
             margin-right: auto;
         }
 
         .input-group label {
-            margin-bottom: 0.4rem; /* Adjusted margin */
+            margin-bottom: 0.5rem;
             font-weight: 500;
             color: #4a5568;
-            font-size: 1rem; /* Adjusted font size */
+            font-size: 1.1rem;
         }
 
         /* Common styles for both select and text input fields */
         .input-group select,
         .input-group input[type="text"] {
             width: 100%;
-            padding: 0.8rem 1rem; /* Adjusted padding */
+            padding: 1rem 1.25rem;
             border: 1px solid #c0cddb;
-            border-radius: 0.75rem; /* Adjusted rounded corners */
-            font-size: 1.1rem; /* Adjusted font size */
+            border-radius: 1rem;
+            font-size: 1.2rem;
             background-color: #fcfcfc;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+            box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.06);
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
 
@@ -334,22 +403,22 @@
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%237b89a8'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 0.8rem center;
-            background-size: 1.2em; /* Adjusted arrow size */
-            padding-right: 2.5rem; /* Adjusted space for the custom arrow */
+            background-position: right 1rem center;
+            background-size: 1.4em;
+            padding-right: 3rem;
         }
 
         /* Styles specifically for text input - removes the arrow */
         .input-group input[type="text"] {
             background-image: none;
-            padding-right: 1rem; /* Adjusted padding */
+            padding-right: 1.25rem;
         }
 
         .input-group select:focus,
         .input-group input[type="text"]:focus {
             outline: none;
             border-color: #5a80e0;
-            box-shadow: 0 0 0 3px rgba(90, 128, 224, 0.4);
+            box-shadow: 0 0 0 4px rgba(90, 128, 224, 0.4);
         }
     </style>
 </head>

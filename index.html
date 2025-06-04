@@ -124,7 +124,7 @@
         }
 
         .main-title {
-            font-size: 0.5rem;
+            font-size: 2.5rem; /* Adjusted for better visibility */
             font-weight: 900;
             color: #3f4c6b;
             margin-bottom: 2rem;
@@ -440,7 +440,7 @@
 
             <div class="input-group">
                 <label for="num-questions">Number of Questions:</label>
-                <select id="num-questions" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4">
+                <select id="num-questions">
                     <option value="5">5</option>
                     <option value="10">10</option>
                     <option value="15">15</option>
@@ -450,7 +450,7 @@
 
             <div class="input-group">
                 <label for="difficulty-level">Difficulty:</label>
-                <select id="difficulty-level" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4">
+                <select id="difficulty-level">
                     <option value="beginner">Beginner</option>
                     <option value="easy">Easy</option>
                     <option value="medium">Medium</option>
@@ -476,7 +476,7 @@
             <p id="question-progress" class="text-gray-600 text-lg font-semibold mb-4"></p>
             <p id="question-text" class="question-text"></p>
             <div id="answer-buttons" class="answer-buttons">
-                </div>
+            </div>
             <p id="feedback-message" class="feedback-message"></p>
             <div class="navigation-buttons">
                 <button id="next-button" class="nav-button" disabled>Next Question</button>
@@ -572,277 +572,8 @@
             showLoadingAnimation();
             errorMessage.classList.add('hidden');
             topicInput.disabled = true;
-            numQuestionsSelect.disabled = true;
-            difficultyLevelSelect.disabled = true;
+            numQuestionsSelect.disabled = true; // Fix: Enable/disable the select element
+            difficultyLevelSelect.disabled = true; // Fix: Enable/disable the select element
 
             try {
-                let chatHistory = [];
-                // Updated prompt to request Markdown and LaTeX
-                const prompt = `Generate ${numQuestions} multiple-choice quiz questions about "${topic}" at a ${difficulty} difficulty level. Each question should have 4 choices, and one correct answer.
-                
-                For text formatting, use **Markdown** (e.g., **bold**, *italics*, lists).
-                For mathematical expressions, use **LaTeX** enclosed in single dollar signs for inline math (e.g., $E=mc^2$) or double dollar signs for block math (e.g., $$x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}$$).
-                
-                Provide the output as a JSON array of objects, where each object has 'question', 'choices' (an array of strings), and 'correctAnswer' (a string matching one of the choices).`;
-                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-
-                const payload = {
-                    contents: chatHistory,
-                    generationConfig: {
-                        responseMimeType: "application/json",
-                        responseSchema: {
-                            type: "ARRAY",
-                            items: {
-                                type: "OBJECT",
-                                properties: {
-                                    "question": { "type": "STRING" },
-                                    "choices": {
-                                        "type": "ARRAY",
-                                        "items": { "type": "STRING" }
-                                    },
-                                    "correctAnswer": { "type": "STRING" }
-                                },
-                                "propertyOrdering": ["question", "choices", "correctAnswer"]
-                            }
-                        }
-                    }
-                };
-
-                const apiKey = "AIzaSyDx1ZjGvvA5N-HGyfqYSX_sbtyb23ZIrjE";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(`API error: ${response.status} - ${errorData.error.message || response.statusText}`);
-                }
-
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const jsonString = result.candidates[0].content.parts[0].text;
-                    const parsedQuestions = JSON.parse(jsonString);
-
-                    if (Array.isArray(parsedQuestions) && parsedQuestions.length > 0) {
-                        questions = parsedQuestions;
-                        topicInputSection.classList.add('fade-out');
-                        topicInputSection.addEventListener('animationend', () => {
-                            topicInputSection.classList.add('hidden');
-                            topicInputSection.classList.remove('fade-out');
-                            quizSection.classList.remove('hidden');
-                            quizSection.classList.add('fade-in');
-                            quitButton.classList.remove('hidden');
-                            loadQuestion();
-                        }, { once: true });
-
-                    } else {
-                        throw new Error("AI did not return valid questions. Please try a different topic or settings.");
-                    }
-                } else {
-                    throw new Error("Failed to generate questions. Please try again.");
-                }
-
-            } catch (error) {
-                console.error("Error fetching questions:", error);
-                errorMessage.textContent = `Error: ${error.message}. Please try again.`;
-                errorMessage.classList.remove('hidden');
-                quizSection.classList.add('hidden');
-                topicInputSection.classList.remove('hidden');
-                quitButton.classList.add('hidden');
-            } finally {
-                hideLoadingAnimation();
-                topicInput.disabled = false;
-                numQuestionsSelect.disabled = false;
-                difficultyLevelSelect.disabled = false;
-            }
-        }
-
-        /**
-         * Loads and displays the current question and its choices.
-         */
-        function loadQuestion() {
-            feedbackMessageElement.textContent = '';
-            feedbackMessageElement.className = 'feedback-message';
-            nextButton.disabled = true;
-            answerSelected = false;
-            answerButtonsElement.innerHTML = '';
-
-            if (questions.length === 0) {
-                errorMessage.textContent = "No questions available. Please generate a new quiz.";
-                errorMessage.classList.remove('hidden');
-                quizSection.classList.add('hidden');
-                topicInputSection.classList.remove('hidden');
-                quitButton.classList.add('hidden');
-                return;
-            }
-
-            const currentQuestion = questions[currentQuestionIndex];
-            // Render Markdown and then let MathJax process LaTeX
-            questionTextElement.innerHTML = marked.parse(currentQuestion.question);
-            MathJax.typesetPromise([questionTextElement]).catch((err) => console.error("MathJax typesetting error:", err));
-
-
-            questionProgressElement.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
-            questionProgressElement.classList.add('score-update-animation');
-            questionProgressElement.addEventListener('animationend', () => {
-                questionProgressElement.classList.remove('score-update-animation');
-            }, { once: true });
-
-            const shuffledChoices = [...currentQuestion.choices];
-            shuffleArray(shuffledChoices);
-
-            shuffledChoices.forEach((choice) => {
-                const button = document.createElement('button');
-                // Render Markdown and then let MathJax process LaTeX for choices
-                button.innerHTML = marked.parse(choice);
-                button.classList.add('answer-button');
-                button.addEventListener('click', (event) => selectAnswer(button, choice, currentQuestion.correctAnswer, event));
-                answerButtonsElement.appendChild(button);
-            });
-            // Typeset MathJax for all new answer buttons as well
-            MathJax.typesetPromise(Array.from(answerButtonsElement.children)).catch((err) => console.error("MathJax typesetting error:", err));
-        }
-
-        /**
-         * Handles the selection of an answer.
-         * @param {HTMLButtonElement} selectedButton - The button element that was clicked.
-         * @param {string} selectedChoice - The raw text of the selected choice (before Markdown/LaTeX rendering).
-         * @param {string} correctAnswer - The raw text of the correct answer.
-         * @param {Event} event - The click event object.
-         */
-        function selectAnswer(selectedButton, selectedChoice, correctAnswer, event) {
-            if (answerSelected) {
-                return;
-            }
-
-            answerSelected = true;
-            selectedButton.classList.add('clicked');
-            selectedButton.addEventListener('animationend', () => {
-                selectedButton.classList.remove('clicked');
-            }, { once: true });
-
-            Array.from(answerButtonsElement.children).forEach(button => {
-                button.classList.add('disabled');
-                button.disabled = true;
-            });
-
-            selectedButton.classList.add('selected');
-
-            // Compare raw text for correctness
-            if (selectedChoice === correctAnswer) {
-                score++;
-                feedbackMessageElement.innerHTML = marked.parse('Correct!');
-                feedbackMessageElement.classList.add('correct-feedback');
-            } else {
-                feedbackMessageElement.innerHTML = marked.parse(`Incorrect. The correct answer was: ${correctAnswer}`);
-                feedbackMessageElement.classList.add('incorrect-feedback');
-
-                // Highlight the correct answer (after rendering potential Markdown/LaTeX)
-                Array.from(answerButtonsElement.children).forEach(button => {
-                    // To reliably highlight, we need to compare the *rendered* text content.
-                    // This uses a simple text comparison after parsing and stripping HTML.
-                    // For more complex LaTeX, a more robust solution might involve
-                    // storing the correct answer's button reference directly.
-                    if (button.textContent.trim() === marked.parse(correctAnswer).replace(/<[^>]*>/g, '').trim()) {
-                        button.classList.add('correct');
-                    }
-                });
-            }
-            // Typeset MathJax for the feedback message after its content is updated
-            MathJax.typesetPromise([feedbackMessageElement]).catch((err) => console.error("MathJax typesetting error for feedback:", err));
-
-            nextButton.disabled = false;
-        }
-
-        /**
-         * Moves to the next question or shows the final results.
-         */
-        function nextQuestion() {
-            quizSection.classList.add('fade-out');
-            quizSection.addEventListener('animationend', () => {
-                quizSection.classList.add('hidden');
-                quizSection.classList.remove('fade-out');
-
-                currentQuestionIndex++;
-                if (currentQuestionIndex < questions.length) {
-                    quizSection.classList.remove('hidden');
-                    quizSection.classList.add('fade-in');
-                    loadQuestion();
-                } else {
-                    showResults();
-                }
-            }, { once: true });
-        }
-
-        /**
-         * Displays the final score and the "Play Again" button.
-         */
-        function showResults() {
-            quizSection.classList.add('hidden');
-            resultsSection.classList.remove('hidden');
-            resultsSection.classList.add('fade-in');
-            quitButton.classList.add('hidden');
-            finalScoreElement.textContent = `You scored ${score} out of ${questions.length}!`;
-        }
-
-        /**
-         * Resets the quiz to its initial state and starts over.
-         */
-        function restartQuiz() {
-            const currentActiveSection = resultsSection.classList.contains('hidden') ? quizSection : resultsSection;
-
-            currentActiveSection.classList.add('fade-out');
-            currentActiveSection.addEventListener('animationend', () => {
-                currentActiveSection.classList.add('hidden');
-                currentActiveSection.classList.remove('fade-out');
-
-                currentQuestionIndex = 0;
-                score = 0;
-                answerSelected = false;
-                questions = [];
-                quizSection.classList.add('hidden');
-                resultsSection.classList.add('hidden');
-                topicInputSection.classList.remove('hidden');
-                topicInputSection.classList.add('fade-in');
-                topicInput.value = '';
-                numQuestionsSelect.value = '5';
-                difficultyLevelSelect.value = 'easy';
-                errorMessage.classList.add('hidden');
-                quitButton.classList.add('hidden');
-            }, { once: true });
-        }
-
-        // Event Listeners
-        startQuizButton.addEventListener('click', () => {
-            const topic = topicInput.value.trim();
-            const numQuestions = parseInt(numQuestionsSelect.value);
-            const difficulty = difficultyLevelSelect.value;
-
-            if (topic) {
-                fetchQuestions(topic, numQuestions, difficulty);
-            } else {
-                errorMessage.textContent = "Please enter a topic to start the quiz.";
-                errorMessage.classList.remove('hidden');
-            }
-        });
-        nextButton.addEventListener('click', nextQuestion);
-        playAgainButton.addEventListener('click', restartQuiz);
-        quitButton.addEventListener('click', restartQuiz);
-
-        // Initial setup - hide quiz and results sections, show topic input
-        document.addEventListener('DOMContentLoaded', () => {
-            quizSection.classList.add('hidden');
-            resultsSection.classList.add('hidden');
-            topicInputSection.classList.remove('hidden');
-            quitButton.classList.add('hidden');
-        });
-    </script>
-</body>
-</html>
+                // In a

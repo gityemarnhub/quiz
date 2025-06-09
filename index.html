@@ -20,33 +20,40 @@
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #e0f2f7 0%, #c8e6c9 100%);
-            /* Removed flex properties from body to prevent centering the container */
-            display: block; /* Revert to default block display */
+            display: flex; /* Use flexbox to center the quiz container */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
             box-sizing: border-box;
+            padding: 1rem; /* Add some padding around the container */
         }
 
         .quiz-container {
             background-color: #ffffff;
-            border-radius: 0; /* Remove border-radius for full-page effect */
-            box-shadow: none; /* Remove shadow for full-page effect */
-            padding: 3rem; /* Generous padding inside the container */
-            width: 100%;
-            min-height: 100vh; /* Ensure it always takes full viewport height */
+            border-radius: 1.5rem; /* Add some border-radius back */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); /* Add a subtle shadow */
+            padding: 2rem; /* Reduced padding */
+            width: 90%; /* Adjust width to be responsive but smaller */
+            max-width: 600px; /* Max width to make it about 50% on larger screens */
             display: flex;
             flex-direction: column;
             align-items: center; /* Center content horizontally */
             justify-content: flex-start; /* Align content to the top initially */
-            gap: 2.5rem;
+            gap: 2rem; /* Reduced gap */
             overflow: hidden;
             position: relative;
             border: none; /* Remove border */
+            min-height: auto; /* Allow height to adjust to content */
         }
 
         /* Adjustments for smaller screens to ensure responsiveness */
         @media (max-width: 768px) {
+            body {
+                padding: 0.5rem;
+            }
             .quiz-container {
                 padding: 1.5rem;
                 gap: 1.5rem;
+                width: 95%; /* Even wider on small screens */
             }
             .main-title {
                 font-size: 2rem;
@@ -494,8 +501,8 @@
         // Configure MathJax to use inline ($...$) and block ($$...$$) LaTeX
         MathJax = {
             tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+                inlineMath: [['$', '$'], ['\(', '\)']],
+                displayMath: [['$$', '$$'], ['\[', '\]']]
             },
             svg: {
                 fontCache: 'global'
@@ -577,3 +584,261 @@
 
             try {
                 // In a
+                const prompt = `Generate a JSON array of ${numQuestions} multiple-choice quiz questions about "${topic}" at a "${difficulty}" difficulty level. Each question object should have:
+                - "question": The question text.
+                - "options": An array of 4 strings for the answer choices.
+                - "correctAnswer": The correct answer string.
+                - "explanation": A brief explanation of the correct answer.
+
+                Ensure all content is valid JSON, and handle any special characters by escaping them. Do NOT include any introductory or concluding text, only the JSON array.
+                If the topic is too broad or too niche, make an educated guess or generalize to create the questions.
+                Example JSON format:
+                [
+                    {
+                        "question": "What is the capital of France?",
+                        "options": ["Berlin", "Madrid", "Paris", "Rome"],
+                        "correctAnswer": "Paris",
+                        "explanation": "Paris is the capital and most populous city of France."
+                    }
+                ]
+                `;
+
+                let chatHistory = [];
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                const payload = {
+                    contents: chatHistory,
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "ARRAY",
+                            items: {
+                                type: "OBJECT",
+                                properties: {
+                                    "question": { "type": "STRING" },
+                                    "options": {
+                                        "type": "ARRAY",
+                                        "items": { "type": "STRING" }
+                                    },
+                                    "correctAnswer": { "type": "STRING" },
+                                    "explanation": { "type": "STRING" }
+                                },
+                                "propertyOrdering": ["question", "options", "correctAnswer", "explanation"]
+                            }
+                        }
+                    }
+                };
+                const apiKey = ""; // If you want to use models other than gemini-2.0-flash or imagen-3.0-generate-002, provide an API key here. Otherwise, leave this as-is.
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const jsonString = result.candidates[0].content.parts[0].text;
+                    questions = JSON.parse(jsonString);
+                    shuffleArray(questions); // Shuffle the questions
+                    startQuiz();
+                } else {
+                    throw new Error("Invalid response structure from API.");
+                }
+
+            } catch (error) {
+                console.error('Error fetching questions:', error);
+                errorMessage.classList.remove('hidden');
+                errorMessage.textContent = 'Failed to generate quiz questions. Please try again.';
+            } finally {
+                hideLoadingAnimation();
+                topicInput.disabled = false;
+                numQuestionsSelect.disabled = false; // Fix: Enable/disable the select element
+                difficultyLevelSelect.disabled = false; // Fix: Enable/disable the select element
+            }
+        }
+
+        /**
+         * Starts the quiz, showing the quiz section and hiding the topic input.
+         */
+        function startQuiz() {
+            topicInputSection.classList.add('hidden');
+            quizSection.classList.remove('hidden');
+            quitButton.classList.remove('hidden');
+            currentQuestionIndex = 0;
+            score = 0;
+            displayQuestion();
+        }
+
+        /**
+         * Displays the current question and its answer options.
+         */
+        function displayQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                showResults();
+                return;
+            }
+
+            const questionData = questions[currentQuestionIndex];
+            questionTextElement.classList.remove('fade-in', 'fade-out'); // Reset animation
+            answerButtonsElement.classList.remove('fade-in', 'fade-out'); // Reset animation
+            feedbackMessageElement.classList.remove('correct-feedback', 'incorrect-feedback');
+            feedbackMessageElement.textContent = '';
+            nextButton.disabled = true;
+            answerSelected = false;
+
+            questionTextElement.textContent = ''; // Clear content for fade-in effect
+            answerButtonsElement.innerHTML = ''; // Clear previous buttons
+
+            questionProgressElement.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+
+            // Add fade-in animation to question text
+            questionTextElement.classList.add('fade-in');
+            // Render question text with MathJax support via Marked
+            questionTextElement.innerHTML = marked.parse(questionData.question);
+
+            // Add fade-in animation to answer buttons
+            answerButtonsElement.classList.add('fade-in');
+
+            // Render and append answer buttons
+            shuffleArray(questionData.options).forEach(option => {
+                const button = document.createElement('button');
+                button.classList.add('answer-button');
+                button.innerHTML = marked.parse(option); // Render option text with MathJax
+                button.addEventListener('click', () => selectAnswer(button, option, questionData.correctAnswer, questionData.explanation));
+                answerButtonsElement.appendChild(button);
+            });
+
+            // Re-render MathJax
+            if (typeof MathJax !== 'undefined') {
+                MathJax.typesetPromise([questionTextElement, answerButtonsElement]).catch((err) => console.error("MathJax typesetting error:", err));
+            }
+        }
+
+        /**
+         * Handles the user's answer selection.
+         * @param {HTMLElement} selectedButton - The button element selected by the user.
+         * @param {string} selectedOption - The text of the selected option.
+         * @param {string} correctAnswer - The correct answer for the current question.
+         * @param {string} explanation - The explanation for the current question.
+         */
+        function selectAnswer(selectedButton, selectedOption, correctAnswer, explanation) {
+            if (answerSelected) return; // Prevent multiple selections
+
+            answerSelected = true;
+            nextButton.disabled = false;
+
+            Array.from(answerButtonsElement.children).forEach(button => {
+                button.classList.add('disabled'); // Disable all buttons
+                button.removeEventListener('click', () => {}); // Remove click listeners
+            });
+
+            selectedButton.classList.add('selected'); // Highlight selected button
+
+            if (selectedOption === correctAnswer) {
+                score++;
+                feedbackMessageElement.classList.remove('incorrect-feedback');
+                feedbackMessageElement.classList.add('correct-feedback', 'fade-in');
+                feedbackMessageElement.innerHTML = 'Correct! ' + marked.parse(explanation); // Render explanation with MathJax
+                selectedButton.classList.add('correct');
+            } else {
+                feedbackMessageElement.classList.remove('correct-feedback');
+                feedbackMessageElement.classList.add('incorrect-feedback', 'fade-in');
+                feedbackMessageElement.innerHTML = `Incorrect. The correct answer was: ${marked.parse(correctAnswer)}. ` + marked.parse(explanation); // Render explanation with MathJax
+                selectedButton.classList.add('incorrect');
+                // Highlight the correct answer
+                Array.from(answerButtonsElement.children).forEach(button => {
+                    if (button.textContent === correctAnswer) {
+                        button.classList.add('correct');
+                    }
+                });
+            }
+
+            // Re-render MathJax for feedback message
+            if (typeof MathJax !== 'undefined') {
+                MathJax.typesetPromise([feedbackMessageElement]).catch((err) => console.error("MathJax typesetting error:", err));
+            }
+        }
+
+        /**
+         * Advances to the next question.
+         */
+        function nextQuestion() {
+            // Add fade-out animation before changing content
+            questionTextElement.classList.add('fade-out');
+            answerButtonsElement.classList.add('fade-out');
+            feedbackMessageElement.classList.add('fade-out');
+
+            setTimeout(() => {
+                currentQuestionIndex++;
+                displayQuestion();
+                // Remove fade-out after content change, displayQuestion will add fade-in
+                questionTextElement.classList.remove('fade-out');
+                answerButtonsElement.classList.remove('fade-out');
+                feedbackMessageElement.classList.remove('fade-out');
+            }, 600); // Duration of fade-out animation
+        }
+
+        /**
+         * Displays the final results of the quiz.
+         */
+        function showResults() {
+            quizSection.classList.add('hidden');
+            resultsSection.classList.remove('hidden');
+            quitButton.classList.add('hidden'); // Hide quit button on results screen
+            finalScoreElement.textContent = `You scored ${score} out of ${questions.length}!`;
+            finalScoreElement.classList.add('score-update-animation'); // Add animation
+        }
+
+        /**
+         * Resets the quiz to the initial topic input screen.
+         */
+        function resetQuiz() {
+            questions = [];
+            currentQuestionIndex = 0;
+            score = 0;
+            answerSelected = false;
+
+            quizSection.classList.add('hidden');
+            resultsSection.classList.add('hidden');
+            quitButton.classList.add('hidden'); // Ensure quit button is hidden
+            topicInputSection.classList.remove('hidden');
+
+            topicInput.value = '';
+            numQuestionsSelect.value = '5';
+            difficultyLevelSelect.value = 'medium';
+
+            errorMessage.classList.add('hidden');
+            hideLoadingAnimation(); // Ensure loading animation is hidden
+            nextButton.disabled = true; // Ensure next button is disabled
+            restartButton.classList.add('hidden'); // Hide restart button
+        }
+
+        // Event Listeners
+        startQuizButton.addEventListener('click', () => {
+            const topic = topicInput.value.trim();
+            const numQuestions = parseInt(numQuestionsSelect.value);
+            const difficulty = difficultyLevelSelect.value;
+
+            if (topic) {
+                fetchQuestions(topic, numQuestions, difficulty);
+            } else {
+                errorMessage.classList.remove('hidden');
+                errorMessage.textContent = 'Please enter a quiz topic.';
+            }
+        });
+
+        nextButton.addEventListener('click', nextQuestion);
+        playAgainButton.addEventListener('click', resetQuiz);
+        quitButton.addEventListener('click', resetQuiz); // Quit button functionality
+        restartButton.addEventListener('click', resetQuiz); // Restart button functionality
+    </script>
+</body>
+</html>

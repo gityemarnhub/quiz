@@ -25,7 +25,7 @@
             padding: 2rem;
             border-radius: 1rem;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            max-width: 100%; /* Ensures it expands to full available width */
+            max-width: 100%; /* Ensures it expands to full available width on larger screens */
             width: 100%; /* Ensures it expands */
             display: flex;
             flex-direction: column;
@@ -33,13 +33,68 @@
             text-align: center; /* Center content within container */
         }
 
-        /* Adjust quiz-container padding for smaller screens if needed to prevent squishing */
+        /* Mobile-specific adjustments for smaller fonts, layouts, and narrower container */
         @media (max-width: 768px) {
             .quiz-container {
-                padding: 1rem; /* Slightly less padding on smaller screens */
+                padding: 0.75rem; /* Slightly less padding on smaller screens */
+                max-width: 60vw; /* Further reduced width for mobile, closer to 60% */
+                margin: 0 auto; /* Center the narrower container */
+                gap: 0.6rem; /* Further reduce gap between elements */
+            }
+            .score-display {
+                font-size: 1rem; /* Smaller font for score */
+                padding: 0.4rem 0.6rem;
+            }
+            .question-text {
+                font-size: 1.1rem; /* Smaller question text */
+                margin-bottom: 0.8rem;
+            }
+            .option-button {
+                font-size: 0.85rem; /* Smaller option buttons text */
+                padding: 0.6rem 0.8rem;
+                margin-bottom: 0.4rem;
+            }
+            .action-button {
+                padding: 0.6rem 0.8rem;
+                font-size: 0.95rem; /* Smaller action button text */
+                margin-top: 0.3rem;
+            }
+            .feedback-container, .chat-container {
+                padding: 0.8rem; /* Smaller padding for feedback/chat boxes */
+                margin-top: 0.8rem;
+                font-size: 0.85rem; /* Smaller text in feedback/chat */
+            }
+            .feedback-message {
+                font-size: 1rem; /* Smaller feedback message */
+            }
+            .explanation-text {
+                font-size: 0.8rem; /* Smaller explanation text */
+            }
+            .chat-container h2 {
+                font-size: 1.5rem; /* Smaller chat header */
+            }
+            #chat-history {
+                max-height: 200px; /* Adjust max height for chat history */
+            }
+            .chat-message {
+                font-size: 0.75rem; /* Even smaller chat messages */
+                padding: 0.3rem 0.6rem;
+            }
+            #user-chat-input {
+                padding: 0.5rem;
+                min-height: 30px; /* Smaller input height */
+            }
+            #send-chat-button {
+                padding: 0.2rem 0.4rem; /* Significantly reduced padding for send button */
+                font-size: 0.8rem; /* Adjust font size if text was present, or for icon alignment */
+            }
+            #send-chat-button svg { /* Adjust icon size directly */
+                width: 1rem; /* Make SVG icon smaller */
+                height: 1rem;
             }
         }
 
+        /* General Styles (unchanged or slightly adjusted for consistency) */
         .score-display {
             display: flex;
             justify-content: space-around;
@@ -48,16 +103,16 @@
             font-weight: 700;
             margin-bottom: 1rem;
             color: #374151;
-            padding: 0.75rem 1.5rem; /* Added padding */
-            border-radius: 0.75rem; /* Rounded corners */
-            background-color: #f9fafb; /* Light background */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            background-color: #f9fafb;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
         .score-correct {
-            color: #10b981; /* Green */
+            color: #10b981;
         }
         .score-incorrect {
-            color: #ef4444; /* Red */
+            color: #ef4444;
         }
 
         .question-text {
@@ -71,8 +126,8 @@
             padding: 1rem 1.5rem;
             margin-bottom: 0.75rem;
             border-radius: 0.75rem;
-            background-color: #e0e7ff; /* Light blue */
-            color: #4338ca; /* Darker blue */
+            background-color: #e0e7ff;
+            color: #4338ca;
             font-size: 1.1rem;
             font-weight: 500;
             text-align: left;
@@ -81,21 +136,21 @@
             cursor: pointer;
         }
         .option-button:hover:not(.selected):not(.correct):not(.incorrect):not(:disabled) {
-            background-color: #c7d2fe; /* Lighter hover blue */
+            background-color: #c7d2fe;
         }
         .option-button.selected {
-            background-color: #93c5fd; /* Medium blue for selected */
-            border-color: #3b82f6; /* Accent border */
+            background-color: #93c5fd;
+            border-color: #3b82f6;
             color: #1e3a8a;
         }
         .option-button.correct {
-            background-color: #d1fae5; /* Light green */
-            border-color: #34d399; /* Green border */
+            background-color: #d1fae5;
+            border-color: #34d399;
             color: #065f46;
         }
         .option-button.incorrect {
-            background-color: #fee2e2; /* Light red */
-            border-color: #ef4444; /* Red border */
+            background-color: #fee2e2;
+            border-color: #ef4444;
             color: #991b1b;
         }
         .option-button:disabled {
@@ -106,7 +161,7 @@
             width: 100%;
             padding: 1rem 1.5rem;
             border-radius: 0.75rem;
-            background-color: #4f46e5; /* Indigo */
+            background-color: #4f46e5;
             color: #ffffff;
             font-size: 1.2rem;
             font-weight: 600;
@@ -114,25 +169,28 @@
             cursor: pointer;
             transition: background-color 0.2s ease-in-out;
             box-shadow: 0 4px 8px rgba(79, 70, 229, 0.2);
-            margin-top: 0.5rem; /* Adjust margin for multiple buttons */
+            margin-top: 0.5rem;
+            display: flex; /* Ensure content is centered if icon is used */
+            justify-content: center; /* Center content if icon is used */
+            align-items: center; /* Center content if icon is used */
         }
         .action-button:hover:not(:disabled) {
-            background-color: #4338ca; /* Darker indigo on hover */
+            background-color: #4338ca;
         }
         .action-button:disabled {
-            background-color: #a5b4fc; /* Lighter indigo when disabled */
+            background-color: #a5b4fc;
             cursor: not-allowed;
         }
         .feedback-container, .chat-container {
             margin-top: 1.5rem;
             padding: 1.25rem;
             border-radius: 0.75rem;
-            background-color: #f0f9ff; /* Very light blue */
-            border: 1px solid #bfdbfe; /* Light blue border */
-            color: #1e40af; /* Dark blue text */
+            background-color: #f0f9ff;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
             font-size: 1rem;
             line-height: 1.6;
-            text-align: left; /* Align text within feedback */
+            text-align: left;
         }
         .loading-spinner {
             border: 4px solid #f3f3f3;
@@ -165,11 +223,11 @@
             flex-grow: 1;
             overflow-y: auto;
             max-height: 300px;
-            padding-right: 10px; /* For scrollbar */
+            padding-right: 10px;
             border-bottom: 1px solid #bfdbfe;
             margin-bottom: 1rem;
-            display: flex; /* Use flex for chat messages */
-            flex-direction: column; /* Stack messages vertically */
+            display: flex;
+            flex-direction: column;
         }
         .chat-message {
             margin-bottom: 0.75rem;
@@ -178,24 +236,24 @@
             max-width: 80%;
         }
         .chat-message.user {
-            background-color: #dbeafe; /* Light blue */
+            background-color: #dbeafe;
             color: #1e40af;
-            align-self: flex-end; /* Align user messages to the right */
+            align-self: flex-end;
             margin-left: auto;
         }
         .chat-message.ai {
-            background-color: #f0fdf4; /* Light green */
+            background-color: #f0fdf4;
             color: #065f46;
-            align-self: flex-start; /* Align AI messages to the left */
+            align-self: flex-start;
             margin-right: auto;
         }
         #chat-input-area {
             display: flex;
             gap: 0.5rem;
-            padding: 0.5rem; /* Added padding to input area */
-            background-color: #f9fafb; /* Light background */
+            padding: 0.5rem;
+            background-color: #f9fafb;
             border-radius: 0.75rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
         #user-chat-input {
             flex-grow: 1;
@@ -204,20 +262,23 @@
             border: 1px solid #bfdbfe;
             resize: vertical;
             min-height: 40px;
-            outline: none; /* Remove default outline */
+            outline: none;
             transition: border-color 0.2s;
         }
         #user-chat-input:focus {
-            border-color: #3b82f6; /* Highlight border on focus */
+            border-color: #3b82f6;
         }
         #send-chat-button {
-            padding: 0.75rem 1.25rem;
+            padding: 0.75rem 1.25rem; /* Default padding for larger screens */
             background-color: #4f46e5;
             color: #ffffff;
             border-radius: 0.5rem;
             cursor: pointer;
             transition: background-color 0.2s;
             border: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         #send-chat-button:hover:not(:disabled) {
             background-color: #4338ca;
@@ -227,65 +288,11 @@
             cursor: not-allowed;
         }
         #back-to-quiz-button {
-            background-color: #6b7280; /* Gray */
+            background-color: #6b7280;
             margin-top: 1rem;
         }
         #back-to-quiz-button:hover {
             background-color: #4b5563;
-        }
-
-        /* Mobile-specific adjustments for smaller fonts and layouts */
-        @media (max-width: 768px) {
-            .score-display {
-                font-size: 1.1rem;
-                padding: 0.5rem 0.75rem;
-            }
-            .question-text {
-                font-size: 1.25rem;
-                margin-bottom: 1rem;
-            }
-            .option-button {
-                font-size: 0.95rem;
-                padding: 0.8rem 1rem;
-                margin-bottom: 0.6rem;
-            }
-            .quiz-container {
-                padding: 1rem; /* Kept 1rem as already adjusted */
-                gap: 1rem;
-            }
-            .action-button {
-                padding: 0.8rem 1rem;
-                font-size: 1.05rem;
-                margin-top: 0.4rem;
-            }
-            .feedback-container, .chat-container {
-                padding: 1rem;
-                margin-top: 1rem;
-            }
-            .feedback-message {
-                font-size: 1.1rem;
-            }
-            .explanation-text {
-                font-size: 0.9rem;
-            }
-            .chat-container h2 {
-                font-size: 1.8rem;
-            }
-            #chat-history {
-                max-height: 250px; /* Adjust max height for chat history */
-            }
-            .chat-message {
-                font-size: 0.85rem;
-                padding: 0.4rem 0.8rem;
-            }
-            #user-chat-input {
-                padding: 0.6rem;
-                min-height: 35px;
-            }
-            #send-chat-button {
-                padding: 0.6rem 1rem;
-                font-size: 1.0rem;
-            }
         }
     </style>
 </head>
@@ -335,7 +342,12 @@
             </div>
             <div id="chat-input-area">
                 <textarea id="user-chat-input" placeholder="Ask a follow-up question..." class="flex-grow"></textarea>
-                <button id="send-chat-button" class="action-button">Send</button>
+                <button id="send-chat-button" class="action-button">
+                    <!-- Send icon using inline SVG -->
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                        <path d="M3.478 2.405a.75.75 0 0 0-.926.94l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.542 60.542 0 0 0 18.445-8.916.75.75 0 0 0 0-1.123A60.542 60.542 0 0 0 3.478 2.405Z" />
+                    </svg>
+                </button>
             </div>
             <button id="back-to-quiz-button" class="action-button">Back to Quiz</button>
         </div>
@@ -438,7 +450,6 @@
         async function generateQuestionFromAI() {
             try {
                 // IMPORTANT: Insert your Gemini API Key here if you are experiencing issues.
-                // YOUR_API_KEY_HERE: Replace this with the actual API key provided by the user.
                 const apiKey = "AIzaSyCr3VbItQdykUs_uNbudLITohWmuFnGz54"; // User provided API Key
                 if (!apiKey && typeof __api_key === 'undefined') { // Check if apiKey is empty and not injected by Canvas
                      console.warn("API Key is missing. AI features may not work. Please insert your key.");
@@ -453,13 +464,15 @@
                 }
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
-                const prompt = `Generate a multiple-choice question about electrical engineering. The question should cover one of these topics: 'loads powers', 'MCB breaker types', 'MCB breaker amperes', or 'wire sizes'. Provide exactly four options, and specify the index of the correct answer (0, 1, 2, or 3). Also, provide a concise, initial explanation for the correct answer. Output should be a JSON object with the following structure. Ensure the 'question' and 'initialExplanation' fields are actual strings, not string representations of JSON.
+                // Added a random number to the prompt to encourage different questions
+                const prompt = `Generate a new and different multiple-choice question about electrical engineering (variation: ${Math.random()}). The question should cover one of these topics: 'loads powers', 'MCB breaker types', 'MCB breaker amperes', or 'wire sizes'. Provide exactly four options, and specify the index of the correct answer (0, 1, 2, or 3). Also, provide a concise, initial explanation for the correct answer. Output should be a JSON object with the following structure. Ensure the 'question' and 'initialExplanation' fields are actual strings, not string representations of JSON.
                 { "question": "string", "options": ["string", "string", "string", "string"], "correctAnswer": "integer", "initialExplanation": "string", "topic": "string" }`;
 
                 const payload = {
                     contents: [{ role: "user", parts: [{ text: prompt }] }],
                     generationConfig: {
                         responseMimeType: "application/json",
+                        temperature: 0.9, // Slightly increased temperature for more variety
                         responseSchema: {
                             type: "OBJECT",
                             properties: {
@@ -483,6 +496,47 @@
                     body: JSON.stringify(payload)
                 });
 
+                // Check for HTTP errors (like 503) before trying to parse JSON
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({})); // Try to parse error body, or empty object
+                    console.error(`API Error - Status: ${response.status}, Message: ${errorData.error ? errorData.error.message : 'No error message available'}`);
+                    
+                    let errorMessage = "An unknown error occurred with the AI service. Please try again.";
+                    let fallbackQuestion = {
+                        question: "Error loading question. What is 2+2?",
+                        options: ["3", "4", "5", "6"],
+                        correctAnswer: 1,
+                        initialExplanation: "Fallback due to API error.",
+                        topic: "fallback"
+                    };
+
+                    if (response.status === 503) {
+                        errorMessage = "The AI service is temporarily unavailable. Please try again in a moment.";
+                        fallbackQuestion.question = "AI service unavailable. Please retry.";
+                        fallbackQuestion.initialExplanation = "This is a temporary service issue. Please try again soon.";
+                    } else if (response.status === 403) { // E.g., for invalid API key
+                        errorMessage = "API key issue: Access denied. Please ensure your API key is correct and valid.";
+                        fallbackQuestion.question = "API key error. Check console.";
+                        fallbackQuestion.initialExplanation = "Your API key might be invalid or unauthorized.";
+                    } else if (response.status >= 400 && response.status < 500) {
+                        errorMessage = `Client error (${response.status}) from AI service.`;
+                        fallbackQuestion.question = "Client-side API error. Check console.";
+                    } else if (response.status >= 500) {
+                        errorMessage = `Server error (${response.status}) from AI service.`;
+                        fallbackQuestion.question = "Server-side API error. Check console.";
+                    }
+
+                    // For network errors where no response is received (e.g., DNS issues, no internet)
+                    if (errorData.error && errorData.error.message && errorData.error.message.includes("API key not valid")) {
+                         errorMessage = "API key not valid. Please ensure your API key is correct and valid.";
+                         fallbackQuestion.question = "Invalid API Key. Check console.";
+                         fallbackQuestion.initialExplanation = "Your API key might be incorrect.";
+                    }
+
+                    console.error(`AI question generation failed: ${errorMessage}`);
+                    return fallbackQuestion;
+                }
+
                 const result = await response.json();
                 if (result.candidates && result.candidates.length > 0 &&
                     result.candidates[0].content && result.candidates[0].content.parts &&
@@ -490,25 +544,25 @@
                     const jsonString = result.candidates[0].content.parts[0].text;
                     return JSON.parse(jsonString);
                 } else {
-                    console.error("Could not generate a valid question from AI:", result);
+                    console.error("Could not generate a valid question from AI: Unexpected response structure", result);
                     // Fallback to a generic question if AI generation fails
                     return {
-                        question: "Failed to generate question. What is 2+2?",
+                        question: "Failed to generate question. Unexpected AI response. What is 2+2?",
                         options: ["3", "4", "5", "6"],
                         correctAnswer: 1,
-                        initialExplanation: "This is a fallback question due to an error.",
-                        topic: "basic math"
+                        initialExplanation: "This is a fallback due to unexpected AI response.",
+                        topic: "ai response issue"
                     };
                 }
             } catch (error) {
-                console.error("Error calling Gemini API for question generation:", error);
-                // Fallback to a generic question on network error
+                // This catch block handles network errors (e.g., no internet connection)
+                console.error("Network or unexpected error calling Gemini API for question generation:", error);
                 return {
-                    question: "Network error loading question. What is the capital of France?",
-                    options: ["Berlin", "London", "Paris", "Rome"],
-                    correctAnswer: 2,
-                    initialExplanation: "This is a fallback question due to a network error.",
-                    topic: "geography"
+                    question: "Network error or unexpected issue. Please check your connection and try again.",
+                    options: ["Check internet", "Try again", "Restart app", "Contact support"],
+                    correctAnswer: 0,
+                    initialExplanation: "A problem occurred connecting to the AI service. Ensure you have an active internet connection.",
+                    topic: "network issue"
                 };
             }
         }
@@ -654,14 +708,26 @@
                         body: JSON.stringify(payload)
                     });
 
-                    const result = await response.json();
-                    if (result.candidates && result.candidates.length > 0 &&
-                        result.candidates[0].content && result.candidates[0].content.parts &&
-                        result.candidates[0].content.parts.length > 0) {
-                        explanationText.textContent = result.candidates[0].content.parts[0].text;
-                        askForMoreDetailsButton.classList.remove('hidden'); // Show details button after AI explanation
+                    // Check for HTTP errors (like 503) before trying to parse JSON
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        console.error(`API Error for explanation - Status: ${response.status}, Message: ${errorData.error ? errorData.error.message : 'No error message available'}`);
+                        explanationText.textContent = `Error generating explanation: Service issue (${response.status}). Please try again.`;
+                        if (response.status === 403) explanationText.textContent = `Error: API key issue.`;
+                        if (errorData.error && errorData.error.message && errorData.error.message.includes("API key not valid")) {
+                           explanationText.textContent = `Error: Invalid API Key.`;
+                        }
                     } else {
-                        explanationText.textContent = "Could not generate an explanation. Please try again.";
+                        const result = await response.json();
+                        if (result.candidates && result.candidates.length > 0 &&
+                            result.candidates[0].content && result.candidates[0].content.parts &&
+                            result.candidates[0].content.parts.length > 0) {
+                            explanationText.textContent = result.candidates[0].content.parts[0].text;
+                            askForMoreDetailsButton.classList.remove('hidden'); // Show details button after AI explanation
+                        } else {
+                            console.error("AI explanation unexpected structure:", result);
+                            explanationText.textContent = "Could not generate an explanation. Unexpected AI response.";
+                        }
                     }
                 } catch (error) {
                     console.error("Error calling Gemini API for incorrect explanation:", error);
@@ -738,20 +804,31 @@
                     body: JSON.stringify(payload)
                 });
 
-                const result = await response.json();
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const aiResponse = result.candidates[0].content.parts[0].text;
-                    displayChatMessage(aiResponse, 'ai');
-                    chatHistory.push({ role: "model", parts: [{ text: aiResponse }] });
+                // Check for HTTP errors (like 503) before trying to parse JSON
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    console.error(`API Error for chat - Status: ${response.status}, Message: ${errorData.error ? errorData.error.message : 'No error message available'}`);
+                    displayChatMessage(`Sorry, I'm having trouble connecting right now (${response.status}). Please try again shortly.`, 'ai');
+                    if (response.status === 403) displayChatMessage(`Error: API key issue.`, 'ai');
+                    if (errorData.error && errorData.error.message && errorData.error.message.includes("API key not valid")) {
+                        displayChatMessage(`Error: Invalid API Key.`, 'ai');
+                    }
                 } else {
-                    console.error("AI response unexpected structure:", result);
-                    displayChatMessage("I'm having trouble understanding. Can you rephrase?", 'ai');
+                    const result = await response.json();
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const aiResponse = result.candidates[0].content.parts[0].text;
+                        displayChatMessage(aiResponse, 'ai');
+                        chatHistory.push({ role: "model", parts: [{ text: aiResponse }] });
+                    } else {
+                        console.error("AI response unexpected structure in chat:", result);
+                        displayChatMessage("I'm having trouble understanding. Can you rephrase?", 'ai');
+                    }
                 }
             } catch (error) {
                 console.error("Error in chat API call:", error);
-                displayChatMessage("Oops! There was an error. Please try again later.", 'ai');
+                displayChatMessage("Oops! There was a network error. Please check your connection and try again.", 'ai');
             } finally {
                 chatLoading.classList.add('hidden'); // Hide AI typing indicator
                 sendChatButton.disabled = false; // Re-enable send button
@@ -779,7 +856,7 @@
         nextButton.addEventListener('click', handleNext);
         askForMoreDetailsButton.addEventListener('click', handleAskForMoreDetails);
         sendChatButton.addEventListener('click', sendChatMessage);
-        userChatInput.addEventListener('keypress', (event) => { // Corrected event listener to 'keypress' or 'keydown' for enter key
+        userChatInput.addEventListener('keypress', (event) => {
             if (event.key === 'Enter' && !event.shiftKey) { // Allow Shift+Enter for new line
                 event.preventDefault(); // Prevent default Enter behavior (e.g., new line)
                 sendChatMessage();

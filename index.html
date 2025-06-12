@@ -48,6 +48,10 @@
             font-weight: 700;
             margin-bottom: 1rem;
             color: #374151;
+            padding: 0.75rem 1.5rem; /* Added padding */
+            border-radius: 0.75rem; /* Rounded corners */
+            background-color: #f9fafb; /* Light background */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow */
         }
         .score-correct {
             color: #10b981; /* Green */
@@ -164,6 +168,8 @@
             padding-right: 10px; /* For scrollbar */
             border-bottom: 1px solid #bfdbfe;
             margin-bottom: 1rem;
+            display: flex; /* Use flex for chat messages */
+            flex-direction: column; /* Stack messages vertically */
         }
         .chat-message {
             margin-bottom: 0.75rem;
@@ -174,18 +180,22 @@
         .chat-message.user {
             background-color: #dbeafe; /* Light blue */
             color: #1e40af;
-            align-self: flex-end;
+            align-self: flex-end; /* Align user messages to the right */
             margin-left: auto;
         }
         .chat-message.ai {
             background-color: #f0fdf4; /* Light green */
             color: #065f46;
-            align-self: flex-start;
+            align-self: flex-start; /* Align AI messages to the left */
             margin-right: auto;
         }
         #chat-input-area {
             display: flex;
             gap: 0.5rem;
+            padding: 0.5rem; /* Added padding to input area */
+            background-color: #f9fafb; /* Light background */
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow */
         }
         #user-chat-input {
             flex-grow: 1;
@@ -194,6 +204,11 @@
             border: 1px solid #bfdbfe;
             resize: vertical;
             min-height: 40px;
+            outline: none; /* Remove default outline */
+            transition: border-color 0.2s;
+        }
+        #user-chat-input:focus {
+            border-color: #3b82f6; /* Highlight border on focus */
         }
         #send-chat-button {
             padding: 0.75rem 1.25rem;
@@ -217,6 +232,60 @@
         }
         #back-to-quiz-button:hover {
             background-color: #4b5563;
+        }
+
+        /* Mobile-specific adjustments for smaller fonts and layouts */
+        @media (max-width: 768px) {
+            .score-display {
+                font-size: 1.1rem;
+                padding: 0.5rem 0.75rem;
+            }
+            .question-text {
+                font-size: 1.25rem;
+                margin-bottom: 1rem;
+            }
+            .option-button {
+                font-size: 0.95rem;
+                padding: 0.8rem 1rem;
+                margin-bottom: 0.6rem;
+            }
+            .quiz-container {
+                padding: 1rem; /* Kept 1rem as already adjusted */
+                gap: 1rem;
+            }
+            .action-button {
+                padding: 0.8rem 1rem;
+                font-size: 1.05rem;
+                margin-top: 0.4rem;
+            }
+            .feedback-container, .chat-container {
+                padding: 1rem;
+                margin-top: 1rem;
+            }
+            .feedback-message {
+                font-size: 1.1rem;
+            }
+            .explanation-text {
+                font-size: 0.9rem;
+            }
+            .chat-container h2 {
+                font-size: 1.8rem;
+            }
+            #chat-history {
+                max-height: 250px; /* Adjust max height for chat history */
+            }
+            .chat-message {
+                font-size: 0.85rem;
+                padding: 0.4rem 0.8rem;
+            }
+            #user-chat-input {
+                padding: 0.6rem;
+                min-height: 35px;
+            }
+            #send-chat-button {
+                padding: 0.6rem 1rem;
+                font-size: 1.0rem;
+            }
         }
     </style>
 </head>
@@ -281,7 +350,6 @@
         // Global variables provided by Canvas environment
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        // FIX: Corrected the reference to __initial_auth_token
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         let app, db, auth;
@@ -369,7 +437,20 @@
          */
         async function generateQuestionFromAI() {
             try {
-                const apiKey = "AIzaSyCr3VbItQdykUs_uNbudLITohWmuFnGz54"; // Canvas will provide this at runtime if empty
+                // IMPORTANT: Insert your Gemini API Key here if you are experiencing issues.
+                // YOUR_API_KEY_HERE: Replace this with the actual API key provided by the user.
+                const apiKey = "AIzaSyCr3VbItQdykUs_uNbudLITohWmuFnGz54"; // User provided API Key
+                if (!apiKey && typeof __api_key === 'undefined') { // Check if apiKey is empty and not injected by Canvas
+                     console.warn("API Key is missing. AI features may not work. Please insert your key.");
+                     // Fallback to a generic question if API key is truly missing
+                     return {
+                        question: "API Key missing. What is 2+2?",
+                        options: ["3", "4", "5", "6"],
+                        correctAnswer: 1,
+                        initialExplanation: "This is a fallback question due to API key absence.",
+                        topic: "api key issue"
+                    };
+                }
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
                 const prompt = `Generate a multiple-choice question about electrical engineering. The question should cover one of these topics: 'loads powers', 'MCB breaker types', 'MCB breaker amperes', or 'wire sizes'. Provide exactly four options, and specify the index of the correct answer (0, 1, 2, or 3). Also, provide a concise, initial explanation for the correct answer. Output should be a JSON object with the following structure. Ensure the 'question' and 'initialExplanation' fields are actual strings, not string representations of JSON.
@@ -556,11 +637,15 @@
                 const prompt = `The user answered '${userChoiceText}' for the question '${currentQuestion.question}'. The correct answer is '${correctAnswerText}'. Please explain concisely why '${userChoiceText}' is incorrect and why '${correctAnswerText}' is correct in the context of electrical engineering principles related to ${currentQuestion.topic}. Keep it to 2-3 sentences.`;
 
                 try {
-                    const apiKey = "AIzaSyCr3VbItQdykUs_uNbudLITohWmuFnGz54";
+                    // IMPORTANT: Insert your Gemini API Key here if you are experiencing issues.
+                    const apiKey = "AIzaSyCr3VbItQdykUs_uNbudLITohWmuFnGz54"; // User provided API Key
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
                     const payload = {
-                        contents: [{ role: "user", parts: [{ text: prompt }] }]
+                        contents: [{ role: "user", parts: [{ text: prompt }] }],
+                        generationConfig: {
+                            maxOutputTokens: 150 // Keep explanations concise
+                        }
                     };
 
                     const response = await fetch(apiUrl, {
@@ -635,13 +720,15 @@
             sendChatButton.disabled = true; // Disable send button
 
             try {
-                const apiKey = "";
+                // IMPORTANT: Insert your Gemini API Key here if you are experiencing issues.
+                const apiKey = "AIzaSyCr3VbItQdykUs_uNbudLITohWmuFnGz54"; // User provided API Key
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
                 const payload = {
                     contents: chatHistory,
                     generationConfig: {
                         temperature: 0.7, // Adjust temperature for more focused or creative responses
+                        maxOutputTokens: 150 // Keep responses concise as requested
                     }
                 };
 
@@ -659,6 +746,7 @@
                     displayChatMessage(aiResponse, 'ai');
                     chatHistory.push({ role: "model", parts: [{ text: aiResponse }] });
                 } else {
+                    console.error("AI response unexpected structure:", result);
                     displayChatMessage("I'm having trouble understanding. Can you rephrase?", 'ai');
                 }
             } catch (error) {
@@ -691,7 +779,7 @@
         nextButton.addEventListener('click', handleNext);
         askForMoreDetailsButton.addEventListener('click', handleAskForMoreDetails);
         sendChatButton.addEventListener('click', sendChatMessage);
-        userChatInput.addEventListener('keypress', (event) => {
+        userChatInput.addEventListener('keypress', (event) => { // Corrected event listener to 'keypress' or 'keydown' for enter key
             if (event.key === 'Enter' && !event.shiftKey) { // Allow Shift+Enter for new line
                 event.preventDefault(); // Prevent default Enter behavior (e.g., new line)
                 sendChatMessage();

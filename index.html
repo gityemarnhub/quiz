@@ -3,704 +3,352 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI-Powered Dynamic Quiz</title>
+    <title>AI Electrical Quiz App</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Ensure html and body take full viewport height and width */
-        html, body {
-            height: 100%;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: auto; /* Allow scrolling if content exceeds viewport */
-        }
-
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #e0f2f7 0%, #c8e6c9 100%);
-            display: flex; /* Use flexbox to center the quiz container */
-            justify-content: center; /* Center horizontally */
-            align-items: center; /* Center vertically */
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
             box-sizing: border-box;
-            padding: 1rem; /* Add some padding around the container */
-            overflow: hidden; /* Prevent body scrollbar if content is scaled larger */
         }
-
         .quiz-container {
             background-color: #ffffff;
-            border-radius: 1.5rem; /* Add some border-radius back */
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); /* Add a subtle shadow */
-            padding: 2rem; /* Reduced padding */
-            width: 90%; /* Adjust width to be responsive but smaller */
-            max-width: 600px; /* Max width to make it about 50% on larger screens */
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
             display: flex;
             flex-direction: column;
-            align-items: center; /* Center content horizontally */
-            justify-content: flex-start; /* Align content to the top initially */
-            gap: 2rem; /* Reduced gap */
-            position: relative;
-            border: none; /* Remove border */
-            min-height: auto; /* Allow height to adjust to content */
-            transform-origin: center center; /* Ensure scaling is from the center */
-            transition: transform 0.2s ease-out; /* Smooth transition for scaling */
-            overflow: auto; /* Allow scrolling if content within container exceeds its size */
+            gap: 1.5rem;
+            text-align: center; /* Center content within container */
         }
-
-        /* Adjustments for smaller screens to ensure responsiveness */
-        @media (max-width: 768px) {
-            body {
-                padding: 0.5rem;
-            }
-            .quiz-container {
-                padding: 1.5rem;
-                gap: 1.5rem;
-                width: 95%; /* Even wider on small screens */
-            }
-            .main-title {
-                font-size: 2rem;
-                margin-bottom: 1rem;
-            }
-            .question-text {
-                font-size: 1.3rem;
-                margin-bottom: 1rem;
-            }
-            .answer-buttons {
-                gap: 0.8rem;
-            }
-            .answer-button {
-                padding: 0.7rem 1.2rem;
-                font-size: 0.9rem;
-            }
-            .feedback-message {
-                font-size: 1rem;
-                margin-top: 1rem;
-                min-height: 2rem;
-            }
-            .navigation-buttons {
-                gap: 0.8rem;
-                margin-top: 1.5rem;
-            }
-            .nav-button {
-                padding: 0.6rem 1.5rem;
-                font-size: 1rem;
-            }
-            .score-display, .final-results {
-                font-size: 1.5rem;
-                margin-top: 1rem;
-            }
-            .quit-button {
-                top: 1rem;
-                right: 1rem;
-                width: 35px;
-                height: 35px;
-                font-size: 1rem;
-            }
-            .quit-button svg {
-                width: 20px;
-                height: 20px;
-            }
-            .loading-bars {
-                height: 20px;
-            }
-            .loading-bar {
-                width: 10px;
-                height: 5px;
-                margin: 0 4px;
-            }
-            .input-group {
-                max-width: 100%;
-                margin-bottom: 0.8rem;
-            }
-            .input-group label {
-                font-size: 0.9rem;
-                margin-bottom: 0.3rem;
-            }
-            .input-group select,
-            .input-group input[type="text"] {
-                padding: 0.7rem 0.8rem;
-                font-size: 1rem;
-                border-radius: 0.75rem;
-            }
-            .input-group select {
-                background-position: right 0.6rem center;
-                background-size: 1em;
-                padding-right: 2rem;
-            }
-            .input-group input[type="text"] {
-                padding-right: 0.8rem;
-            }
-        }
-
-        .main-title {
-            font-size: 2.5rem; /* Adjusted for better visibility */
-            font-weight: 900;
-            color: #3f4c6b;
-            margin-bottom: 2rem;
-            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.08);
-            width: 100%;
-            text-align: center;
-        }
-
         .question-text {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: #3f4c6b;
-            margin-bottom: 2rem;
-            width: 100%;
-            text-align: center;
-        }
-
-        .answer-buttons {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-            width: 100%;
-        }
-
-        @media (min-width: 768px) {
-            .answer-buttons {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        .answer-button {
-            background-color: #f0f4f8;
-            color: #5a6a8a;
-            border: 1px solid #dbe2ea;
-            padding: 1.2rem 2rem;
-            border-radius: 1rem;
-            font-size: 1.3rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            font-size: 1.5rem;
             font-weight: 600;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+            color: #1f2937;
+            margin-bottom: 1.5rem;
         }
-
-        .answer-button:hover:not(.correct):not(.incorrect):not(.disabled) {
-            background-color: #e2e8f0;
-            border-color: #c0cddb;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .answer-button.selected {
-            border-color: #5a80e0;
-            box-shadow: 0 0 0 5px rgba(90, 128, 224, 0.4);
-        }
-
-        .answer-button.correct {
-            background-color: #4CAF50;
-            color: white;
-            border-color: #388E3C;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .answer-button.incorrect {
-            background-color: #E53935;
-            color: white;
-            border-color: #D32F2F;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .answer-button.disabled {
-            opacity: 0.6;
-        }
-
-        .feedback-message {
-            font-size: 1.6rem;
-            font-weight: 700;
-            margin-top: 1.8rem;
-            min-height: 3rem;
+        .option-button {
             width: 100%;
-            text-align: center;
-        }
-
-        .feedback-message.correct-feedback {
-            color: #388E3C;
-        }
-
-        .feedback-message.incorrect-feedback {
-            color: #D32F2F;
-        }
-
-        .navigation-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-top: 2.5rem;
-            width: 100%;
-        }
-
-        .nav-button {
-            background-color: #5a80e0;
-            color: white;
-            padding: 1rem 2.5rem;
-            border-radius: 1rem;
-            font-size: 1.4rem;
+            padding: 1rem 1.5rem;
+            margin-bottom: 0.75rem;
+            border-radius: 0.75rem;
+            background-color: #e0e7ff; /* Light blue */
+            color: #4338ca; /* Darker blue */
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-align: left;
+            border: 2px solid transparent;
+            transition: all 0.2s ease-in-out;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-            font-weight: 700;
-            border: none;
-            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1);
         }
-
-        .nav-button:hover:not(:disabled) {
-            background-color: #4a6ec5;
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        .option-button:hover:not(.selected):not(.correct):not(.incorrect):not(:disabled) {
+            background-color: #c7d2fe; /* Lighter hover blue */
         }
-
-        .nav-button:active:not(:disabled) {
-            transform: translateY(0);
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        .option-button.selected {
+            background-color: #93c5fd; /* Medium blue for selected */
+            border-color: #3b82f6; /* Accent border */
+            color: #1e3a8a;
         }
-
-        .nav-button:disabled {
-            opacity: 0.5;
+        .option-button.correct {
+            background-color: #d1fae5; /* Light green */
+            border-color: #34d399; /* Green border */
+            color: #065f46;
+        }
+        .option-button.incorrect {
+            background-color: #fee2e2; /* Light red */
+            border-color: #ef4444; /* Red border */
+            color: #991b1b;
+        }
+        .option-button:disabled {
             cursor: not-allowed;
-            background-color: #a0aec0;
-            box-shadow: none;
+            opacity: 0.7;
         }
-
-        .score-display {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: #3f4c6b;
-            margin-top: 1.8rem;
+        .action-button {
             width: 100%;
-            text-align: center;
-        }
-
-        .final-results {
-            font-size: 3rem;
-            font-weight: 900;
-            color: #3f4c6b;
-            margin-bottom: 2.5rem;
-            width: 100%;
-            text-align: center;
-        }
-
-        /* Animations */
-        .fade-in { animation: fadeIn 0.6s ease-out forwards; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .fade-out { animation: fadeOut 0.6s ease-out forwards; }
-        @keyframes fadeOut {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(-20px); }
-        }
-
-        .answer-button.clicked { animation: buttonClick 0.2s ease-out; }
-        @keyframes buttonClick {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
-        }
-
-        .score-update-animation { animation: scoreUpdate 0.6s ease-out; }
-        @keyframes scoreUpdate {
-            0% { transform: scale(0.9); opacity: 0.7; }
-            50% { transform: scale(1.05); opacity: 1; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        /* Quit button specific styles */
-        .quit-button {
-            position: absolute;
-            top: 2rem;
-            right: 2rem;
-            background-color: #E53935;
-            color: white;
-            padding: 0.8rem;
-            border-radius: 9999px;
-            font-size: 1.6rem;
-            cursor: pointer;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            background-color: #4f46e5; /* Indigo */
+            color: #ffffff;
+            font-size: 1.2rem;
+            font-weight: 600;
             border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-            z-index: 10;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+            box-shadow: 0 4px 8px rgba(79, 70, 229, 0.2);
+            margin-top: 0.5rem; /* Adjust margin for multiple buttons */
         }
-
-        .quit-button:hover {
-            background-color: #C62828;
-            transform: scale(1.1);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        .action-button:hover:not(:disabled) {
+            background-color: #4338ca; /* Darker indigo on hover */
         }
-
-        .quit-button svg {
+        .action-button:disabled {
+            background-color: #a5b4fc; /* Lighter indigo when disabled */
+            cursor: not-allowed;
+        }
+        .feedback-container, .chat-container {
+            margin-top: 1.5rem;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            background-color: #f0f9ff; /* Very light blue */
+            border: 1px solid #bfdbfe; /* Light blue border */
+            color: #1e40af; /* Dark blue text */
+            font-size: 1rem;
+            line-height: 1.6;
+            text-align: left; /* Align text within feedback */
+        }
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
             width: 30px;
             height: 30px;
-            fill: currentColor;
+            animation: spin 1s linear infinite;
+            margin: 1rem auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #question-loading, #explanation-loading, #chat-loading {
+            text-align: center;
+            font-size: 1.1rem;
+            color: #4b5563;
         }
 
-        /* Refined Loading Animation Styles (Bouncing Bars) */
-        .loading-bars {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 1rem;
-            height: 30px;
-        }
-
-        .loading-bar {
-            width: 15px;
-            height: 7.5px;
-            background-color: #a8c0ff;
-            margin: 0 6px;
-            border-radius: 4px;
-            animation: stretchAndFade 1.6s infinite ease-in-out;
-        }
-
-        @keyframes stretchAndFade {
-            0%, 100% {
-                transform: scaleY(0.3);
-                background-color: #a8c0ff;
-                opacity: 0.6;
-            }
-            50% {
-                transform: scaleY(1.5);
-                background-color: #5a80e0;
-                opacity: 1;
-            }
-        }
-
-        /* Refined Input Box and Select Styles */
-        .input-group {
+        /* Chat specific styles */
+        .chat-container {
+            min-height: 400px;
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        #chat-history {
+            flex-grow: 1;
+            overflow-y: auto;
+            max-height: 300px;
+            padding-right: 10px; /* For scrollbar */
+            border-bottom: 1px solid #bfdbfe;
             margin-bottom: 1rem;
-            width: 100%;
-            max-width: 500px;
+        }
+        .chat-message {
+            margin-bottom: 0.75rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            max-width: 80%;
+        }
+        .chat-message.user {
+            background-color: #dbeafe; /* Light blue */
+            color: #1e40af;
+            align-self: flex-end;
             margin-left: auto;
+        }
+        .chat-message.ai {
+            background-color: #f0fdf4; /* Light green */
+            color: #065f46;
+            align-self: flex-start;
             margin-right: auto;
         }
-
-        .input-group label {
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #4a5568;
-            font-size: 1.1rem;
+        #chat-input-area {
+            display: flex;
+            gap: 0.5rem;
         }
-
-        /* Common styles for both select and text input fields */
-        .input-group select,
-        .input-group input[type="text"],
-        .input-group input[type="range"] { /* Added range input here */
-            width: 100%;
-            padding: 1rem 1.25rem;
-            border: 1px solid #c0cddb;
-            border-radius: 1rem;
-            font-size: 1.2rem;
-            background-color: #fcfcfc;
-            box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.06);
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        #user-chat-input {
+            flex-grow: 1;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid #bfdbfe;
+            resize: vertical;
+            min-height: 40px;
         }
-
-        /* Styles specifically for select (dropdowns) - retains the arrow */
-        .input-group select {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%237b89a8'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 1.4em;
-            padding-right: 3rem;
-        }
-
-        /* Styles specifically for text input - removes the arrow */
-        .input-group input[type="text"] {
-            background-image: none;
-            padding-right: 1.25rem;
-        }
-
-        .input-group select:focus,
-        .input-group input[type="text"]:focus,
-        .input-group input[type="range"]:focus { /* Added range input focus */
-            outline: none;
-            border-color: #5a80e0;
-            box-shadow: 0 0 0 4px rgba(90, 128, 224, 0.4);
-        }
-
-        /* Styling for the range input (slider) */
-        .input-group input[type="range"] {
-            -webkit-appearance: none; /* Override default look */
-            appearance: none;
-            height: 0.75rem; /* Thickness of the track */
-            background: #dbe2ea; /* Track color */
+        #send-chat-button {
+            padding: 0.75rem 1.25rem;
+            background-color: #4f46e5;
+            color: #ffffff;
             border-radius: 0.5rem;
             cursor: pointer;
-            padding: 0; /* Remove default padding for range input */
-            box-shadow: none; /* Remove default shadow for range input */
+            transition: background-color 0.2s;
+            border: none;
         }
-
-        /* Webkit (Chrome, Safari) thumb */
-        .input-group input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 1.5rem; /* Size of the slider thumb */
-            height: 1.5rem;
-            background: #5a80e0; /* Thumb color */
-            border-radius: 50%; /* Make it round */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
-            margin-top: -0.375rem; /* Center the thumb vertically */
+        #send-chat-button:hover:not(:disabled) {
+            background-color: #4338ca;
         }
-
-        .input-group input[type="range"]::-webkit-slider-thumb:hover {
-            background: #4a6ec5;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
-            transform: scale(1.05);
+        #send-chat-button:disabled {
+            background-color: #a5b4fc;
+            cursor: not-allowed;
         }
-
-        /* Firefox thumb */
-        .input-group input[type="range"]::-moz-range-thumb {
-            width: 1.5rem;
-            height: 1.5rem;
-            background: #5a80e0;
-            border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+        #back-to-quiz-button {
+            background-color: #6b7280; /* Gray */
+            margin-top: 1rem;
         }
-
-        .input-group input[type="range"]::-moz-range-thumb:hover {
-            background: #4a6ec5;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
-            transform: scale(1.05);
-        }
-
-        /* Firefox track */
-        .input-group input[type="range"]::-moz-range-track {
-            background: #dbe2ea;
-            border-radius: 0.5rem;
-        }
-
-        .scale-value {
-            font-weight: 600;
-            color: #5a6a8a;
-            margin-left: 0.5rem;
+        #back-to-quiz-button:hover {
+            background-color: #4b5563;
         }
     </style>
 </head>
 <body>
-    <div id="quiz-container" class="quiz-container">
-        <h1 class="main-title">AI-Powered Dynamic Quiz</h1>
+    <div class="quiz-container">
+        <h1 class="text-3xl font-bold text-center text-gray-800">Electrical Engineering Quiz</h1>
 
-        <button id="quit-button" class="quit-button hidden">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-            </svg>
-        </button>
-
-        <div id="topic-input-section">
-            <div class="input-group">
-                <label for="topic-input">Enter a quiz topic:</label>
-                <input type="text" id="topic-input" placeholder="e.g., World History, Science, Pop Culture">
-            </div>
-
-            <div class="input-group">
-                <label for="num-questions">Number of Questions:</label>
-                <select id="num-questions">
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="15">15</option>
-                    <option value="20">20</option>
-                </select>
-            </div>
-
-            <div class="input-group">
-                <label for="difficulty-level">Difficulty:</label>
-                <select id="difficulty-level">
-                    <option value="beginner">Beginner</option>
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                    <option value="expert">Expert</option>
-                </select>
-            </div>
-
-            <div class="input-group">
-                <label for="layout-scale">Adjust Layout Size: <span id="scale-value">100%</span></label>
-                <input type="range" id="layout-scale" min="0.5" max="1.5" step="0.05" value="1.0">
-            </div>
-
-            <button id="start-quiz-button" class="nav-button w-full">
-                <span id="start-button-text">Start Quiz</span>
-                <div id="loading-bars" class="loading-bars hidden">
-                    <div class="loading-bar"></div>
-                    <div class="loading-bar"></div>
-                    <div class="loading-bar"></div>
-                    <div class="loading-bar"></div>
-                    <div class="loading-bar"></div>
+        <!-- Question Area -->
+        <div id="question-loading" class="hidden">
+            <div class="loading-spinner"></div>
+            <p>Generating new question...</p>
+        </div>
+        <div id="quiz-view">
+            <div id="question-area">
+                <p id="question-text" class="question-text"></p>
+                <div id="options-container" class="space-y-3">
+                    <!-- Options will be dynamically loaded here -->
                 </div>
-            </button>
-            <p id="error-message" class="text-red-500 text-sm mt-2 hidden"></p>
+                <button id="submit-button" class="action-button mt-6">Submit Answer</button>
+                <button id="next-button" class="action-button mt-6 hidden">Next Question</button>
+            </div>
+
+            <div id="feedback-area" class="feedback-container hidden">
+                <div id="explanation-loading" class="hidden">
+                    <div class="loading-spinner"></div>
+                    <p class="text-center text-gray-600">Generating explanation...</p>
+                </div>
+                <p id="feedback-message" class="font-semibold text-lg text-center"></p>
+                <p id="explanation-text" class="mt-2"></p>
+                <button id="ask-for-more-details-button" class="action-button mt-4 hidden">Ask AI for More Details</button>
+            </div>
         </div>
 
-        <div id="quiz-section" class="hidden">
-            <p id="question-progress" class="text-gray-600 text-lg font-semibold mb-4"></p>
-            <p id="question-text" class="question-text"></p>
-            <div id="answer-buttons" class="answer-buttons">
+        <!-- Chat Area -->
+        <div id="chat-view" class="chat-container hidden">
+            <h2 class="text-2xl font-semibold text-center text-gray-700">AI Chat</h2>
+            <div id="chat-history" class="flex flex-col">
+                <!-- Chat messages will appear here -->
             </div>
-            <p id="feedback-message" class="feedback-message"></p>
-            <div class="navigation-buttons">
-                <button id="next-button" class="nav-button" disabled>Next Question</button>
-                <button id="restart-button" class="nav-button hidden">Restart Quiz</button>
+            <div id="chat-loading" class="hidden">
+                <div class="loading-spinner"></div>
+                <p class="text-center text-gray-600">AI is typing...</p>
             </div>
-        </div>
-
-        <div id="results-section" class="hidden">
-            <p id="final-score" class="final-results"></p>
-            <button id="play-again-button" class="nav-button">Play Again</button>
+            <div id="chat-input-area">
+                <textarea id="user-chat-input" placeholder="Ask a follow-up question..." class="flex-grow"></textarea>
+                <button id="send-chat-button" class="action-button">Send</button>
+            </div>
+            <button id="back-to-quiz-button" class="action-button">Back to Quiz</button>
         </div>
     </div>
 
-    <script>
-        // Configure MathJax to use inline ($...$) and block ($$...$$) LaTeX
-        MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$'], ['\\[', '\\]']]
-            },
-            svg: {
-                fontCache: 'global'
-            }
-        };
+    <script type="module">
+        // Firebase imports (required for Canvas environment, though not directly used for storage here)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // DOM elements
-        const quizContainer = document.getElementById('quiz-container'); // Get the main quiz container
-        const topicInputSection = document.getElementById('topic-input-section');
-        const topicInput = document.getElementById('topic-input');
-        const numQuestionsSelect = document.getElementById('num-questions');
-        const difficultyLevelSelect = document.getElementById('difficulty-level');
-        const layoutScaleInput = document.getElementById('layout-scale'); // New layout scale input
-        const scaleValueSpan = document.getElementById('scale-value'); // Span to display scale value
-        const startQuizButton = document.getElementById('start-quiz-button');
-        const startButtonText = document.getElementById('start-button-text');
-        const loadingBars = document.getElementById('loading-bars');
-        const errorMessage = document.getElementById('error-message');
+        // Global variables provided by Canvas environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-        const quizSection = document.getElementById('quiz-section');
-        const quitButton = document.getElementById('quit-button');
-        const questionTextElement = document.getElementById('question-text');
-        const answerButtonsElement = document.getElementById('answer-buttons');
-        const feedbackMessageElement = document.getElementById('feedback-message');
-        const nextButton = document.getElementById('next-button');
-        const restartButton = document.getElementById('restart-button');
+        let app, db, auth;
+        let userId = 'anonymous'; // Default userId
 
-        const resultsSection = document.getElementById('results-section');
-        const finalScoreElement = document.getElementById('final-score');
-        const playAgainButton = document.getElementById('play-again-button');
-        const questionProgressElement = document.getElementById('question-progress');
-
-        // Game state variables
-        let questions = [];
-        let currentQuestionIndex = 0;
-        let score = 0;
-        let answerSelected = false;
-
-        /**
-         * Shuffles an array in place (Fisher-Yates algorithm).
-         * @param {Array} array - The array to shuffle.
-         */
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
-
-        /**
-         * Shows the loading animation on the start button.
-         */
-        function showLoadingAnimation() {
-            startButtonText.classList.add('hidden');
-            loadingBars.classList.remove('hidden');
-            startQuizButton.disabled = true;
-            startQuizButton.style.cursor = 'wait';
-        }
-
-        /**
-         * Hides the loading animation and restores the start button.
-         */
-        function hideLoadingAnimation() {
-            startButtonText.classList.remove('hidden');
-            loadingBars.classList.add('hidden');
-            startQuizButton.disabled = false;
-            startQuizButton.style.cursor = 'pointer';
-        }
-
-        /**
-         * Fetches quiz questions from the Gemini API based on the provided topic, number of questions, and difficulty.
-         * @param {string} topic - The user-defined topic for the quiz.
-         * @param {number} numQuestions - The number of questions to generate.
-         * @param {string} difficulty - The difficulty level (beginner, easy, medium, hard, expert).
-         */
-        async function fetchQuestions(topic, numQuestions, difficulty) {
-            showLoadingAnimation();
-            errorMessage.classList.add('hidden');
-            topicInput.disabled = true;
-            numQuestionsSelect.disabled = true;
-            difficultyLevelSelect.disabled = true;
-            layoutScaleInput.disabled = true; // Disable scale during fetch
-
+        // Initialize Firebase and authenticate
+        async function initializeFirebase() {
             try {
-                const prompt = `Generate a JSON array of ${numQuestions} multiple-choice quiz questions about "${topic}" at a "${difficulty}" difficulty level. Each question object should have:
-                - "question": The question text.
-                - "options": An array of 4 strings for the answer choices.
-                - "correctAnswer": The correct answer string.
-                - "explanation": A brief explanation of the correct answer.
+                if (Object.keys(firebaseConfig).length > 0) {
+                    app = initializeApp(firebaseConfig);
+                    db = getFirestore(app);
+                    auth = getAuth(app);
 
-                Ensure all content is valid JSON, and handle any special characters by escaping them. Do NOT include any introductory or concluding text, only the JSON array.
-                If the topic is too broad or too niche, make an educated guess or generalize to create the questions.
-                Example JSON format:
-                [
-                    {
-                        "question": "What is the capital of France?",
-                        "options": ["Berlin", "Madrid", "Paris", "Rome"],
-                        "correctAnswer": "Paris",
-                        "explanation": "Paris is the capital and most populous city of France."
+                    if (initialAuthToken) {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                        userId = auth.currentUser?.uid || userId;
+                        console.log("Firebase authenticated with custom token:", userId);
+                    } else {
+                        await signInAnonymously(auth);
+                        userId = auth.currentUser?.uid || userId;
+                        console.log("Firebase authenticated anonymously:", userId);
                     }
-                ]
-                `;
+                } else {
+                    console.warn("Firebase config not found. Running without Firebase.");
+                }
+            } catch (error) {
+                console.error("Error initializing Firebase:", error);
+                // Fallback to running without Firebase if initialization fails
+            }
+        }
 
-                let chatHistory = [];
-                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+        // Call Firebase initialization
+        initializeFirebase();
+
+        let currentQuestion = null;
+        let nextQuestionPreloaded = null; // Stores the next question generated in the background
+        let selectedOption = null;
+        let quizActive = true; // State to control quiz flow (e.g., prevent multiple submissions)
+        let chatHistory = []; // Stores the conversation for the chat interface
+
+        // DOM Elements - Quiz View
+        const quizView = document.getElementById('quiz-view');
+        const questionTextElement = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const submitButton = document.getElementById('submit-button');
+        const nextButton = document.getElementById('next-button');
+        const feedbackArea = document.getElementById('feedback-area');
+        const feedbackMessage = document.getElementById('feedback-message');
+        const explanationText = document.getElementById('explanation-text');
+        const questionLoading = document.getElementById('question-loading');
+        const explanationLoading = document.getElementById('explanation-loading');
+        const askForMoreDetailsButton = document.getElementById('ask-for-more-details-button');
+        const questionArea = document.getElementById('question-area'); // This is part of quiz-view now
+
+        // DOM Elements - Chat View
+        const chatView = document.getElementById('chat-view');
+        const chatHistoryDiv = document.getElementById('chat-history');
+        const userChatInput = document.getElementById('user-chat-input');
+        const sendChatButton = document.getElementById('send-chat-button');
+        const chatLoading = document.getElementById('chat-loading');
+        const backToQuizButton = document.getElementById('back-to-quiz-button');
+
+
+        /**
+         * Fetches a new electrical engineering question from the Gemini AI.
+         * The response is expected to be a JSON object with question, options, correctAnswer,
+         * initialExplanation, and topic.
+         */
+        async function generateQuestionFromAI() {
+            try {
+                const apiKey = ""; // Canvas will provide this at runtime if empty
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const prompt = `Generate a multiple-choice question about electrical engineering. The question should cover one of these topics: 'loads powers', 'MCB breaker types', 'MCB breaker amperes', or 'wire sizes'. Provide exactly four options, and specify the index of the correct answer (0, 1, 2, or 3). Also, provide a concise, initial explanation for the correct answer. Output should be a JSON object with the following structure. Ensure the 'question' and 'initialExplanation' fields are actual strings, not string representations of JSON.
+                { "question": "string", "options": ["string", "string", "string", "string"], "correctAnswer": "integer", "initialExplanation": "string", "topic": "string" }`;
+
                 const payload = {
-                    contents: chatHistory,
+                    contents: [{ role: "user", parts: [{ text: prompt }] }],
                     generationConfig: {
                         responseMimeType: "application/json",
                         responseSchema: {
-                            type: "ARRAY",
-                            items: {
-                                type: "OBJECT",
-                                properties: {
-                                    "question": { "type": "STRING" },
-                                    "options": {
-                                        "type": "ARRAY",
-                                        "items": { "type": "STRING" }
-                                    },
-                                    "correctAnswer": { "type": "STRING" },
-                                    "explanation": { "type": "STRING" }
+                            type: "OBJECT",
+                            properties: {
+                                "question": { "type": "STRING" },
+                                "options": {
+                                    "type": "ARRAY",
+                                    "items": { "type": "STRING" }
                                 },
-                                "propertyOrdering": ["question", "options", "correctAnswer", "explanation"]
-                            }
+                                "correctAnswer": { "type": "INTEGER" },
+                                "initialExplanation": { "type": "STRING" },
+                                "topic": { "type": "STRING" }
+                            },
+                            "propertyOrdering": ["question", "options", "correctAnswer", "initialExplanation", "topic"]
                         }
                     }
                 };
-                const apiKey = "";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
                 const response = await fetch(apiUrl, {
                     method: 'POST',
@@ -708,224 +356,297 @@
                     body: JSON.stringify(payload)
                 });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
                 const result = await response.json();
-
                 if (result.candidates && result.candidates.length > 0 &&
                     result.candidates[0].content && result.candidates[0].content.parts &&
                     result.candidates[0].content.parts.length > 0) {
                     const jsonString = result.candidates[0].content.parts[0].text;
-                    questions = JSON.parse(jsonString);
-                    shuffleArray(questions); // Shuffle the questions
-                    startQuiz();
+                    return JSON.parse(jsonString);
                 } else {
-                    throw new Error("Invalid response structure from API.");
+                    console.error("Could not generate a valid question from AI:", result);
+                    // Fallback to a generic question if AI generation fails
+                    return {
+                        question: "Failed to generate question. What is 2+2?",
+                        options: ["3", "4", "5", "6"],
+                        correctAnswer: 1,
+                        initialExplanation: "This is a fallback question due to an error.",
+                        topic: "basic math"
+                    };
                 }
-
             } catch (error) {
-                console.error('Error fetching questions:', error);
-                errorMessage.classList.remove('hidden');
-                errorMessage.textContent = 'Failed to generate quiz questions. Please try again.';
-            } finally {
-                hideLoadingAnimation();
-                topicInput.disabled = false;
-                numQuestionsSelect.disabled = false;
-                difficultyLevelSelect.disabled = false;
-                layoutScaleInput.disabled = false; // Re-enable scale after fetch
+                console.error("Error calling Gemini API for question generation:", error);
+                // Fallback to a generic question on network error
+                return {
+                    question: "Network error loading question. What is the capital of France?",
+                    options: ["Berlin", "London", "Paris", "Rome"],
+                    correctAnswer: 2,
+                    initialExplanation: "This is a fallback question due to a network error.",
+                    topic: "geography"
+                };
             }
         }
 
         /**
-         * Starts the quiz, showing the quiz section and hiding the topic input.
+         * Preloads the next question in the background.
          */
-        function startQuiz() {
-            topicInputSection.classList.add('hidden');
-            quizSection.classList.remove('hidden');
-            quitButton.classList.remove('hidden');
-            layoutScaleInput.disabled = true; // Disable scale input during quiz
-            currentQuestionIndex = 0;
-            score = 0;
-            displayQuestion();
+        async function preloadNextQuestion() {
+            nextQuestionPreloaded = await generateQuestionFromAI();
+            console.log("Next question preloaded:", nextQuestionPreloaded);
         }
 
         /**
-         * Displays the current question and its answer options.
+         * Renders the current question and its options to the UI.
          */
-        function displayQuestion() {
-            if (currentQuestionIndex >= questions.length) {
-                showResults();
+        async function displayQuestion() {
+            // Hide previous feedback and question area during transition
+            quizView.classList.add('hidden');
+            chatView.classList.add('hidden'); // Ensure chat view is hidden
+            feedbackArea.classList.add('hidden'); // Hide feedback area for new question
+
+            if (nextQuestionPreloaded) {
+                currentQuestion = nextQuestionPreloaded;
+                nextQuestionPreloaded = null; // Clear preloaded question as it's now current
+                questionLoading.classList.add('hidden'); // Ensure loading is hidden if preloaded
+            } else {
+                questionLoading.classList.remove('hidden'); // Show loading if not preloaded
+                currentQuestion = await generateQuestionFromAI();
+                questionLoading.classList.add('hidden'); // Hide loading once generated
+            }
+
+            if (!currentQuestion) {
+                questionTextElement.textContent = "Error loading question. Please try again.";
+                optionsContainer.innerHTML = '';
+                submitButton.classList.add('hidden');
+                nextButton.classList.add('hidden');
                 return;
             }
 
-            const questionData = questions[currentQuestionIndex];
-            questionTextElement.classList.remove('fade-in', 'fade-out'); // Reset animation
-            answerButtonsElement.classList.remove('fade-in', 'fade-out'); // Reset animation
-            feedbackMessageElement.classList.remove('correct-feedback', 'incorrect-feedback');
-            feedbackMessageElement.textContent = '';
-            nextButton.disabled = true;
-            answerSelected = false;
+            // Reset UI for new question
+            questionTextElement.textContent = currentQuestion.question;
+            optionsContainer.innerHTML = '';
+            feedbackMessage.textContent = '';
+            explanationText.textContent = '';
+            explanationLoading.classList.add('hidden');
+            askForMoreDetailsButton.classList.add('hidden');
+            selectedOption = null;
+            submitButton.classList.remove('hidden');
+            submitButton.disabled = true;
+            nextButton.classList.add('hidden');
+            quizActive = true;
 
-            questionTextElement.textContent = ''; // Clear content for fade-in effect
-            answerButtonsElement.innerHTML = ''; // Clear previous buttons
-
-            questionProgressElement.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
-
-            // Add fade-in animation to question text
-            questionTextElement.classList.add('fade-in');
-            // Render question text with MathJax support via Marked
-            questionTextElement.innerHTML = marked.parse(questionData.question);
-
-            // Add fade-in animation to answer buttons
-            answerButtonsElement.classList.add('fade-in');
-
-            // Render and append answer buttons
-            shuffleArray(questionData.options).forEach(option => {
+            currentQuestion.options.forEach((option, index) => {
                 const button = document.createElement('button');
-                button.classList.add('answer-button');
-                button.innerHTML = marked.parse(option); // Render option text with MathJax
-                button.addEventListener('click', () => selectAnswer(button, option, questionData.correctAnswer, questionData.explanation));
-                answerButtonsElement.appendChild(button);
+                button.textContent = option;
+                button.classList.add('option-button');
+                button.setAttribute('data-index', index);
+
+                button.addEventListener('click', () => {
+                    const currentSelected = optionsContainer.querySelector('.option-button.selected');
+                    if (currentSelected) {
+                        currentSelected.classList.remove('selected');
+                    }
+                    button.classList.add('selected');
+                    selectedOption = index;
+                    submitButton.disabled = false;
+                });
+                optionsContainer.appendChild(button);
             });
 
-            // Re-render MathJax
-            if (typeof MathJax !== 'undefined') {
-                MathJax.typesetPromise([questionTextElement, answerButtonsElement]).catch((err) => console.error("MathJax typesetting error:", err));
+            quizView.classList.remove('hidden'); // Show quiz view after content is ready
+
+            // Start preloading the next question immediately after displaying the current one
+            preloadNextQuestion();
+        }
+
+        /**
+         * Handles the submission of an answer. Checks correctness and provides feedback.
+         */
+        async function handleSubmit() {
+            if (selectedOption === null || !quizActive || !currentQuestion) {
+                return;
+            }
+
+            quizActive = false;
+
+            const isCorrect = (selectedOption === currentQuestion.correctAnswer);
+
+            submitButton.classList.add('hidden');
+            nextButton.classList.remove('hidden');
+
+            optionsContainer.querySelectorAll('.option-button').forEach((button, index) => {
+                button.disabled = true;
+                if (index === currentQuestion.correctAnswer) {
+                    button.classList.add('correct');
+                } else if (index === selectedOption) {
+                    button.classList.add('incorrect');
+                }
+            });
+
+            feedbackArea.classList.remove('hidden');
+
+            if (isCorrect) {
+                feedbackMessage.textContent = "Correct! 🎉";
+                feedbackMessage.style.color = '#065f46';
+                explanationText.textContent = currentQuestion.initialExplanation;
+                askForMoreDetailsButton.classList.remove('hidden'); // Show button for correct answers
+            } else {
+                feedbackMessage.textContent = "Incorrect. 🙁";
+                feedbackMessage.style.color = '#991b1b';
+                explanationLoading.classList.remove('hidden');
+                explanationText.textContent = '';
+                askForMoreDetailsButton.classList.add('hidden'); // Hide details button for incorrect answers initially
+
+                const userChoiceText = currentQuestion.options[selectedOption];
+                const correctAnswerText = currentQuestion.options[currentQuestion.correctAnswer];
+                const prompt = `The user answered '${userChoiceText}' for the question '${currentQuestion.question}'. The correct answer is '${correctAnswerText}'. Please explain concisely why '${userChoiceText}' is incorrect and why '${correctAnswerText}' is correct in the context of electrical engineering principles related to ${currentQuestion.topic}. Keep it to 2-3 sentences.`;
+
+                try {
+                    const apiKey = "";
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                    const payload = {
+                        contents: [{ role: "user", parts: [{ text: prompt }] }]
+                    };
+
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    const result = await response.json();
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        explanationText.textContent = result.candidates[0].content.parts[0].text;
+                        askForMoreDetailsButton.classList.remove('hidden'); // Show details button after AI explanation
+                    } else {
+                        explanationText.textContent = "Could not generate an explanation. Please try again.";
+                    }
+                } catch (error) {
+                    console.error("Error calling Gemini API for incorrect explanation:", error);
+                    explanationText.textContent = "Error generating explanation. Network issue or API error.";
+                } finally {
+                    explanationLoading.classList.add('hidden');
+                }
             }
         }
 
         /**
-         * Handles the user's answer selection.
-         * @param {HTMLElement} selectedButton - The button element selected by the user.
-         * @param {string} selectedOption - The text of the selected option.
-         * @param {string} correctAnswer - The correct answer for the current question.
-         * @param {string} explanation - The explanation for the current question.
+         * Displays a chat message in the chat history.
+         * @param {string} text - The message text.
+         * @param {string} sender - 'user' or 'ai'.
          */
-        function selectAnswer(selectedButton, selectedOption, correctAnswer, explanation) {
-            if (answerSelected) return; // Prevent multiple selections
+        function displayChatMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('chat-message', sender);
+            messageDiv.textContent = text;
+            chatHistoryDiv.appendChild(messageDiv);
+            chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight; // Scroll to bottom
+        }
 
-            answerSelected = true;
-            nextButton.disabled = false;
+        /**
+         * Initializes and displays the chat view.
+         */
+        async function handleAskForMoreDetails() {
+            if (!currentQuestion) return;
 
-            Array.from(answerButtonsElement.children).forEach(button => {
-                button.classList.add('disabled'); // Disable all buttons
-                button.removeEventListener('click', () => {}); // Remove click listeners
-            });
+            quizView.classList.add('hidden');
+            chatView.classList.remove('hidden');
+            chatHistoryDiv.innerHTML = ''; // Clear previous chat history
+            chatHistory = []; // Reset chat history for new conversation
 
-            selectedButton.classList.add('selected'); // Highlight selected button
+            // Initial AI message based on the quiz question context
+            const initialPrompt = `Hello! I can help you with more details about electrical engineering. What would you like to know about '${currentQuestion.topic}' or '${currentQuestion.question}'?`;
+            
+            // Add initial AI message to history and display
+            chatHistory.push({ role: "model", parts: [{ text: initialPrompt }] });
+            displayChatMessage(initialPrompt, 'ai');
+        }
 
-            if (selectedOption === correctAnswer) {
-                score++;
-                feedbackMessageElement.classList.remove('incorrect-feedback');
-                feedbackMessageElement.classList.add('correct-feedback', 'fade-in');
-                feedbackMessageElement.innerHTML = 'Correct! ' + marked.parse(explanation); // Render explanation with MathJax
-                selectedButton.classList.add('correct');
-            } else {
-                feedbackMessageElement.classList.remove('correct-feedback');
-                feedbackMessageElement.classList.add('incorrect-feedback', 'fade-in');
-                feedbackMessageElement.innerHTML = `Incorrect. The correct answer was: ${marked.parse(correctAnswer)}. ` + marked.parse(explanation); // Render explanation with MathJax
-                selectedButton.classList.add('incorrect');
-                // Highlight the correct answer
-                Array.from(answerButtonsElement.children).forEach(button => {
-                    if (button.textContent === correctAnswer) {
-                        button.classList.add('correct');
+        /**
+         * Sends a user message and gets an AI response.
+         */
+        async function sendChatMessage() {
+            const userMessage = userChatInput.value.trim();
+            if (!userMessage) return;
+
+            displayChatMessage(userMessage, 'user');
+            chatHistory.push({ role: "user", parts: [{ text: userMessage }] });
+            userChatInput.value = ''; // Clear input
+
+            chatLoading.classList.remove('hidden'); // Show AI typing indicator
+            sendChatButton.disabled = true; // Disable send button
+
+            try {
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const payload = {
+                    contents: chatHistory,
+                    generationConfig: {
+                        temperature: 0.7, // Adjust temperature for more focused or creative responses
                     }
-                });
-            }
+                };
 
-            // Re-render MathJax for feedback message
-            if (typeof MathJax !== 'undefined') {
-                MathJax.typesetPromise([feedbackMessageElement]).catch((err) => console.error("MathJax typesetting error:", err));
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const aiResponse = result.candidates[0].content.parts[0].text;
+                    displayChatMessage(aiResponse, 'ai');
+                    chatHistory.push({ role: "model", parts: [{ text: aiResponse }] });
+                } else {
+                    displayChatMessage("I'm having trouble understanding. Can you rephrase?", 'ai');
+                }
+            } catch (error) {
+                console.error("Error in chat API call:", error);
+                displayChatMessage("Oops! There was an error. Please try again later.", 'ai');
+            } finally {
+                chatLoading.classList.add('hidden'); // Hide AI typing indicator
+                sendChatButton.disabled = false; // Re-enable send button
             }
+        }
+
+        /**
+         * Switches back to the quiz view.
+         */
+        function handleBackToQuiz() {
+            chatView.classList.add('hidden');
+            quizView.classList.remove('hidden');
         }
 
         /**
          * Advances to the next question.
          */
-        function nextQuestion() {
-            // Add fade-out animation before changing content
-            questionTextElement.classList.add('fade-out');
-            answerButtonsElement.classList.add('fade-out');
-            feedbackMessageElement.classList.add('fade-out');
-
-            setTimeout(() => {
-                currentQuestionIndex++;
-                displayQuestion();
-                // Remove fade-out after content change, displayQuestion will add fade-in
-                questionTextElement.classList.remove('fade-out');
-                answerButtonsElement.classList.remove('fade-out');
-                feedbackMessageElement.classList.remove('fade-out');
-            }, 600); // Duration of fade-out animation
-        }
-
-        /**
-         * Displays the final results of the quiz.
-         */
-        function showResults() {
-            quizSection.classList.add('hidden');
-            resultsSection.classList.remove('hidden');
-            quitButton.classList.add('hidden'); // Hide quit button on results screen
-            layoutScaleInput.disabled = false; // Re-enable scale input after quiz
-            finalScoreElement.textContent = `You scored ${score} out of ${questions.length}!`;
-            finalScoreElement.classList.add('score-update-animation'); // Add animation
-        }
-
-        /**
-         * Resets the quiz to the initial topic input screen.
-         */
-        function resetQuiz() {
-            questions = [];
-            currentQuestionIndex = 0;
-            score = 0;
-            answerSelected = false;
-
-            quizSection.classList.add('hidden');
-            resultsSection.classList.add('hidden');
-            quitButton.classList.add('hidden'); // Ensure quit button is hidden
-            topicInputSection.classList.remove('hidden');
-            layoutScaleInput.disabled = false; // Ensure scale input is enabled
-
-            topicInput.value = '';
-            numQuestionsSelect.value = '5';
-            difficultyLevelSelect.value = 'medium';
-            // Do not reset layout scale to default, let user keep their preference
-            // layoutScaleInput.value = '1.0';
-            // scaleValueSpan.textContent = '100%';
-            // quizContainer.style.transform = 'scale(1.0)';
-
-            errorMessage.classList.add('hidden');
-            hideLoadingAnimation(); // Ensure loading animation is hidden
-            nextButton.disabled = true; // Ensure next button is disabled
-            restartButton.classList.add('hidden'); // Hide restart button
+        function handleNext() {
+            displayQuestion(); // This will use the preloaded question if available
         }
 
         // Event Listeners
-        startQuizButton.addEventListener('click', () => {
-            const topic = topicInput.value.trim();
-            const numQuestions = parseInt(numQuestionsSelect.value);
-            const difficulty = difficultyLevelSelect.value;
+        submitButton.addEventListener('click', handleSubmit);
+nextButton.addEventListener('click', handleNext);
+askForMoreDetailsButton.addEventListener('click', handleAskForMoreDetails);
+sendChatButton.addEventListener('click', sendChatMessage);
+userChatInput.addEventListener('keypress', (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) { // Allow Shift+Enter for new line
+        event.preventDefault(); // Prevent default Enter behavior (e.g., new line)
+        sendChatMessage();
+    }
+});
+backToQuizButton.addEventListener('click', handleBackToQuiz);
 
-            if (topic) {
-                fetchQuestions(topic, numQuestions, difficulty);
-            } else {
-                errorMessage.classList.remove('hidden');
-                errorMessage.textContent = 'Please enter a quiz topic.';
-            }
-        });
 
-        nextButton.addEventListener('click', nextQuestion);
-        playAgainButton.addEventListener('click', resetQuiz);
-        quitButton.addEventListener('click', resetQuiz); // Quit button functionality
-        restartButton.addEventListener('click', resetQuiz); // Restart button functionality
-
-        // Event listener for layout scale slider
-        layoutScaleInput.addEventListener('input', (event) => {
-            const scaleValue = parseFloat(event.target.value);
-            quizContainer.style.transform = `scale(${scaleValue})`;
-            scaleValueSpan.textContent = `${Math.round(scaleValue * 100)}%`;
-        });
+        // Initial display of the first question when the window loads
+        window.onload = function() {
+            displayQuestion(); // This will trigger the first question generation and then preload the next
+        };
     </script>
 </body>
 </html>

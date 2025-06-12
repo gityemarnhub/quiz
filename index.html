@@ -33,64 +33,65 @@
             text-align: center; /* Center content within container */
         }
 
-        /* Mobile-specific adjustments for smaller fonts, layouts, and narrower container */
+        /* Adjust quiz-container padding for smaller screens if needed to prevent squishing */
         @media (max-width: 768px) {
             .quiz-container {
-                padding: 0.75rem; /* Slightly less padding on smaller screens */
-                max-width: 60vw; /* Further reduced width for mobile, closer to 60% */
-                margin: 0 auto; /* Center the narrower container */
-                gap: 0.6rem; /* Further reduce gap between elements */
+                padding: 1rem; /* Slightly less padding on smaller screens */
+                /* Reverted max-width to previous state, not 60vw */
+                /* It will take max-width: 100% and width: 100% as defined above for general screens */
+                margin: 0 auto; /* Center the container */
+                gap: 1rem; /* Reverted gap between elements */
             }
             .score-display {
-                font-size: 1rem; /* Smaller font for score */
-                padding: 0.4rem 0.6rem;
+                font-size: 1.1rem;
+                padding: 0.5rem 0.75rem;
             }
             .question-text {
-                font-size: 1.1rem; /* Smaller question text */
-                margin-bottom: 0.8rem;
+                font-size: 1.25rem;
+                margin-bottom: 1rem;
             }
             .option-button {
-                font-size: 0.85rem; /* Smaller option buttons text */
-                padding: 0.6rem 0.8rem;
-                margin-bottom: 0.4rem;
+                font-size: 0.95rem;
+                padding: 0.8rem 1rem;
+                margin-bottom: 0.6rem;
             }
             .action-button {
-                padding: 0.6rem 0.8rem;
-                font-size: 0.95rem; /* Smaller action button text */
-                margin-top: 0.3rem;
+                padding: 0.8rem 1rem;
+                font-size: 1.05rem;
+                margin-top: 0.4rem;
             }
             .feedback-container, .chat-container {
-                padding: 0.8rem; /* Smaller padding for feedback/chat boxes */
-                margin-top: 0.8rem;
-                font-size: 0.85rem; /* Smaller text in feedback/chat */
+                padding: 1rem;
+                margin-top: 1rem;
+                font-size: 1rem; /* Reverted text size */
             }
             .feedback-message {
-                font-size: 1rem; /* Smaller feedback message */
+                font-size: 1.1rem;
             }
             .explanation-text {
-                font-size: 0.8rem; /* Smaller explanation text */
+                font-size: 0.9rem;
             }
             .chat-container h2 {
-                font-size: 1.5rem; /* Smaller chat header */
+                font-size: 1.8rem;
             }
             #chat-history {
-                max-height: 200px; /* Adjust max height for chat history */
+                max-height: 250px; /* Reverted max height for chat history */
             }
             .chat-message {
-                font-size: 0.75rem; /* Even smaller chat messages */
-                padding: 0.3rem 0.6rem;
+                font-size: 0.85rem;
+                padding: 0.4rem 0.8rem;
             }
             #user-chat-input {
-                padding: 0.5rem;
-                min-height: 30px; /* Smaller input height */
+                padding: 0.6rem;
+                min-height: 35px;
             }
             #send-chat-button {
-                padding: 0.2rem 0.4rem; /* Significantly reduced padding for send button */
-                font-size: 0.8rem; /* Adjust font size if text was present, or for icon alignment */
+                padding: 0.6rem 1rem; /* Reverted padding for send button */
+                font-size: 1.0rem; /* Reverted font size (if text was present) */
             }
-            #send-chat-button svg { /* Adjust icon size directly */
-                width: 1rem; /* Make SVG icon smaller */
-                height: 1rem;
+            #send-chat-button svg { /* Reverted icon size directly */
+                width: 1.5rem; /* Original SVG icon size */
+                height: 1.5rem;
             }
         }
 

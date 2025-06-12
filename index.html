@@ -369,7 +369,7 @@
          */
         async function generateQuestionFromAI() {
             try {
-                const apiKey = ""; // Canvas will provide this at runtime if empty
+                const apiKey = "AIzaSyCr3VbItQdykUs_uNbudLITohWmuFnGz54"; // Canvas will provide this at runtime if empty
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
                 const prompt = `Generate a multiple-choice question about electrical engineering. The question should cover one of these topics: 'loads powers', 'MCB breaker types', 'MCB breaker amperes', or 'wire sizes'. Provide exactly four options, and specify the index of the correct answer (0, 1, 2, or 3). Also, provide a concise, initial explanation for the correct answer. Output should be a JSON object with the following structure. Ensure the 'question' and 'initialExplanation' fields are actual strings, not string representations of JSON.

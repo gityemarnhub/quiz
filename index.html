@@ -3,883 +3,370 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Electrical Quiz App</title>
-    <!-- Tailwind CSS CDN -->
+    <title>AI-Powered Liquid Glass Quiz App</title>
+    <!-- Tailwind CSS CDN for utility classes -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Marked.js for Markdown parsing -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
-            padding: 1rem;
-            box-sizing: border-box;
-        }
-        .quiz-container {
-            background-color: #ffffff;
-            padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            max-width: 100%; /* Ensures it expands to full available width on larger screens */
-            width: 100%; /* Ensures it expands */
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-            text-align: center; /* Center content within container */
+            /* Background image and styling for the liquid glass effect */
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIizj-yKMa30aivqh1AFZ3YLdMf-VSphh8mg&s');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-blend-mode: overlay;
+            background-color: rgba(0, 0, 0, 0.3);
+            overflow: hidden; /* Prevent scrollbars */
         }
 
-        /* Mobile-specific adjustments for smaller fonts, layouts, and narrower container */
-        @media (max-width: 768px) {
-            .quiz-container {
-                padding: 0.75rem; /* Slightly less padding on smaller screens */
-                max-width: 85vw; /* Adjusted for better fit, closer to 60% relative to parent viewport */
-                margin: 0 auto; /* Center the narrower container */
-                gap: 0.6rem; /* Reduce gap between elements */
-            }
-            .score-display {
-                font-size: 0.9rem; /* Further reduced font size for score */
-                padding: 0.3rem 0.5rem;
-            }
-            .question-text {
-                font-size: 1rem; /* Further reduced question text */
-                margin-bottom: 0.6rem;
-            }
-            .option-button {
-                font-size: 0.8rem; /* Further reduced option buttons text */
-                padding: 0.5rem 0.7rem;
-                margin-bottom: 0.3rem;
-            }
-            .action-button {
-                padding: 0.4rem 0.6rem; /* Smaller padding for action buttons */
-                font-size: 0.85rem; /* Smaller action button text */
-                margin-top: 0.2rem;
-            }
-            .feedback-container, .chat-container {
-                padding: 0.6rem; /* Further reduced padding for feedback/chat boxes */
-                margin-top: 0.6rem;
-                font-size: 0.75rem; /* Further reduced text in feedback/chat */
-            }
-            .feedback-message {
-                font-size: 0.9rem; /* Further reduced feedback message */
-            }
-            .explanation-text {
-                font-size: 0.7rem; /* Further reduced explanation text */
-            }
-            .chat-container h2 {
-                font-size: 1.3rem; /* Further reduced chat header */
-            }
-            #chat-history {
-                max-height: 180px; /* Further adjust max height for chat history */
-            }
-            .chat-message {
-                font-size: 0.7rem; /* Even smaller chat messages */
-                padding: 0.2rem 0.5rem;
-            }
-            #user-chat-input {
-                padding: 0.4rem;
-                min-height: 25px; /* Further smaller input height */
-            }
-            #send-chat-button {
-                padding: 0.2rem 0.2rem; /* Significantly reduced padding for send button */
-            }
-            #send-chat-button svg { /* Adjust icon size directly */
-                width: 0.8rem; /* Make SVG icon even smaller */
-                height: 0.8rem;
-            }
-        }
-
-        /* General Styles (unchanged or slightly adjusted for consistency) */
-        .score-display {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: #374151;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem;
-            background-color: #f9fafb;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-        .score-correct {
-            color: #10b981;
-        }
-        .score-incorrect {
-            color: #ef4444;
-        }
-
-        .question-text {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 1.5rem;
-        }
-        .option-button {
-            width: 100%;
-            padding: 1rem 1.5rem;
-            margin-bottom: 0.75rem;
-            border-radius: 0.75rem;
-            background-color: #e0e7ff;
-            color: #4338ca;
-            font-size: 1.1rem;
-            font-weight: 500;
-            text-align: left;
-            border: 2px solid transparent;
-            transition: all 0.2s ease-in-out;
-            cursor: pointer;
-        }
-        .option-button:hover:not(.selected):not(.correct):not(.incorrect):not(:disabled) {
-            background-color: #c7d2fe;
-        }
-        .option-button.selected {
-            background-color: #93c5fd;
-            border-color: #3b82f6;
-            color: #1e3a8a;
-        }
-        .option-button.correct {
-            background-color: #d1fae5;
-            border-color: #34d399;
-            color: #065f46;
-        }
-        .option-button.incorrect {
-            background-color: #fee2e2;
-            border-color: #ef4444;
-            color: #991b1b;
-        }
-        .option-button:disabled {
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-        .action-button {
-            width: 100%;
-            padding: 1rem 1.5rem;
-            border-radius: 0.75rem;
-            background-color: #4f46e5;
+        .liquid-glass-container {
+            background: rgba(255, 255, 255, 0.08); /* Slightly more transparent */
+            backdrop-filter: blur(25px) saturate(200%); /* Stronger blur and saturation */
+            -webkit-backdrop-filter: blur(25px) saturate(200%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15), inset 0 0 10px rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px; /* Increased max-width for quiz content */
+            text-align: center;
             color: #ffffff;
-            font-size: 1.2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .liquid-glass-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease-out;
+            pointer-events: none;
+        }
+
+        .liquid-glass-container:hover::before {
+            opacity: 1;
+        }
+
+        .liquid-glass-button {
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(12px) saturate(170%);
+            -webkit-backdrop-filter: blur(12px) saturate(170%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), inset 0 0 8px rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 12px 25px;
+            margin-top: 15px; /* Adjusted margin for option buttons */
+            color: #ffffff;
             font-weight: 600;
-            border: none;
             cursor: pointer;
-            transition: background-color 0.2s ease-in-out;
-            box-shadow: 0 4px 8px rgba(79, 70, 229, 0.2);
-            margin-top: 0.5rem;
-            display: flex; /* Ensure content is centered if icon is used */
-            justify-content: center; /* Center content if icon is used */
-            align-items: center; /* Center content if icon is used */
+            outline: none;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%; /* Make buttons full width */
+            text-align: left; /* Align text left within button */
+            padding-left: 20px;
         }
-        .action-button:hover:not(:disabled) {
-            background-color: #4338ca;
+
+        .liquid-glass-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
         }
-        .action-button:disabled {
-            background-color: #a5b4fc;
-            cursor: not-allowed;
+
+        .liquid-glass-button:active {
+            transform: translateY(0) scale(0.98);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
-        .feedback-container, .chat-container {
-            margin-top: 1.5rem;
-            padding: 1.25rem;
-            border-radius: 0.75rem;
-            background-color: #f0f9ff;
-            border: 1px solid #bfdbfe;
-            color: #1e40af;
-            font-size: 1rem;
-            line-height: 1.6;
-            text-align: left;
+
+        /* Input field styling */
+        .liquid-glass-input {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px) saturate(150%);
+            -webkit-backdrop-filter: blur(10px) saturate(150%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 12px 20px;
+            margin-bottom: 15px;
+            color: #ffffff;
+            font-weight: 400;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box; /* Include padding in width */
         }
-        .loading-spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
+
+        .liquid-glass-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* State for correct/incorrect answers */
+        .liquid-glass-button.correct {
+            background: rgba(144, 238, 144, 0.3); /* Light green */
+            border-color: rgba(144, 238, 144, 0.5);
+            box-shadow: 0 4px 15px rgba(0, 255, 0, 0.3), inset 0 0 8px rgba(255, 255, 255, 0.2);
+            pointer-events: none; /* Disable after selection */
+        }
+
+        .liquid-glass-button.incorrect {
+            background: rgba(255, 99, 71, 0.3); /* Tomato red */
+            border-color: rgba(255, 99, 71, 0.5);
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.3), inset 0 0 8px rgba(255, 255, 255, 0.2);
+            pointer-events: none; /* Disable after selection */
+        }
+
+        /* Ripple effect for buttons */
+        .ripple {
+            position: absolute;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 1rem auto;
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            background-color: rgba(255, 255, 255, 0.7);
+            opacity: 0;
         }
+
+        @keyframes ripple-animation {
+            from {
+                transform: scale(0);
+                opacity: 0.7;
+            }
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #ffffff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        #question-loading, #explanation-loading, #chat-loading {
-            text-align: center;
-            font-size: 1.1rem;
-            color: #4b5563;
-        }
 
-        /* Chat specific styles */
-        .chat-container {
-            min-height: 400px; /* Kept for larger screens */
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            gap: 1rem;
-        }
-        #chat-history {
-            flex-grow: 1;
-            overflow-y: auto;
-            max-height: 300px; /* Kept for larger screens */
-            padding-right: 10px;
-            border-bottom: 1px solid #bfdbfe;
-            margin-bottom: 1rem;
-            display: flex;
-            flex-direction: column;
-        }
-        .chat-message {
-            margin-bottom: 0.75rem;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            max-width: 80%;
-        }
-        .chat-message.user {
-            background-color: #dbeafe;
-            color: #1e40af;
-            align-self: flex-end;
-            margin-left: auto;
-        }
-        .chat-message.ai {
-            background-color: #f0fdf4;
-            color: #065f46;
-            align-self: flex-start;
-            margin-right: auto;
-        }
-        /* Markdown specific styles for readability */
-        .chat-message.ai p:first-child {
-            margin-top: 0;
-        }
-        .chat-message.ai p:last-child {
-            margin-bottom: 0;
-        }
-        .chat-message.ai ul, .chat-message.ai ol {
-            margin-left: 1.25rem;
-            padding-left: 0;
-        }
-        .chat-message.ai code {
-            background-color: #e2e8f0;
-            padding: 0.1rem 0.3rem;
-            border-radius: 0.25rem;
-            font-family: 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace;
-            font-size: 0.8em;
-        }
-        .chat-message.ai pre {
-            background-color: #2d3748;
-            color: #f7fafc;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            overflow-x: auto;
-            font-family: 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace;
-            font-size: 0.8em;
-        }
-
-
-        #chat-input-area {
-            display: flex;
-            gap: 0.5rem;
-            padding: 0.5rem; /* Kept padding for larger screens */
-            background-color: #f9fafb;
-            border-radius: 0.75rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            /* Removed the border from chat-input-area to reduce "extra container" feel */
-            border: none; 
-        }
-        #user-chat-input {
-            flex-grow: 1;
-            padding: 0.75rem; /* Kept padding for larger screens */
-            border-radius: 0.5rem;
-            border: 1px solid #bfdbfe;
-            resize: vertical;
-            min-height: 40px; /* Kept min-height for larger screens */
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        #user-chat-input:focus {
-            border-color: #3b82f6;
-        }
-        #send-chat-button {
-            padding: 0.75rem 1.25rem; /* Default padding for larger screens */
-            background-color: #4f46e5;
-            color: #ffffff;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: background-color 0.2s;
-            border: none;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        #send-chat-button:hover:not(:disabled) {
-            background-color: #4338ca;
-        }
-        #send-chat-button:disabled {
-            background-color: #a5b4fc;
-            cursor: not-allowed;
-        }
-        #back-to-quiz-button {
-            background-color: #6b7280;
-            margin-top: 1rem;
-        }
-        #back-to-quiz-button:hover {
-            background-color: #4b5563;
+        /* Responsive adjustments for mobile screens */
+        @media (max-width: 640px) {
+            .liquid-glass-container {
+                padding: 15px; /* Reduced from 30px, roughly 50% */
+                border-radius: 15px; /* Adjusted slightly */
+                max-width: 95%; /* Ensure it fits narrow screens */
+                margin: 10px; /* Add a small margin to the edges */
+            }
+            .liquid-glass-button {
+                padding: 10px 15px; /* Reduced from 12px 25px */
+                font-size: 0.8em; /* Adjusted for readability */
+                margin-top: 10px; /* Adjusted margin */
+            }
+            .liquid-glass-input {
+                padding: 10px 15px; /* Reduced from 12px 20px */
+                font-size: 0.8em; /* Adjusted for readability */
+            }
+            #appHeader {
+                font-size: 2rem; /* Adjusted for mobile header size */
+                margin-bottom: 15px; /* Adjusted margin */
+            }
+            #questionDisplay {
+                font-size: 1.1rem; /* Adjusted for mobile question size */
+                margin-bottom: 15px; /* Adjusted margin */
+            }
+            #scoreDisplay {
+                font-size: 1.2rem; /* Adjusted for mobile score size */
+            }
         }
     </style>
 </head>
 <body>
-    <div class="quiz-container">
-        <!-- Score Display -->
-        <div id="score-display" class="score-display">
-            <span id="correct-count" class="score-correct">Correct: 0</span>
-            <span id="incorrect-count" class="score-incorrect">Incorrect: 0</span>
+    <div class="liquid-glass-container" id="quizContainer">
+        <!-- Dynamic header for the app -->
+        <div id="appHeader" class="text-3xl md:text-4xl font-bold mb-4 flex items-center justify-center gap-2">
+            <!-- Content will be set by JavaScript -->
         </div>
 
-        <!-- Question Area -->
-        <div id="question-loading" class="hidden">
-            <div class="loading-spinner"></div>
-            <p>Generating new question...</p>
-        </div>
-        <div id="quiz-view">
-            <div id="question-area">
-                <p id="question-text" class="question-text"></p>
-                <div id="options-container" class="space-y-3">
-                    <!-- Options will be dynamically loaded here -->
-                </div>
-                <button id="submit-button" class="action-button mt-6">Submit Answer</button>
-                <button id="next-button" class="action-button mt-6 hidden">Next Question</button>
-            </div>
+        <!-- Initial setup for quiz generation -->
+        <div id="quizSetup" class="p-4">
+            <label for="quizTopic" class="block text-xl mb-2">What kind of quiz do you want?</label>
+            <input type="text" id="quizTopic" placeholder="e.g., History, Science, Pop Culture" class="liquid-glass-input mb-4">
 
-            <div id="feedback-area" class="feedback-container hidden">
-                <div id="explanation-loading" class="hidden">
-                    <div class="loading-spinner"></div>
-                    <p class="text-center text-gray-600">Generating explanation...</p>
-                </div>
-                <p id="feedback-message" class="font-semibold text-lg text-center"></p>
-                <p id="explanation-text" class="mt-2"></p>
-                <button id="ask-for-more-details-button" class="action-button mt-4 hidden">Ask AI for More Details</button>
-            </div>
+            <label for="numOptions" class="block text-xl mb-2">How many options per question?</label>
+            <input type="number" id="numOptions" value="4" min="2" max="6" class="liquid-glass-input mb-4">
+
+            <button class="liquid-glass-button w-auto px-8" id="generateQuizBtn">
+                Generate Quiz
+            </button>
         </div>
 
-        <!-- Chat Area -->
-        <div id="chat-view" class="chat-container hidden">
-            <h2 class="text-2xl font-semibold text-center text-gray-700">AI Chat</h2>
-            <div id="chat-history" class="flex flex-col">
-                <!-- Chat messages will appear here -->
+        <!-- Quiz display area -->
+        <div id="quizContent" style="display:none;">
+            <div id="questionDisplay" class="text-xl md:text-2xl mb-6">
+                <!-- Question will be loaded here -->
             </div>
-            <div id="chat-loading" class="hidden">
-                <div class="loading-spinner"></div>
-                <p class="text-center text-gray-600">AI is typing...</p>
+            <div id="optionsContainer" class="flex flex-col gap-4">
+                <!-- Options will be loaded here -->
             </div>
-            <div id="chat-input-area">
-                <textarea id="user-chat-input" placeholder="Ask a follow-up question..." class="flex-grow"></textarea>
-                <button id="send-chat-button" class="action-button">
-                    <!-- Send icon using inline SVG -->
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                        <path d="M3.478 2.405a.75.75 0 0 0-.926.94l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.542 60.542 0 0 0 18.445-8.916.75.75 0 0 0 0-1.123A60.542 60.542 0 0 0 3.478 2.405Z" />
-                    </svg>
-                </button>
+            <button class="liquid-glass-button mt-6 w-auto px-8" id="nextButton" style="display:none;">
+                Next Question
+            </button>
+            <button class="liquid-glass-button mt-6 w-auto px-8" id="restartButton" style="display:none;">
+                New Quiz
+            </button>
+            <div id="scoreDisplay" class="text-2xl mt-6" style="display:none;">
+                <!-- Score will be displayed here -->
             </div>
-            <button id="back-to-quiz-button" class="action-button">Back to Quiz</button>
         </div>
+
+        <!-- Loading spinner -->
+        <div id="loadingSpinner" class="spinner" style="display:none;"></div>
+        <div id="errorMessage" class="text-red-400 mt-4" style="display:none;"></div>
     </div>
 
-    <script type="module">
-        // Firebase imports (required for Canvas environment, though not directly used for storage here)
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        // Import necessary Firestore modules
-        import { getFirestore, collection, addDoc, query, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    <script>
+        const quizContainer = document.getElementById('quizContainer');
+        const appHeader = document.getElementById('appHeader'); // New header element
+        const quizSetup = document.getElementById('quizSetup');
+        const quizTopicInput = document.getElementById('quizTopic');
+        const numOptionsInput = document.getElementById('numOptions');
+        const generateQuizBtn = document.getElementById('generateQuizBtn');
+        const quizContent = document.getElementById('quizContent');
+        const questionDisplay = document.getElementById('questionDisplay');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const nextButton = document.getElementById('nextButton');
+        const restartButton = document.getElementById('restartButton');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const errorMessage = document.getElementById('errorMessage');
 
-        // Global variables provided by Canvas environment
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null; 
+        let quizQuestions = []; // This will store AI-generated questions
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answerSelected = false;
 
-        let app, db, auth;
-        let userId = 'anonymous'; // Default userId
+        // Function to update CSS variables for mouse position
+        function updateMousePosition(e) {
+            const rect = quizContainer.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width * 100;
+            const y = (e.clientY - rect.top) / rect.height * 100;
+            quizContainer.style.setProperty('--mouse-x', `${x}%`);
+            quizContainer.style.setProperty('--mouse-y', `${y}%`);
+        }
 
-        // Initialize Firebase and authenticate
-        async function initializeFirebase() {
-            try {
-                if (Object.keys(firebaseConfig).length > 0) {
-                    app = initializeApp(firebaseConfig);
-                    db = getFirestore(app);
-                    auth = getAuth(app);
+        // Add event listener for mouse movement on the quiz container
+        quizContainer.addEventListener('mousemove', updateMousePosition);
 
-                    if (initialAuthToken) {
-                        await signInWithCustomToken(auth, initialAuthToken);
-                        userId = auth.currentUser?.uid || userId;
-                        console.log("Firebase authenticated with custom token:", userId);
-                    } else {
-                        await signInAnonymously(auth);
-                        userId = auth.currentUser?.uid || userId;
-                        console.log("Firebase authenticated anonymously:", userId);
-                    }
-                } else {
-                    console.warn("Firebase config not found. Running without Firebase.");
-                }
-            } catch (error) {
-                console.error("Error initializing Firebase:", error);
-                // Fallback to running without Firebase if initialization fails
+        // Reset mouse position when mouse leaves the quiz container
+        quizContainer.addEventListener('mouseleave', () => {
+            quizContainer.style.setProperty('--mouse-x', `50%`);
+            quizContainer.style.setProperty('--mouse-y', `50%`);
+        });
+
+        // Function to create ripple effect on buttons
+        function createRipple(event) {
+            const button = event.currentTarget;
+            const circle = document.createElement('span');
+            const diameter = Math.max(button.clientWidth, button.clientHeight);
+            const radius = diameter / 2;
+
+            circle.style.width = circle.style.height = `${diameter}px`;
+            circle.style.left = `${event.clientX - (button.getBoundingClientRect().left + radius)}px`;
+            circle.style.top = `${event.clientY - (button.getBoundingClientRect().top + radius)}px`;
+            circle.classList.add('ripple');
+
+            // Remove existing ripple if any
+            const existingRipple = button.getElementsByClassName('ripple')[0];
+            if (existingRipple) {
+                existingRipple.remove();
             }
+
+            button.appendChild(circle);
         }
 
-        // Call Firebase initialization
-        initializeFirebase();
-
-        let currentQuestion = null;
-        let nextQuestionPreloaded = null; // Stores the next question generated in the background
-        let selectedOption = null;
-        let quizActive = true; // State to control quiz flow (e.g., prevent multiple submissions)
-        let chatHistory = []; // Stores the conversation for the chat interface
-
-        // Score tracking variables
-        let correctCount = 0;
-        let incorrectCount = 0;
-
-        // DOM Elements - Quiz View
-        const quizView = document.getElementById('quiz-view');
-        const questionTextElement = document.getElementById('question-text');
-        const optionsContainer = document.getElementById('options-container');
-        const submitButton = document.getElementById('submit-button');
-        const nextButton = document.getElementById('next-button');
-        const feedbackArea = document.getElementById('feedback-area');
-        const feedbackMessage = document.getElementById('feedback-message');
-        const explanationText = document.getElementById('explanation-text');
-        const questionLoading = document.getElementById('question-loading');
-        const explanationLoading = document.getElementById('explanation-loading');
-        const askForMoreDetailsButton = document.getElementById('ask-for-more-details-button');
-        const questionArea = document.getElementById('question-area');
-
-        // DOM Elements - Score Display
-        const scoreDisplay = document.getElementById('score-display');
-        const correctCountSpan = document.getElementById('correct-count');
-        const incorrectCountSpan = document.getElementById('incorrect-count');
-
-        // DOM Elements - Chat View
-        const chatView = document.getElementById('chat-view');
-        const chatHistoryDiv = document.getElementById('chat-history');
-        const userChatInput = document.getElementById('user-chat-input');
-        const sendChatButton = document.getElementById('send-chat-button');
-        const chatLoading = document.getElementById('chat-loading');
-        const backToQuizButton = document.getElementById('back-to-quiz-button');
-
-
-        /**
-         * Updates the score display on the UI.
-         */
-        function updateScoreDisplay() {
-            correctCountSpan.textContent = `Correct: ${correctCount}`;
-            incorrectCountSpan.textContent = `Incorrect: ${incorrectCount}`;
+        // Function to update the app header
+        function updateAppHeader(text, iconHtml = '') {
+            appHeader.innerHTML = iconHtml + text;
         }
 
-        /**
-         * Saves a generated quiz question to Firestore.
-         * @param {Object} questionData - The question object to save.
-         */
-        async function saveQuestionToFirestore(questionData) {
-            // Ensure db and user are ready before attempting to save
-            if (!db || !auth.currentUser || userId === 'anonymous') {
-                console.warn("Firestore or user not ready, cannot save question.");
+        // Function to generate quiz questions using Gemini API
+        async function generateQuiz() {
+            const topic = quizTopicInput.value.trim();
+            const numOptions = parseInt(numOptionsInput.value, 10);
+
+            if (!topic) {
+                errorMessage.textContent = "Please enter a quiz topic.";
+                errorMessage.style.display = 'block';
                 return;
             }
+            if (isNaN(numOptions) || numOptions < 2 || numOptions > 6) {
+                errorMessage.textContent = "Number of options must be between 2 and 6.";
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            errorMessage.style.display = 'none';
+            quizSetup.style.display = 'none';
+            loadingSpinner.style.display = 'block';
+            quizContent.style.display = 'none';
+            updateAppHeader('Generating your quiz...');
+
             try {
-                // Define the collection path for user-specific quiz questions
-                const questionsCollectionRef = collection(db, `artifacts/${appId}/users/${auth.currentUser.uid}/quizQuestions`);
-                
-                // Add the document to Firestore
-                await addDoc(questionsCollectionRef, {
-                    question: questionData.question,
-                    options: questionData.options,
-                    correctAnswer: questionData.correctAnswer,
-                    initialExplanation: questionData.initialExplanation,
-                    topic: questionData.topic,
-                    timestamp: serverTimestamp() // Add a server-generated timestamp
-                });
-                console.log("Question saved to Firestore:", questionData.question);
-            } catch (e) {
-                console.error("Error adding document to Firestore: ", e);
-            }
-        }
+                // Prompt for the AI model
+                const prompt = `Generate a JSON array of 5 multiple-choice quiz questions about "${topic}". Each question should have ${numOptions} options, and one correct answer. The JSON should be structured as follows:
+                [
+                    {
+                        "question": "Your question here?",
+                        "options": ["Option A", "Option B", "Option C", "Option D"],
+                        "answer": "Correct Option Text"
+                    },
+                    ...
+                ]`;
 
-        /**
-         * Checks if a question with the given text already exists in Firestore.
-         * @param {string} questionText - The text of the question to check.
-         * @returns {Promise<boolean>} - True if the question exists, false otherwise.
-         */
-        async function checkIfQuestionExists(questionText) {
-            // Ensure db and user are ready before attempting to check
-            if (!db || !auth.currentUser || userId === 'anonymous') {
-                console.warn("Firestore or user not ready, cannot check for question existence. Assuming not exist.");
-                return false;
-            }
-            try {
-                const questionsCollectionRef = collection(db, `artifacts/${appId}/users/${auth.currentUser.uid}/quizQuestions`);
-                // Create a query to find documents where the 'question' field matches the questionText
-                const q = query(questionsCollectionRef, where("question", "==", questionText));
-                const querySnapshot = await getDocs(q);
-                // If the snapshot is not empty, it means a matching question was found
-                return !querySnapshot.empty;
-            } catch (e) {
-                console.error("Error checking question existence in Firestore: ", e);
-                return false; // Return false to allow generation if there's an error checking
-            }
-        }
-
-        /**
-         * Fetches a new electrical engineering question from the Gemini AI.
-         * The response is expected to be a JSON object with question, options, correctAnswer,
-         * initialExplanation, and topic.
-         */
-        async function generateQuestionFromAI() {
-            let generatedQuestion = null;
-            let attempts = 0;
-            const maxAttempts = 5; // To prevent infinite loops in case AI keeps generating duplicates
-
-            while (generatedQuestion === null && attempts < maxAttempts) {
-                attempts++;
-                try {
-                    const apiKey = "AIzaSyCr3VbItQdykUs_uNbudLITohWmuFnGz54"; // User provided API Key
-                    if (!apiKey && typeof __api_key === 'undefined') {
-                        console.warn("API Key is missing. AI features may not work. Please insert your key.");
-                        return {
-                            question: "API Key missing. What is 2+2?",
-                            options: ["3", "4", "5", "6"],
-                            correctAnswer: 1,
-                            initialExplanation: "This is a fallback question due to API key absence.",
-                            topic: "api key issue"
-                        };
-                    }
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-                    const prompt = `Generate a new and different multiple-choice question about electrical engineering, specifically referencing or applying **Myanmar electrical standards and common practices (e.g., 230V/400V, 50Hz, aligned with IEC standards)** (variation: ${Math.random()}). The question should cover one of these topics: 'breaker sizes', 'wire sizes', 'inverter sizes', 'loads', 'solar sizes', 'amperes', or 'sockets'. Provide exactly four options, and specify the index of the correct answer (0, 1, 2, or 3). Also, provide a concise, initial explanation for the correct answer, incorporating relevant Myanmar-specific context or IEC alignment where appropriate. Output should be a JSON object with the following structure. Ensure the 'question' and 'initialExplanation' fields are actual strings, not string representations of JSON.
-                    { "question": "string", "options": ["string", "string", "string", "string"], "correctAnswer": "integer", "initialExplanation": "string", "topic": "string" }`;
-
-                    const payload = {
-                        contents: [{ role: "user", parts: [{ text: prompt }] }],
-                        generationConfig: {
-                            responseMimeType: "application/json",
-                            temperature: 0.9,
-                            responseSchema: {
+                let chatHistory = [];
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                const payload = {
+                    contents: chatHistory,
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "ARRAY",
+                            items: {
                                 type: "OBJECT",
                                 properties: {
                                     "question": { "type": "STRING" },
                                     "options": {
-                                        "type": "ARRAY",
-                                        "items": { "type": "STRING" }
+                                        type: "ARRAY",
+                                        items: { "type": "STRING" }
                                     },
-                                    "correctAnswer": { "type": "INTEGER" },
-                                    "initialExplanation": { "type": "STRING" },
-                                    "topic": { "type": "STRING" }
+                                    "answer": { "type": "STRING" }
                                 },
-                                "propertyOrdering": ["question", "options", "correctAnswer", "initialExplanation", "topic"]
+                                "propertyOrdering": ["question", "options", "answer"]
                             }
                         }
-                    };
-
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({}));
-                        console.error(`API Error - Status: ${response.status}, Message: ${errorData.error ? errorData.error.message : 'No error message available'}`);
-                        // If API error, break loop and return fallback
-                        return {
-                            question: `API Error: ${response.status}. Try again.`,
-                            options: ["Error", "Loading", "Failed", "Check Console"],
-                            correctAnswer: 0,
-                            initialExplanation: `AI service issue. Status: ${response.status}.`,
-                            topic: "api_error"
-                        };
                     }
-
-                    const result = await response.json();
-                    if (result.candidates && result.candidates.length > 0 &&
-                        result.candidates[0].content && result.candidates[0].content.parts &&
-                        result.candidates[0].content.parts.length > 0) {
-                        const jsonString = result.candidates[0].content.parts[0].text;
-                        const parsedQuestion = JSON.parse(jsonString);
-
-                        // Check if the generated question already exists
-                        const exists = await checkIfQuestionExists(parsedQuestion.question);
-                        if (!exists) {
-                            // If it's a unique question, save it and use it
-                            await saveQuestionToFirestore(parsedQuestion);
-                            generatedQuestion = parsedQuestion;
-                        } else {
-                            console.log(`Question already exists (attempt ${attempts}):`, parsedQuestion.question);
-                            // If it exists, loop again to try generating a new one
-                        }
-                    } else {
-                        console.error("Could not generate a valid question from AI: Unexpected response structure", result);
-                        // If AI response structure is bad, break loop and return fallback
-                        return {
-                            question: "Failed to generate question. Bad AI response structure. What is 2+2?",
-                            options: ["3", "4", "5", "6"],
-                            correctAnswer: 1,
-                            initialExplanation: "Unexpected AI response structure.",
-                            topic: "ai_structure_issue"
-                        };
-                    }
-                } catch (error) {
-                    console.error("Network or unexpected error calling Gemini API for question generation:", error);
-                    // If any error during fetch/parse, break loop and return fallback
-                    return {
-                        question: "Network error or unexpected issue. Please check your connection and try again.",
-                        options: ["Check internet", "Try again", "Restart app", "Contact support"],
-                        correctAnswer: 0,
-                        initialExplanation: "A problem occurred connecting to the AI service.",
-                        topic: "network_issue"
-                    };
-                }
-            }
-
-            if (generatedQuestion === null) {
-                console.warn("Failed to generate a unique question after multiple attempts. Returning fallback.");
-                return {
-                    question: "Could not generate a unique question after several attempts. What is 2+2?",
-                    options: ["3", "4", "5", "6"],
-                    correctAnswer: 1,
-                    initialExplanation: "Reached max generation attempts for unique question.",
-                    topic: "max_attempts"
                 };
-            }
-            return generatedQuestion;
-        }
-
-        /**
-         * Preloads the next question in the background.
-         */
-        async function preloadNextQuestion() {
-            nextQuestionPreloaded = await generateQuestionFromAI();
-            console.log("Next question preloaded:", nextQuestionPreloaded);
-        }
-
-        /**
-         * Renders the current question and its options to the UI.
-         */
-        async function displayQuestion() {
-            // Hide previous feedback and question area during transition
-            quizView.classList.add('hidden');
-            chatView.classList.add('hidden');
-            feedbackArea.classList.add('hidden');
-
-            updateScoreDisplay();
-
-            if (nextQuestionPreloaded) {
-                currentQuestion = nextQuestionPreloaded;
-                nextQuestionPreloaded = null;
-                questionLoading.classList.add('hidden');
-            } else {
-                questionLoading.classList.remove('hidden');
-                currentQuestion = await generateQuestionFromAI();
-                questionLoading.classList.add('hidden');
-            }
-
-            if (!currentQuestion) {
-                questionTextElement.innerHTML = "Error loading question. Please try again."; // Use innerHTML for Markdown
-                optionsContainer.innerHTML = '';
-                submitButton.classList.add('hidden');
-                nextButton.classList.add('hidden');
-                return;
-            }
-
-            // Reset UI for new question
-            questionTextElement.innerHTML = marked.parse(currentQuestion.question); // Parse Markdown for question text
-            optionsContainer.innerHTML = '';
-            feedbackMessage.textContent = '';
-            explanationText.innerHTML = ''; // Use innerHTML for Markdown
-            explanationLoading.classList.add('hidden');
-            askForMoreDetailsButton.classList.add('hidden');
-            selectedOption = null;
-            submitButton.classList.remove('hidden');
-            submitButton.disabled = true;
-            nextButton.classList.add('hidden');
-            quizActive = true;
-
-            currentQuestion.options.forEach((option, index) => {
-                const button = document.createElement('button');
-                button.textContent = option; // Options usually don't contain markdown
-                button.classList.add('option-button');
-                button.setAttribute('data-index', index);
-
-                button.addEventListener('click', () => {
-                    const currentSelected = optionsContainer.querySelector('.option-button.selected');
-                    if (currentSelected) {
-                        currentSelected.classList.remove('selected');
-                    }
-                    button.classList.add('selected');
-                    selectedOption = index;
-                    submitButton.disabled = false;
-                });
-                optionsContainer.appendChild(button);
-            });
-
-            quizView.classList.remove('hidden');
-
-            preloadNextQuestion();
-        }
-
-        /**
-         * Handles the submission of an answer. Checks correctness and provides feedback.
-         */
-        async function handleSubmit() {
-            if (selectedOption === null || !quizActive || !currentQuestion) {
-                return;
-            }
-
-            quizActive = false;
-
-            const isCorrect = (selectedOption === currentQuestion.correctAnswer);
-
-            if (isCorrect) {
-                correctCount++;
-            } else {
-                incorrectCount++;
-            }
-            updateScoreDisplay();
-
-            submitButton.classList.add('hidden');
-            nextButton.classList.remove('hidden');
-
-            optionsContainer.querySelectorAll('.option-button').forEach((button, index) => {
-                button.disabled = true;
-                if (index === currentQuestion.correctAnswer) {
-                    button.classList.add('correct');
-                } else if (index === selectedOption) {
-                    button.classList.add('incorrect');
-                }
-            });
-
-            feedbackArea.classList.remove('hidden');
-
-            if (isCorrect) {
-                feedbackMessage.textContent = "Correct! 🎉";
-                feedbackMessage.style.color = '#065f46';
-                explanationText.innerHTML = marked.parse(currentQuestion.initialExplanation); // Parse Markdown for explanation
-                askForMoreDetailsButton.classList.remove('hidden');
-            } else {
-                feedbackMessage.textContent = "Incorrect. 🙁";
-                feedbackMessage.style.color = '#991b1b';
-                explanationLoading.classList.remove('hidden');
-                explanationText.innerHTML = ''; // Use innerHTML for Markdown
-                askForMoreDetailsButton.classList.add('hidden');
-
-                const userChoiceText = currentQuestion.options[selectedOption];
-                const correctAnswerText = currentQuestion.options[currentQuestion.correctAnswer];
-                const prompt = `The user answered '${userChoiceText}' for the question '${currentQuestion.question}'. The correct answer is '${correctAnswerText}'. Please explain concisely why '${userChoiceText}' is incorrect and why '${correctAnswerText}' is correct in the context of Myanmar electrical engineering principles related to ${currentQuestion.topic}. Keep it to 2-3 sentences.`;
-
-                try {
-                    const apiKey = "AIzaSyCr3VbItQdykUs_uNbudLITohWmuFnGz54"; // User provided API Key
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-                    const payload = {
-                        contents: [{ role: "user", parts: [{ text: prompt }] }],
-                        generationConfig: {
-                            maxOutputTokens: 150
-                        }
-                    };
-
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({}));
-                        console.error(`API Error for explanation - Status: ${response.status}, Message: ${errorData.error ? errorData.error.message : 'No error message available'}`);
-                        explanationText.innerHTML = `Error generating explanation: Service issue (${response.status}). Please try again.`;
-                        if (response.status === 403) explanationText.innerHTML = `Error: API key issue.`;
-                        if (errorData.error && errorData.error.message && errorData.error.message.includes("API key not valid")) {
-                           explanationText.innerHTML = `Error: Invalid API Key.`;
-                        }
-                    } else {
-                        const result = await response.json();
-                        if (result.candidates && result.candidates.length > 0 &&
-                            result.candidates[0].content && result.candidates[0].content.parts &&
-                            result.candidates[0].content.parts.length > 0) {
-                            explanationText.innerHTML = marked.parse(result.candidates[0].content.parts[0].text); // Parse Markdown for explanation
-                            askForMoreDetailsButton.classList.remove('hidden');
-                        } else {
-                            console.error("AI explanation unexpected structure:", result);
-                            explanationText.innerHTML = "Could not generate an explanation. Unexpected AI response.";
-                        }
-                    }
-                } catch (error) {
-                    console.error("Error calling Gemini API for incorrect explanation:", error);
-                    explanationText.innerHTML = "Error generating explanation. Network issue or API error.";
-                } finally {
-                    explanationLoading.classList.add('hidden');
-                }
-            }
-        }
-
-        /**
-         * Displays a chat message in the chat history.
-         * @param {string} text - The message text.
-         * @param {string} sender - 'user' or 'ai'.
-         */
-        function displayChatMessage(text, sender) {
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('chat-message', sender);
-            if (sender === 'ai') {
-                messageDiv.innerHTML = marked.parse(text); // Parse Markdown for AI messages
-            } else {
-                messageDiv.textContent = text; // User messages are plain text
-            }
-            chatHistoryDiv.appendChild(messageDiv);
-            chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
-        }
-
-        /**
-         * Initializes and displays the chat view.
-         */
-        async function handleAskForMoreDetails() {
-            if (!currentQuestion) return;
-
-            quizView.classList.add('hidden');
-            chatView.classList.remove('hidden');
-            scoreDisplay.classList.add('hidden');
-            chatHistoryDiv.innerHTML = '';
-            chatHistory = [];
-
-            const initialPrompt = `Hello! I can help you with more details about electrical engineering based on Myanmar standards. What would you like to know about '${currentQuestion.topic}' or '${currentQuestion.question}'?`;
-            
-            chatHistory.push({ role: "model", parts: [{ text: initialPrompt }] });
-            displayChatMessage(initialPrompt, 'ai');
-        }
-
-        /**
-         * Sends a user message and gets an AI response.
-         */
-        async function sendChatMessage() {
-            const userMessage = userChatInput.value.trim();
-            if (!userMessage) return;
-
-            displayChatMessage(userMessage, 'user');
-            chatHistory.push({ role: "user", parts: [{ text: userMessage }] });
-            userChatInput.value = '';
-
-            chatLoading.classList.remove('hidden');
-            sendChatButton.disabled = true;
-
-            try {
-                const apiKey = "AIzaSyCr3VbItQdykUs_uNbudLITohWmuFnGz54"; // User provided API Key
+                const apiKey = "";
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-                const payload = {
-                    contents: chatHistory,
-                    generationConfig: {
-                        temperature: 0.7,
-                        maxOutputTokens: 150
-                    }
-                };
 
                 const response = await fetch(apiUrl, {
                     method: 'POST',
@@ -888,69 +375,133 @@
                 });
 
                 if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({}));
-                    console.error(`API Error for chat - Status: ${response.status}, Message: ${errorData.error ? errorData.error.message : 'No error message available'}`);
-                    displayChatMessage(`Sorry, I'm having trouble connecting right now (${response.status}). Please try again shortly.`, 'ai');
-                    if (response.status === 403) displayChatMessage(`Error: API key issue.`, 'ai');
-                    if (errorData.error && errorData.error.message && errorData.error.message.includes("API key not valid")) {
-                        displayChatMessage(`Error: Invalid API Key.`, 'ai');
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const jsonString = result.candidates[0].content.parts[0].text;
+                    quizQuestions = JSON.parse(jsonString);
+
+                    // Basic validation of generated questions
+                    if (!Array.isArray(quizQuestions) || quizQuestions.length === 0) {
+                        throw new Error("AI did not generate a valid quiz array.");
                     }
+                    for (const q of quizQuestions) {
+                        if (!q.question || !Array.isArray(q.options) || q.options.length !== numOptions || !q.answer) {
+                            throw new Error("Invalid quiz question format from AI.");
+                        }
+                        if (!q.options.includes(q.answer)) {
+                            console.warn(`Correct answer "${q.answer}" not found in options for question: "${q.question}"`);
+                            // Optionally, re-add the correct answer if missing, or handle as an error
+                        }
+                    }
+
+                    currentQuestionIndex = 0;
+                    score = 0;
+                    quizContent.style.display = 'block';
+                    loadQuestion();
+                    updateAppHeader('Your Quiz Awaits!');
                 } else {
-                    const result = await response.json();
-                    if (result.candidates && result.candidates.length > 0 &&
-                        result.candidates[0].content && result.candidates[0].content.parts &&
-                        result.candidates[0].content.parts.length > 0) {
-                        const aiResponse = result.candidates[0].content.parts[0].text;
-                        displayChatMessage(aiResponse, 'ai');
-                        chatHistory.push({ role: "model", parts: [{ text: aiResponse }] });
-                    } else {
-                        console.error("AI response unexpected structure in chat:", result);
-                        displayChatMessage("I'm having trouble understanding. Can you rephrase?", 'ai');
-                    }
+                    throw new Error("No valid content received from AI.");
                 }
             } catch (error) {
-                console.error("Error in chat API call:", error);
-                displayChatMessage("Oops! There was a network error. Please check your connection and try again.", 'ai');
+                console.error("Error generating quiz:", error);
+                errorMessage.textContent = `Failed to generate quiz: ${error.message}. Please try again.`;
+                errorMessage.style.display = 'block';
+                quizSetup.style.display = 'block'; // Show setup again on error
+                updateAppHeader('AI Quiz Generator');
             } finally {
-                chatLoading.classList.add('hidden');
-                sendChatButton.disabled = false;
+                loadingSpinner.style.display = 'none';
             }
         }
 
-        /**
-         * Switches back to the quiz view.
-         */
-        function handleBackToQuiz() {
-            chatView.classList.add('hidden');
-            quizView.classList.remove('hidden');
-            scoreDisplay.classList.remove('hidden');
-        }
+        // Function to load a question
+        function loadQuestion() {
+            answerSelected = false;
+            nextButton.style.display = 'none'; // Hide next button
+            restartButton.style.display = 'none'; // Hide restart button
+            scoreDisplay.style.display = 'none'; // Hide score display
+            updateAppHeader(`Question ${currentQuestionIndex + 1}/${quizQuestions.length}`);
 
-        /**
-         * Advances to the next question.
-         */
-        function handleNext() {
-            displayQuestion();
-        }
 
-        // Event Listeners
-        submitButton.addEventListener('click', handleSubmit);
-        nextButton.addEventListener('click', handleNext);
-        askForMoreDetailsButton.addEventListener('click', handleAskForMoreDetails);
-        sendChatButton.addEventListener('click', sendChatMessage);
-        userChatInput.addEventListener('keypress', (event) => {
-            if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
-                sendChatMessage();
+            if (currentQuestionIndex < quizQuestions.length) {
+                const questionData = quizQuestions[currentQuestionIndex];
+                questionDisplay.textContent = questionData.question;
+                optionsContainer.innerHTML = ''; // Clear previous options
+
+                questionData.options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.classList.add('liquid-glass-button');
+                    button.textContent = option;
+                    button.addEventListener('click', (e) => selectAnswer(e, option, questionData.answer));
+                    button.addEventListener('click', createRipple); // Add ripple effect
+                    optionsContainer.appendChild(button);
+                });
+            } else {
+                showScore(); // End of quiz
             }
+        }
+
+        // Function to handle answer selection
+        function selectAnswer(event, selectedOption, correctAnswer) {
+            if (answerSelected) return; // Prevent multiple selections
+
+            answerSelected = true;
+            const buttons = optionsContainer.querySelectorAll('.liquid-glass-button');
+            buttons.forEach(button => {
+                if (button.textContent === correctAnswer) {
+                    button.classList.add('correct');
+                } else if (button.textContent === selectedOption) {
+                    button.classList.add('incorrect');
+                }
+                // Stop ripple on selection
+                button.removeEventListener('click', createRipple);
+                button.style.pointerEvents = 'none'; // Disable further clicks on options
+            });
+
+            if (selectedOption === correctAnswer) {
+                score++;
+            }
+
+            nextButton.style.display = 'block'; // Show next button
+        }
+
+        // Function to move to the next question
+        nextButton.addEventListener('click', () => {
+            currentQuestionIndex++;
+            loadQuestion();
         });
-        backToQuizButton.addEventListener('click', handleBackToQuiz);
 
+        // Function to show the final score
+        function showScore() {
+            questionDisplay.textContent = 'Quiz Completed!';
+            optionsContainer.innerHTML = ''; // Clear options
+            nextButton.style.display = 'none'; // Hide next button
+            scoreDisplay.textContent = `You scored ${score} out of ${quizQuestions.length}.`;
+            scoreDisplay.style.display = 'block'; // Show score
+            restartButton.style.display = 'block'; // Show restart button
+            updateAppHeader('Quiz Results');
+        }
 
-        // Initial display of the first question when the window loads
-        window.onload = function() {
-            displayQuestion();
-        };
+        // Function to restart the quiz (go back to topic selection)
+        restartButton.addEventListener('click', () => {
+            quizContent.style.display = 'none';
+            quizSetup.style.display = 'block';
+            quizTopicInput.value = ''; // Clear topic input
+            numOptionsInput.value = '4'; // Reset options to default
+            quizQuestions = []; // Clear questions
+            updateAppHeader('AI Quiz Generator'); // Reset header
+        });
+
+        // Event listener for Generate Quiz button
+        generateQuizBtn.addEventListener('click', createRipple); // Ripple effect for generate button
+        generateQuizBtn.addEventListener('click', generateQuiz);
+
+        // Initial header setup
+        updateAppHeader('AI Quiz Generator');
     </script>
 </body>
 </html>

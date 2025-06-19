@@ -133,7 +133,7 @@
               problemLoading.style.display = 'block'; // Show loading
               problemTextElement.innerHTML = ''; // Clear previous problem
 
-              const prompt = `Generate a tailored practice problem for sizing ${component} in a solar power system. The problem should include realistic parameters and ask for a specific calculation.Use "Myanmar" standards but no need say it. Use Markdown for formatting and LaTeX for any mathematical equations. For example: "Calculate the total energy. The formula is $E = mc^2$". Provide only the problem text, no solution or extra text.`;
+              const prompt = `By using Markdown for formatting and LaTeX for any mathematical equations, generate a tailored practice problem for sizing ${component} in a solar power system with scenarios. The problem should include realistic parameters and ask for a specific calculation.Use "Myanmar" standards but no need say it. Use Markdown for formatting and LaTeX for any mathematical equations. For example: "Calculate the total energy. The formula is $E = mc^2$". Provide only the problem text, no solution or extra text.`;
               const apiKey = "AIzaSyDx1ZjGvvA5N-HGyfqYSX_sbtyb23ZIrjE"; // Provided API key
               const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 

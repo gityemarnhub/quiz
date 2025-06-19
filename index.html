@@ -261,7 +261,7 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container px-4"> <!-- Added px-4 for horizontal padding on all screen sizes -->
         <!-- Application Header Section -->
         <div class="app-header">
             <h1 class="title">
@@ -300,16 +300,16 @@
         <div id="problemContent" class="tab-content active">
             <label for="problemDisplay" class="sr-only">Problem Statement:</label>
             <div id="problemDisplay"
-                     class="markdown-content"
-                     >The generated problem will appear here...</div>
+                         class="markdown-content"
+                         >The generated problem will appear here...</div>
         </div>
 
         <!-- Tab Content - Solution Display Area -->
         <div id="solutionContent" class="tab-content">
             <label for="solutionDisplay" class="sr-only">Solution:</label>
             <div id="solutionDisplay"
-                     class="markdown-content"
-                     >The solution will appear here after the problem is generated...</div>
+                         class="markdown-content"
+                         >The solution will appear here after the problem is generated...</div>
         </div>
     </div>
 
@@ -518,7 +518,7 @@
                         }
                     };
 
-                    const apiKey = "AIzaSyDx1ZjGvvA5N-HGyfqYSX_sbtyb23ZIrjE"; // Canvas will automatically provide the API key at runtime
+                    const apiKey = ""; // Canvas will automatically provide the API key at runtime
                     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
                     // Make the API call to generate content

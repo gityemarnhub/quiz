@@ -189,8 +189,10 @@
         }
 
         /* Adjust button row and tab navigation margins for alignment within container */
+        /* Removed negative margins for better mobile alignment */
         .button-row, .tab-navigation {
-            margin: 0 1.5rem; /* Apply horizontal margin for alignment */
+            margin: 0 0; /* Reset margins */
+            padding: 0 1.5rem; /* Use padding for inner spacing */
         }
         .tab-navigation {
             border-radius: 8px 8px 0 0;
@@ -274,20 +276,22 @@
         </div>
 
         <!-- Action Buttons: Generate Problem and Settings -->
-        <div class="flex justify-center mb-4 space-x-4 button-row">
+        <!-- Changed to flex-col for mobile, sm:flex-row for larger screens, added space-y for vertical spacing -->
+        <div class="flex flex-col sm:flex-row justify-center mb-4 space-y-4 sm:space-y-0 sm:space-x-4 button-row">
             <button id="generateProblemBtn"
-                    class="relative bg-blue-600 text-white font-bold py-3 px-8 rounded-full shadow-lg flex items-center justify-center text-lg">
+                    class="relative bg-blue-600 text-white font-bold py-3 px-8 rounded-full shadow-lg flex items-center justify-center text-lg w-full sm:w-auto">
                 <span id="buttonText">Generate New Problem</span>
                 <div id="loadingSpinner" class="loading-spinner hidden"></div>
             </button>
             <button id="settingsBtn"
-                    class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-full shadow-lg text-lg">
+                    class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-full shadow-lg text-lg w-full sm:w-auto">
                 Settings
             </button>
         </div>
 
         <!-- Tab Navigation for Problem and Solution -->
-        <div class="flex border-b border-gray-200 -mx-2 sm:-mx-0 justify-center tab-navigation">
+        <!-- Adjusted margins to use padding from parent container -->
+        <div class="flex border-b border-gray-200 justify-center tab-navigation">
             <button id="problemTabBtn" class="tab-button active">
                 Problem Statement
             </button>

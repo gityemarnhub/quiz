@@ -1,585 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solar System Problem Generator</title>
-    <!-- Tailwind CSS CDN for styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font from Google Fonts for modern typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    
-    <!-- Lucide Icons CDN for vector icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-
-    <!-- MathJax Configuration and CDN for rendering LaTeX mathematics -->
-    <script>
-        MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']], // Inline math with single dollar signs
-                displayMath: [['$$', '$$'], ['\\[', '\\]']] // Display math with double dollar signs
-            },
-            svg: {
-                fontCache: 'global' // Caches fonts globally for better performance
-            }
-        };
-    </script>
-    <script type="text/javascript" id="MathJax-script" async
-      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-    </script>
-    
-    <!-- Marked.js CDN for Markdown parsing -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link
+      rel="stylesheet"
+      as="style"
+      onload="this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Space+Grotesk%3Awght%40400%3B500%3B700"
+    />
+    <title>Solar Sizing Practice</title>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <style>
-        /* Base styles for HTML and Body to ensure full height and prevent horizontal overflow */
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow-x: hidden; /* Prevent horizontal scrollbar */
-        }
-        /* Body styling: font, background, and flexbox for centering the container */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #ffffff; /* White background to fill potential gaps */
-            display: flex; /* Use flexbox to center content */
-            justify-content: center; /* Center container horizontally */
-            align-items: flex-start; /* Align container to the top */
-            min-height: 100vh; /* Ensure body takes full viewport height */
-            padding: 1rem 0; /* Add top and bottom padding for visual offset */
-            box-sizing: border-box; /* Include padding in height calculation */
-        }
-        /* Container styling: responsive width, centering, shadow, and flex layout */
-        .container {
-            width: 100%; /* Take full width of its parent (body) */
-            max-width: 800px; /* Limit content width for readability */
-            margin: 0 auto; /* Center the container itself */
-            padding: 0;
-            background-color: #ffffff;
-            border-radius: 16px; /* Rounded corners for the card effect */
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Soft shadow for depth */
-            display: flex;
-            flex-direction: column;
-            gap: 1rem; /* Space between sections (header, buttons, tabs) */
-            flex-shrink: 0; /* Prevent container from shrinking below its content */
-        }
-        /* Styling for the content display divs (where problem/solution appear) */
-        .markdown-content {
-            background-color: #f8fafc; /* Light gray background */
-            border: 1px solid #cbd5e1; /* Subtle border */
-            padding: 1.25rem;
-            border-radius: 8px;
-            font-size: 1rem;
-            line-height: 1.6;
-            color: #334155;
-            min-height: 250px; /* Minimum height for content area */
-            max-height: 600px; /* Maximum height before scrolling */
-            overflow-y: auto; /* Enable vertical scrolling */
-            flex-grow: 1; /* Allow content to grow within the tab-content */
-        }
-        
-        /* Button common styles for transition, shadow, and hover effects */
-        button {
-            transition: all 0.3s ease-in-out; /* Smooth transitions for hover effects */
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); /* Initial subtle shadow */
-            position: relative; /* For positioning loading spinner */
-            overflow: hidden; /* Ensures content doesn't overflow rounded corners */
-        }
-        button:hover {
-            transform: translateY(-3px); /* Slight lift on hover */
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4); /* Enhanced shadow on hover */
-            background-color: #2563eb; /* Darker blue on hover */
-        }
-        button:disabled {
-            background-color: #93c5fd; /* Lighter blue for disabled state */
-            cursor: not-allowed; /* Indicate non-interactable state */
-            box-shadow: none; /* No shadow when disabled */
-            transform: none; /* No transform when disabled */
-        }
-        /* Loading spinner animation */
-        .loading-spinner {
-            border: 3px solid rgba(255, 255, 255, 0.3); /* Translucent white border */
-            border-left-color: #ffffff; /* Solid white for the spinning part */
-            border-radius: 50%; /* Makes it a circle */
-            width: 20px;
-            height: 20px;
-            animation: spin 0.8s linear infinite; /* Spin animation */
-            position: absolute;
-            left: 1rem; /* Position to the left of button text */
-            top: 50%;
-            transform: translateY(-50%); /* Vertically center the spinner */
-        }
-        @keyframes spin {
-            0% { transform: translateY(-50%) rotate(0deg); }
-            100% { transform: translateY(-50%) rotate(360deg); }
-        }
-        /* Custom scrollbar for markdown content divs */
-        .markdown-content::-webkit-scrollbar {
-            width: 8px; /* Width of the scrollbar */
-        }
-        .markdown-content::-webkit-scrollbar-track {
-            background: #f1f1f1; /* Background of the scrollbar track */
-            border-radius: 10px;
-        }
-        .markdown-content::-webkit-scrollbar-thumb {
-            background: #cbd5e1; /* Color of the scrollbar thumb */
-            border-radius: 10px;
-        }
-        .markdown-content::-webkit-scrollbar-thumb:hover {
-            background: #a0aec0; /* Darker color on hover */
-        }
-
-        /* Tab specific styles */
-        .tab-button {
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px 8px 0 0; /* Rounded top corners */
-            font-weight: 600;
-            color: #64748b; /* Gray text color */
-            background-color: #e2e8f0; /* Light gray background */
-            transition: all 0.2s ease-in-out;
-            cursor: pointer;
-            border-bottom: 2px solid transparent; /* Transparent bottom border for active indicator */
-        }
-        .tab-button.active {
-            color: #1e3a8a; /* Dark blue for active tab text */
-            background-color: #ffffff; /* White background for active tab */
-            border-bottom: 2px solid #3b82f6; /* Blue bottom border for active indicator */
-        }
-        .tab-button:not(.active):hover {
-            background-color: #dce4ed; /* Slightly darker background on hover for inactive tabs */
-        }
-        .tab-content {
-            display: none; /* Hidden by default */
-            padding: 1.25rem 1.5rem; /* Consistent padding for content within tabs */
-            border-top: 1px solid #e2e8f0; /* Separator from tabs */
-            background-color: #ffffff;
-            border-radius: 0 0 16px 16px; /* Match container bottom radius */
-            flex-grow: 1; /* Allows content to expand */
-            flex-direction: column; /* Content inside tabs flows vertically */
-        }
-        .tab-content.active {
-            display: flex; /* Show active tab content */
-        }
-        /* Header styles for the application title and subtitle */
-        .app-header {
-            padding: 1rem 1.5rem; /* Horizontal padding for header content */
-            background-color: #ffffff;
-            border-radius: 16px 16px 0 0; /* Match top border-radius of container */
-            margin-bottom: 0.5rem; /* Space below header */
-            text-align: center;
-        }
-        .app-header .title {
-            font-size: 1.875rem; /* Larger font size for title */
-            font-weight: 800; /* Extra bold */
-            color: #1a202c; /* Dark text color */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem; /* Space between icon and text */
-            margin-bottom: 0.5rem;
-        }
-        .app-header .subtitle {
-            font-size: 0.95rem;
-            color: #4a5568; /* Slightly lighter text color */
-            line-height: 1.5;
-            max-width: 600px;
-            margin: 0 auto; /* Center subtitle text */
-        }
-
-        /* Adjust button row and tab navigation margins for alignment within container */
-        /* Removed negative margins for better mobile alignment */
-        .button-row, .tab-navigation {
-            margin: 0 0; /* Reset margins */
-            padding: 0 1.5rem; /* Use padding for inner spacing */
-        }
-        .tab-navigation {
-            border-radius: 8px 8px 0 0;
-            overflow: hidden; /* Hides any overflow from rounded corners */
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05); /* Shadow for the entire tab group */
-        }
-        .tab-navigation .tab-button {
-            box-shadow: none; /* Remove individual button box-shadow */
-        }
-
-        /* Modal Styles for settings popup */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black background */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000; /* Ensure modal is on top */
-            backdrop-filter: blur(5px); /* Blur effect for background */
-            -webkit-backdrop-filter: blur(5px); /* Safari compatibility */
-        }
-        .modal-content {
-            background-color: #ffffff;
-            padding: 2rem;
-            border-radius: 16px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); /* Stronger shadow for modal */
-            width: 90%;
-            max-width: 400px; /* Max width for modal */
-            max-height: 90vh; /* Max height for modal content */
-            overflow-y: auto; /* Enable scrolling if content overflows */
-            position: relative;
-        }
-        .modal-close-button {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #64748b; /* Gray close button */
-        }
-        .modal-close-button:hover {
-            color: #334155; /* Darker gray on hover */
-        }
-        /* Checkbox group styling within the modal */
-        .checkbox-group {
-            margin-bottom: 1.5rem;
-        }
-        .checkbox-group label {
-            display: flex;
-            align-items: center;
-            margin-bottom: 0.5rem;
-            font-weight: 400;
-            color: #334155;
-            cursor: pointer;
-        }
-        .checkbox-group input[type="checkbox"] {
-            margin-right: 0.75rem;
-            width: 1.25rem;
-            height: 1.25rem;
-            accent-color: #3b82f6; /* Blue accent color for checkboxes */
-        }
+      body {
+        font-family: "Inter", sans-serif; /* Using Inter for consistency */
+      }
+      /* Custom styles for rounded corners and shadows */
+      .card {
+        border-radius: 0.75rem; /* rounded-lg */
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+      }
+      .btn {
+        border-radius: 0.5rem; /* rounded-md */
+        padding: 0.75rem 1.5rem;
+        transition: background-color 0.2s ease-in-out;
+      }
+      .btn:hover {
+        background-color: #3b82f6; /* Blue 500 */
+      }
     </style>
-</head>
-<body>
-    <div class="container px-4"> <!-- Added px-4 for horizontal padding on all screen sizes -->
-        <!-- Application Header Section -->
-        <div class="app-header">
-            <h1 class="title">
-                <i data-lucide="solar-panel" class="w-8 h-8 text-blue-600"></i>
-                Solar Sizing Assistant
-            </h1>
-            <p class="subtitle">
-                Generate tailored problems and step-by-step solutions for sizing loads, inverters, batteries, breakers, and solar panels.
-            </p>
+  </head>
+  <body>
+    <div
+      class="relative flex size-full min-h-screen flex-col bg-slate-50 justify-between group/design-root overflow-x-hidden"
+      style='font-family: "Space Grotesk", "Noto Sans", sans-serif;'
+    >
+      <div>
+        <div class="flex items-center bg-slate-50 p-4 pb-2 justify-between">
+          <h2 class="text-[#0d141c] text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pl-12 pr-12">Solar Sizing Practice</h2>
         </div>
-
-        <!-- Action Buttons: Generate Problem and Settings -->
-        <!-- Changed to flex-col for mobile, sm:flex-row for larger screens, added space-y for vertical spacing -->
-        <div class="flex flex-col sm:flex-row justify-center mb-4 space-y-4 sm:space-y-0 sm:space-x-4 button-row">
-            <button id="generateProblemBtn"
-                    class="relative bg-blue-600 text-white font-bold py-3 px-8 rounded-full shadow-lg flex items-center justify-center text-lg w-full sm:w-auto">
-                <span id="buttonText">Generate New Problem</span>
-                <div id="loadingSpinner" class="loading-spinner hidden"></div>
-            </button>
-            <button id="settingsBtn"
-                    class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-full shadow-lg text-lg w-full sm:w-auto">
-                Settings
-            </button>
-        </div>
-
-        <!-- Tab Navigation for Problem and Solution -->
-        <!-- Adjusted margins to use padding from parent container -->
-        <div class="flex border-b border-gray-200 justify-center tab-navigation">
-            <button id="problemTabBtn" class="tab-button active">
-                Problem Statement
-            </button>
-            <button id="solutionTabBtn" class="tab-button">
-                Solution
-            </button>
-        </div>
-
-        <!-- Tab Content - Problem Display Area -->
-        <div id="problemContent" class="tab-content active">
-            <label for="problemDisplay" class="sr-only">Problem Statement:</label>
-            <div id="problemDisplay"
-                         class="markdown-content"
-                         >The generated problem will appear here...</div>
-        </div>
-
-        <!-- Tab Content - Solution Display Area -->
-        <div id="solutionContent" class="tab-content">
-            <label for="solutionDisplay" class="sr-only">Solution:</label>
-            <div id="solutionDisplay"
-                         class="markdown-content"
-                         >The solution will appear here after the problem is generated...</div>
-        </div>
-    </div>
-
-    <!-- Settings Modal Overlay -->
-    <div id="settingsModal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <button class="modal-close-button" id="closeSettingsBtn">&times;</button>
-            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Problem Type Settings</h2>
-            
-            <h3 class="text-xl font-semibold text-gray-700 mb-3">Include in Problem:</h3>
-            <div class="checkbox-group grid grid-cols-1 gap-2 mb-6">
-                <label><input type="checkbox" id="includeLoads" checked> Total Daily Energy Consumption (Load)</label>
-                <label><input type="checkbox" id="includeInverter" checked> Inverter Size</label>
-                <label><input type="checkbox" id="includeBattery" checked> Battery Bank Capacity</label>
-                <label><input type="checkbox" id="includeBreaker" checked> Breaker Sizes</label>
-                <label><input type="checkbox" id="includeSolar" checked> Solar Panel Sizing</label>
+        <h2 class="text-[#0d141c] tracking-light text-[28px] font-bold leading-tight px-4 text-center pb-3 pt-5">Master Solar System Sizing</h2>
+        <p class="text-[#0d141c] text-base font-normal leading-normal pb-3 pt-1 px-4 text-center">
+          Sharpen your skills with practice problems for each component of a solar power system.
+        </p>
+        <h2 class="text-[#0d141c] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Choose a Component</h2>
+        <div class="grid grid-cols-[repeat(auto-fit,minmax(158px,1fr))] gap-3 p-4">
+          <!-- Loads Card -->
+          <div class="component-card flex flex-1 gap-3 rounded-lg border border-[#cedae8] bg-slate-50 p-4 items-center cursor-pointer card" data-component="Loads">
+            <div class="text-[#0d141c]" data-icon="House" data-size="24px" data-weight="regular">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                <path
+                  d="M218.83,103.77l-80-75.48a1.14,1.14,0,0,1-.11-.11,16,16,0,0,0-21.53,0l-.11.11L37.17,103.77A16,16,0,0,0,32,115.55V208a16,16,0,0,0,16,16H96a16,16,0,0,0,16-16V160h32v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V115.55A16,16,0,0,0,218.83,103.77ZM208,208H160V160a16,16,0,0,0-16-16H112a16,16,0,0,0-16,16v48H48V115.55l.11-.1L128,40l79.9,75.43.11.1Z"
+                ></path>
+              </svg>
             </div>
-            
-            <div class="flex justify-end">
-                <button id="saveSettingsBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg mr-2">
-                    Save Settings
-                </button>
-                <button id="cancelSettingsBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-6 rounded-lg">
-                    Cancel
-                </button>
+            <h2 class="text-[#0d141c] text-base font-bold leading-tight">Loads</h2>
+          </div>
+          <!-- Inverters Card -->
+          <div class="component-card flex flex-1 gap-3 rounded-lg border border-[#cedae8] bg-slate-50 p-4 items-center cursor-pointer card" data-component="Inverters">
+            <div class="text-[#0d141c]" data-icon="Gear" data-size="24px" data-weight="regular">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                <path
+                  d="M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Zm88-29.84q.06-2.16,0-4.32l14.92-18.64a8,8,0,0,0,1.48-7.06,107.21,107.21,0,0,0-10.88-26.25,8,8,0,0,0-6-3.93l-23.72-2.64q-1.48-1.56-3-3L186,40.54a8,8,0,0,0-3.94-6,107.71,107.71,0,0,0-26.25-10.87,8,8,0,0,0-7.06,1.49L130.16,40Q128,40,125.84,40L107.2,25.11a8,8,0,0,0-7.06-1.48A107.6,107.6,0,0,0,73.89,34.51a8,8,0,0,0-3.93,6L67.32,64.27q-1.56,1.49-3,3L40.54,70a8,8,0,0,0-6,3.94,107.71,107.71,0,0,0-10.87,26.25,8,8,0,0,0,1.49,7.06L40,125.84Q40,128,40,130.16L25.11,148.8a8,8,0,0,0-1.48,7.06,107.21,107.21,0,0,0,10.88,26.25,8,8,0,0,0,6,3.93l23.72,2.64q1.49,1.56,3,3L70,215.46a8,8,0,0,0,3.94,6,107.71,107.71,0,0,0,26.25,10.87,8,8,0,0,0,7.06-1.49L125.84,216q2.16.06,4.32,0l18.64,14.92a8,8,0,0,0,7.06,1.48,107.21,107.21,0,0,0,26.25-10.88,8,8,0,0,0,3.93-6l2.64-23.72q1.56-1.48,3-3L215.46,186a8,8,0,0,0,6-3.94,107.71,107.71,0,0,0,10.87-26.25,8,8,0,0,0-1.49-7.06Zm-16.1-6.5a73.93,73.93,0,0,1,0,8.68,8,8,0,0,0,1.74,5.48l14.19,17.73a91.57,91.57,0,0,1-6.23,15L187,173.11a8,8,0,0,0-5.1,2.64,74.11,74.11,0,0,1-6.14,6.14,8,8,0,0,0-2.64,5.1l-2.51,22.58a91.32,91.32,0,0,1-15,6.23l-17.74-14.19a8,8,0,0,0-5-1.75h-.48a73.93,73.93,0,0,1-8.68,0,8,8,0,0,0-5.48,1.74L100.45,215.8a91.57,91.57,0,0,1-15-6.23L82.89,187a8,8,0,0,0-2.64-5.1,74.11,74.11,0,0,1-6.14-6.14,8,8,0,0,0-5.1-2.64L46.43,170.6a91.32,91.32,0,0,1-6.23-15l14.19-17.74a8,8,0,0,0,1.74-5.48,73.93,73.93,0,0,1,0-8.68,8,8,0,0,0-1.74-5.48L40.2,100.45a91.57,91.57,0,0,1,6.23-15L69,82.89a8,8,0,0,0,5.1-2.64,74.11,74.11,0,0,1,6.14-6.14A8,8,0,0,0,82.89,69L85.4,46.43a91.32,91.32,0,0,1,15-6.23l17.74,14.19a8,8,0,0,0,5.48,1.74,73.93,73.93,0,0,1,8.68,0,8,8,0,0,0,5.48-1.74L155.55,40.2a91.57,91.57,0,0,1,15,6.23L173.11,69a8,8,0,0,0,2.64,5.1,74.11,74.11,0,0,1,6.14,6.14,8,8,0,0,0,5.1,2.64l22.58,2.51a91.32,91.32,0,0,1,6.23,15l-14.19,17.74A8,8,0,0,0,199.87,123.66Z"
+                ></path>
+              </svg>
             </div>
+            <h2 class="text-[#0d141c] text-base font-bold leading-tight">Inverters</h2>
+          </div>
+          <!-- Batteries Card -->
+          <div class="component-card flex flex-1 gap-3 rounded-lg border border-[#cedae8] bg-slate-50 p-4 items-center cursor-pointer card" data-component="Batteries">
+            <div class="text-[#0d141c]" data-icon="BatteryHigh" data-size="24px" data-weight="regular">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                <path
+                  d="M200,56H32A24,24,0,0,0,8,80v96a24,24,0,0,0,24,24H200a24,24,0,0,0,24-24V80A24,24,0,0,0,200,56Zm8,120a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V80a8,8,0,0,1,8-8H200a8,8,0,0,1,8,8ZM144,96v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0Zm-40,0v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0ZM64,96v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0Zm192,0v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0Z"
+                ></path>
+              </svg>
+            </div>
+            <h2 class="text-[#0d141c] text-base font-bold leading-tight">Batteries</h2>
+          </div>
+          <!-- Breakers Card -->
+          <div class="component-card flex flex-1 gap-3 rounded-lg border border-[#cedae8] bg-slate-50 p-4 items-center cursor-pointer card" data-component="Breakers">
+            <div class="text-[#0d141c]" data-icon="Power" data-size="24px" data-weight="regular">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                <path
+                  d="M120,128V48a8,8,0,0,1,16,0v80a8,8,0,0,1-16,0Zm60.37-78.7a8,8,0,0,0-8.74,13.4C194.74,77.77,208,101.57,208,128a80,80,0,0,1-160,0c0-26.43,13.26-50.23,36.37-65.3a8,8,0,0,0-8.74-13.4C47.9,67.38,32,96.06,32,128a96,96,0,0,0,192,0C224,96.06,208.1,67.38,180.37,49.3Z"
+                ></path>
+              </svg>
+            </div>
+            <h2 class="text-[#0d141c] text-base font-bold leading-tight">Breakers</h2>
+          </div>
+          <!-- Solar Panels Card -->
+          <div class="component-card flex flex-1 gap-3 rounded-lg border border-[#cedae8] bg-slate-50 p-4 items-center cursor-pointer card" data-component="Solar Panels">
+            <div class="text-[#0d141c]" data-icon="Sun" data-size="24px" data-weight="regular">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                <path
+                  d="M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm72,88a64,64,0,1,1-64-64A64.07,64.07,0,0,1,192,128Zm-16,0a48,48,0,1,0-48,48A48.05,48.05,0,0,0,176,128ZM58.34,69.66A8,8,0,0,0,69.66,58.34l-16-16A8,8,0,0,0,42.34,53.66Zm0,116.68-16,16a8,8,0,0,0,11.32,11.32l16-16a8,8,0,0,0-11.32-11.32ZM192,72a8,8,0,0,0,5.66-2.34l16-16a8,8,0,0,0-11.32-11.32l-16,16A8,8,0,0,0,192,72Zm5.66,114.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32-11.32ZM48,128a8,8,0,0,0-8-8H16a8,8,0,0,0,0,16H40A8,8,0,0,0,48,128Zm80,80a8,8,0,0,0-8,8v24a8,8,0,0,0,16,0V216A8,8,0,0,0,128,208Zm112-88H216a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16Z"
+                ></path>
+              </svg>
+            </div>
+            <h2 class="text-[#0d141c] text-base font-bold leading-tight">Solar Panels</h2>
+          </div>
+          <!-- Complete Set Card -->
+          <div class="component-card flex flex-1 gap-3 rounded-lg border border-[#cedae8] bg-slate-50 p-4 items-center cursor-pointer card" data-component="Complete Set">
+            <div class="text-[#0d141c]" data-icon="Package" data-size="24px" data-weight="regular">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                <path d="M224,112H168a8,8,0,0,1-8-8V48a16,16,0,0,0-16-16H104A16,16,0,0,0,88,48v56a8,8,0,0,1-8,8H32a8,8,0,0,0-8,8v80a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V120A8,8,0,0,0,224,112ZM104,48h40v48H104Zm112,144H40V128H216v64Z"></path>
+              </svg>
+            </div>
+            <h2 class="text-[#0d141c] text-base font-bold leading-tight">Complete Set</h2>
+          </div>
         </div>
-    </div>
+      </div>
+      <div>
+        <div class="flex gap-2 border-t border-[#e7edf4] bg-slate-50 px-4 pb-3 pt-2">
+          <a class="just flex flex-1 flex-col items-center justify-end gap-1 rounded-full text-[#0d141c]" href="#">
+            <div class="text-[#0d141c] flex h-8 items-center justify-center" data-icon="House" data-size="24px" data-weight="fill">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                <path
+                  d="M224,115.55V208a16,16,0,0,1-16,16H168a16,16,0,0,1-16-16V168a8,8,0,0,0-8-8H112a8,8,0,0,0-8,8v40a16,16,0,0,1-16,16H48a16,16,0,0,1-16-16V115.55a16,16,0,0,1,5.17-11.78l80-75.48.11-.11a16,16,0,0,1,21.53,0,1.14,1.14,0,0,0,.11.11l80,75.48A16,16,0,0,1,224,115.55Z"
+                ></path>
+              </svg>
+            </div>
+          </a>
+          <a class="just flex flex-1 flex-col items-center justify-end gap-1 text-[#49709c]" href="#">
+            <div class="text-[#49709c] flex h-8 items-center justify-center" data-icon="MagnifyingGlass" data-size="24px" data-weight="regular">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
+              </svg>
+            </div>
+          </a>
+          <a class="just flex flex-1 flex-col items-center justify-end gap-1 text-[#49709c]" href="#">
+            <div class="text-[#49709c] flex h-8 items-center justify-center" data-icon="BookmarkSimple" data-size="24px" data-weight="regular">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                <path
+                  d="M184,32H72A16,16,0,0,0,56,48V224a8,8,0,0,0,12.24,6.78L128,193.43l59.77,37.35A8,8,0,0,0,200,224V48A16,16,0,0,0,184,32Zm0,177.57-51.77-32.35a8,8,0,0,0-8.48,0L72,209.57V48H184Z"
+                ></path>
+              </svg>
+            </div>
+          </a>
+          <a class="just flex flex-1 flex-col items-center justify-end gap-1 text-[#49709c]" href="#">
+            <div class="text-[#49709c] flex h-8 items-center justify-center" data-icon="User" data-size="24px" data-weight="regular">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                <path
+                  d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"
+                ></path>
+              </svg>
+            </div>
+          </a>
+        </div>
+        <div class="h-5 bg-slate-50"></div>
+      </div>
 
-    <script>
-        // Ensure the script runs only after the DOM is fully loaded
+      <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialize Lucide icons across the document
-            lucide.createIcons();
+          // Get all component cards
+          const componentCards = document.querySelectorAll('.component-card');
 
-            // Get references to all necessary DOM elements
-            const generateProblemBtn = document.getElementById('generateProblemBtn');
-            const settingsBtn = document.getElementById('settingsBtn');
-            const problemDisplay = document.getElementById('problemDisplay');
-            const solutionDisplay = document.getElementById('solutionDisplay');
-            const loadingSpinner = document.getElementById('loadingSpinner');
-            const buttonText = document.getElementById('buttonText');
-
-            const problemTabBtn = document.getElementById('problemTabBtn');
-            const solutionTabBtn = document.getElementById('solutionTabBtn');
-            const problemContent = document.getElementById('problemContent');
-            const solutionContent = document.getElementById('solutionContent');
-
-            const settingsModal = document.getElementById('settingsModal');
-            const closeSettingsBtn = document.getElementById('closeSettingsBtn');
-            const saveSettingsBtn = document.getElementById('saveSettingsBtn');
-            const cancelSettingsBtn = document.getElementById('cancelSettingsBtn');
-
-            // Checkbox elements for problem components in the settings modal
-            const includeLoads = document.getElementById('includeLoads');
-            const includeInverter = document.getElementById('includeInverter');
-            const includeBattery = document.getElementById('includeBattery');
-            const includeBreaker = document.getElementById('includeBreaker');
-            const includeSolar = document.getElementById('includeSolar');
-
-            // State object to store current settings for problem components
-            let currentSettings = {
-                componentsToInclude: {
-                    loads: true,
-                    inverter: true,
-                    battery: true,
-                    breaker: true,
-                    solar: true
-                }
-            };
-
-            /**
-             * Loads the current settings from `currentSettings` state into the modal's checkbox form.
-             */
-            function loadSettingsToForm() {
-                includeLoads.checked = currentSettings.componentsToInclude.loads;
-                includeInverter.checked = currentSettings.componentsToInclude.inverter;
-                includeBattery.checked = currentSettings.componentsToInclude.battery;
-                includeBreaker.checked = currentSettings.componentsToInclude.breaker;
-                includeSolar.checked = currentSettings.componentsToInclude.solar;
-            }
-
-            /**
-             * Saves the current selections from the modal's checkbox form into the `currentSettings` state.
-             */
-            function saveSettingsFromForm() {
-                currentSettings.componentsToInclude.loads = includeLoads.checked;
-                currentSettings.componentsToInclude.inverter = includeInverter.checked;
-                currentSettings.componentsToInclude.battery = includeBattery.checked;
-                currentSettings.componentsToInclude.breaker = includeBreaker.checked;
-                currentSettings.componentsToInclude.solar = includeSolar.checked;
-            }
-
-            /**
-             * Switches the active tab between 'problem' and 'solution'.
-             * Updates active classes for buttons and content divs.
-             * @param {string} tabName - The name of the tab to activate ('problem' or 'solution').
-             */
-            function showTab(tabName) {
-                // Remove active class from all tab buttons and content divs
-                problemTabBtn.classList.remove('active');
-                solutionTabBtn.classList.remove('active');
-                problemContent.classList.remove('active');
-                solutionContent.classList.remove('active');
-
-                // Add active class to the selected tab button and its content
-                if (tabName === 'problem') {
-                    problemTabBtn.classList.add('active');
-                    problemContent.classList.add('active');
-                } else if (tabName === 'solution') {
-                    solutionTabBtn.classList.add('active');
-                    solutionContent.classList.add('active');
-                }
-            }
-
-            // Event listeners for tab buttons to switch displayed content
-            problemTabBtn.addEventListener('click', () => showTab('problem'));
-            solutionTabBtn.addEventListener('click', () => showTab('solution'));
-
-            // Event listener for the settings button to open the modal
-            settingsBtn.addEventListener('click', () => {
-                loadSettingsToForm(); // Load current settings into the form before showing
-                settingsModal.classList.remove('hidden'); // Display the modal
+          // Add click event listener to each card
+          componentCards.forEach(card => {
+            card.addEventListener('click', () => {
+              const componentType = card.dataset.component;
+              // Navigate to problem_solution.html with the component type as a URL parameter
+              window.location.href = `problem_solution.html?component=${encodeURIComponent(componentType)}`;
             });
-
-            // Event listener for the close button within the settings modal
-            closeSettingsBtn.addEventListener('click', () => {
-                settingsModal.classList.add('hidden'); // Hide the modal
-            });
-            // Event listener for the cancel button within the settings modal
-            cancelSettingsBtn.addEventListener('click', () => {
-                settingsModal.classList.add('hidden'); // Hide the modal without saving changes
-            });
-
-            // Event listener for the save settings button
-            saveSettingsBtn.addEventListener('click', () => {
-                saveSettingsFromForm(); // Save the selected settings from the form
-                settingsModal.classList.add('hidden'); // Hide the modal
-            });
-
-            // Event listener for the main "Generate New Problem" button
-            generateProblemBtn.addEventListener('click', async () => {
-                // Clear previous content and show a "Generating..." message
-                problemDisplay.innerHTML = '<p class="text-gray-500 text-center">Generating problem...</p>';
-                solutionDisplay.innerHTML = '<p class="text-gray-500 text-center">Generating solution...</p>';
-
-                // Show loading state: update button text, display spinner, and disable button
-                buttonText.textContent = 'Generating...';
-                loadingSpinner.classList.remove('hidden'); // Show spinner
-                generateProblemBtn.disabled = true;
-
-                // Automatically switch to the problem tab when a new problem is being generated
-                showTab('problem');
-
-                try {
-                    // Dynamically build the list of calculations to include based on user settings
-                    let calculationsToInclude = [];
-                    if (currentSettings.componentsToInclude.loads) calculationsToInclude.push("1. Total daily energy consumption (load).");
-                    if (currentSettings.componentsToInclude.inverter) calculationsToInclude.push("2. Required inverter size.");
-                    if (currentSettings.componentsToInclude.battery) calculationsToInclude.push("3. Required battery bank capacity (Ah and kWh).");
-                    if (currentSettings.componentsToInclude.breaker) calculationsToInclude.push("4. Appropriate breaker sizes for main DC and AC lines.");
-                    if (currentSettings.componentsToInclude.solar) calculationsToInclude.push("5. Number of solar panels and total solar array size (kWp).");
-
-                    // Fallback: If no components are selected, include all calculations by default
-                    if (calculationsToInclude.length === 0) {
-                        calculationsToInclude.push("1. Total daily energy consumption (load).");
-                        calculationsToInclude.push("2. Required inverter size.");
-                        calculationsToInclude.push("3. Required battery bank capacity (Ah and kWh).");
-                        calculationsToInclude.push("4. Appropriate breaker sizes for main DC and AC lines.");
-                        calculationsToInclude.push("5. Number of solar panels and total solar array size (kWp).");
-                    }
-                    const calculationsPrompt = calculationsToInclude.join('\\n'); // Join with newline for the prompt
-
-
-                    // Define the prompt for the AI, explicitly asking for Markdown and LaTeX
-                    const prompt = `
-                    Generate a solar system problem, fully formatted using Markdown.
-                    Include relevant headings, bullet points, and ensure all numerical values that would typically be part of a calculation are presented clearly.
-                    If any part of the solution or problem benefits from mathematical notation, use LaTeX syntax enclosed in single '$' for inline math and double '$$' for display math.
-
-                    The problem should involve calculating the following:
-                    ${calculationsPrompt}
-
-                    Provide a realistic scenario with appliance wattages, hours of use, sun-hours, battery depth of discharge (DoD), days of autonomy, system voltage, and panel specifications (e.g., 400W panels). These numerical parameters and appliance details should be chosen by you to create a coherent and solvable problem.
-
-                    Format the output as a JSON object with two keys: "problem" and "solution".
-                    The "problem" key should contain the full problem description in Markdown/LaTeX.
-                    The "solution" key should contain the step-by-step calculation and final answers for each component, also in Markdown/LaTeX. Ensure the solution *only* calculates the components requested in the problem.
-                    `;
-
-                    // API configuration for calling the Gemini API
-                    let chatHistory = [];
-                    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-                    const payload = {
-                        contents: chatHistory,
-                        generationConfig: {
-                            responseMimeType: "application/json", // Request JSON response
-                            responseSchema: { // Define the schema for the expected JSON output
-                                type: "OBJECT",
-                                properties: {
-                                    "problem": { "type": "STRING" },
-                                    "solution": { "type": "STRING" }
-                                },
-                                "propertyOrdering": ["problem", "solution"] // Define order of properties
-                            }
-                        }
-                    };
-
-                    const apiKey = "AIzaSyDx1ZjGvvA5N-HGyfqYSX_sbtyb23ZIrjE"; // Canvas will automatically provide the API key at runtime
-                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-                    // Make the API call to generate content
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    // Handle API response errors
-                    if (!response.ok) {
-                        const errorData = await response.json();
-                        throw new Error(`API Error: ${response.status} - ${errorData.error.message || 'Unknown error'}`);
-                    }
-
-                    const result = await response.json();
-
-                    // Parse and display the generated problem and solution
-                    if (result.candidates && result.candidates.length > 0 &&
-                        result.candidates[0].content && result.candidates[0].content.parts &&
-                        result.candidates[0].content.parts.length > 0) {
-
-                        const jsonString = result.candidates[0].content.parts[0].text;
-                        const parsedJson = JSON.parse(jsonString);
-
-                        // Convert Markdown to HTML and inject into display areas
-                        problemDisplay.innerHTML = marked.parse(parsedJson.problem || "Could not retrieve problem.");
-                        solutionDisplay.innerHTML = marked.parse(parsedJson.solution || "Could not retrieve solution.");
-
-                        // After injecting new content, tell MathJax to typeset the equations
-                        if (typeof MathJax !== 'undefined') {
-                            MathJax.typeset();
-                        }
-
-                    } else {
-                        // Display error if AI response structure is unexpected
-                        problemDisplay.innerHTML = "Error: No valid response from AI.";
-                        solutionDisplay.innerHTML = "Please try again.";
-                        console.error("Unexpected AI response structure:", result);
-                    }
-
-                } catch (error) {
-                    // Catch and display any errors during the generation process
-                    problemDisplay.innerHTML = `Failed to generate problem. Error: ${error.message}`;
-                    solutionDisplay.innerHTML = 'Please check your network connection or try again later.';
-                    console.error("Error generating problem:", error);
-                } finally {
-                    // Always reset button state regardless of success or failure
-                    buttonText.textContent = 'Generate New Problem';
-                    loadingSpinner.classList.add('hidden'); // Hide spinner
-                    generateProblemBtn.disabled = false; // Re-enable button
-                }
-            });
-
-            // Initial load of settings into the form when the page loads
-            loadSettingsToForm();
+          });
         });
-    </script>
-</body>
+      </script>
+    </div>
+  </body>
 </html>

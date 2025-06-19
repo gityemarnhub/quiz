@@ -7,8 +7,7 @@
     <!-- Tailwind CSS CDN for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Inter Font from Google Fonts for modern typography -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     
     <!-- Lucide Icons CDN for vector icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -44,186 +43,71 @@
         /* Body styling: font, background, and flexbox for centering the container */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #e6eef9; /* Softer, cooler background */
-            background-image: linear-gradient(135deg, #f7fbff 0%, #e6eef9 100%); /* Subtle gradient */
+            background-color: #ffffff; /* White background to fill potential gaps */
             display: flex; /* Use flexbox to center content */
             justify-content: center; /* Center container horizontally */
-            align-items: center; /* Center container vertically */
+            align-items: flex-start; /* Align container to the top */
             min-height: 100vh; /* Ensure body takes full viewport height */
-            padding: 1.5rem; /* Increased padding around the container */
+            padding: 1rem 0; /* Add top and bottom padding for visual offset */
             box-sizing: border-box; /* Include padding in height calculation */
-            position: relative;
-            overflow: hidden; /* For background pseudo-elements */
         }
-
-        /* Subtle background circles/elements for visual interest */
-        body::before, body::after {
-            content: '';
-            position: absolute;
-            border-radius: 50%;
-            opacity: 0.1;
-            filter: blur(50px);
-            z-index: -1;
-        }
-        body::before {
-            width: 300px;
-            height: 300px;
-            background-color: #9fe2bf; /* Greenish circle */
-            top: -50px;
-            left: -50px;
-        }
-        body::after {
-            width: 400px;
-            height: 400px;
-            background-color: #89cff0; /* Bluish circle */
-            bottom: -100px;
-            right: -100px;
-        }
-
         /* Container styling: responsive width, centering, shadow, and flex layout */
         .container {
-            width: 100%; /* Take full width of its parent */
-            max-width: 1000px; /* Increased max-width for more content space */
+            width: 100%; /* Take full width of its parent (body) */
+            max-width: 800px; /* Limit content width for readability */
             margin: 0 auto; /* Center the container itself */
+            padding: 0;
             background-color: #ffffff;
-            border-radius: 25px; /* More rounded corners */
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15); /* Deeper, more spread shadow */
-            border: 1px solid rgba(255, 255, 255, 0.5); /* Subtle white border */
-            backdrop-filter: blur(10px); /* Glassmorphism effect */
-            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px; /* Rounded corners for the card effect */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Soft shadow for depth */
             display: flex;
             flex-direction: column;
-            gap: 2rem; /* Increased space between sections */
+            gap: 1rem; /* Space between sections (header, buttons, tabs) */
             flex-shrink: 0; /* Prevent container from shrinking below its content */
-            padding: 2.5rem; /* Inner padding for the container */
-            position: relative;
-            z-index: 1; /* Ensure content is above background elements */
         }
-
-        /* Application Header Section */
-        .app-header {
-            text-align: center;
-            margin-bottom: 0.5rem;
+        /* Styling for the content display divs (where problem/solution appear) */
+        .markdown-content {
+            background-color: #f8fafc; /* Light gray background */
+            border: 1px solid #cbd5e1; /* Subtle border */
+            padding: 1.25rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #334155;
+            min-height: 250px; /* Minimum height for content area */
+            max-height: 600px; /* Maximum height before scrolling */
+            overflow-y: auto; /* Enable vertical scrolling */
+            flex-grow: 1; /* Allow content to grow within the tab-content */
         }
-        .app-header .title {
-            font-family: 'Orbitron', sans-serif; /* A more "techy" font for the title */
-            font-size: 2.5rem; /* Even larger title font size */
-            font-weight: 700; /* Bold */
-            color: #1a202c; /* Dark text color */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem; /* More space between icon and text */
-            margin-bottom: 0.75rem; /* More space below title */
-            line-height: 1.1;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.05); /* Subtle text shadow */
-        }
-        .app-header .title i {
-            transform: rotate(-10deg); /* Slightly rotate icon */
-            transition: transform 0.3s ease-in-out;
-        }
-        .app-header .title:hover i {
-            transform: rotate(10deg); /* Rotate on hover */
-        }
-        .app-header .subtitle {
-            font-size: 1.1rem; /* Slightly larger subtitle */
-            color: #4a5568; /* Slightly lighter text color */
-            line-height: 1.7;
-            max-width: 750px;
-            margin: 0 auto; /* Center subtitle text */
-        }
-
-        /* Action Buttons: Generate Problem and Settings */
-        .button-group {
-            display: flex;
-            flex-direction: column; /* Stack buttons by default on small screens */
-            gap: 1.25rem; /* Space between stacked buttons */
-            margin-bottom: 1.5rem; /* More space below buttons */
-            padding: 0 1.5rem; /* Consistent padding for button group */
-        }
-        @media (min-width: 640px) { /* On small screens and up, make buttons row */
-            .button-group {
-                flex-direction: row;
-                gap: 1.75rem; /* Space between side-by-side buttons */
-            }
-        }
-
+        
         /* Button common styles for transition, shadow, and hover effects */
-        .primary-button, .secondary-button {
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smoother cubic-bezier transition */
-            font-weight: 700; /* Bold */
-            border-radius: 9999px; /* Fully rounded/pill shape */
-            padding: 1rem 3rem; /* Even larger padding for better touch targets */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem; /* Larger font for buttons */
+        button {
+            transition: all 0.3s ease-in-out; /* Smooth transitions for hover effects */
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); /* Initial subtle shadow */
             position: relative; /* For positioning loading spinner */
             overflow: hidden; /* Ensures content doesn't overflow rounded corners */
-            flex-grow: 1; /* Allow buttons to grow and fill space */
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* More prominent shadow */
-            text-align: center;
-            white-space: nowrap; /* Prevent button text from wrapping */
-            text-transform: uppercase; /* Uppercase text for buttons */
-            letter-spacing: 0.05em; /* Slight letter spacing */
-            cursor: pointer;
         }
-        .primary-button {
-            background: linear-gradient(45deg, #4299e1, #3b82f6); /* Enhanced gradient blue */
-            color: #ffffff;
-            border: 2px solid #3b82f6; /* Subtle border */
+        button:hover {
+            transform: translateY(-3px); /* Slight lift on hover */
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4); /* Enhanced shadow on hover */
+            background-color: #2563eb; /* Darker blue on hover */
         }
-        .primary-button:hover {
-            transform: translateY(-5px) scale(1.02); /* More pronounced lift and slight scale on hover */
-            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.5); /* Enhanced shadow on hover */
-            background: linear-gradient(45deg, #3b82f6, #2563eb); /* Darker gradient on hover */
-        }
-        .primary-button:disabled {
-            background: #a3c9f7; /* Lighter blue for disabled state */
+        button:disabled {
+            background-color: #93c5fd; /* Lighter blue for disabled state */
             cursor: not-allowed; /* Indicate non-interactable state */
             box-shadow: none; /* No shadow when disabled */
             transform: none; /* No transform when disabled */
-            border-color: transparent;
         }
-
-        /* Pulsating animation for the generate button */
-        .primary-button:not(:disabled):hover .button-text {
-            animation: pulse-text 0.8s infinite alternate;
-        }
-        @keyframes pulse-text {
-            from { transform: scale(1); opacity: 1; }
-            to { transform: scale(1.03); opacity: 0.9; }
-        }
-
-        .secondary-button {
-            background-color: #cbd5e1; /* Lighter gray background */
-            color: #4a5568; /* Darker gray text */
-            border: 2px solid #cbd5e1;
-        }
-        .secondary-button:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 15px 40px rgba(100, 116, 139, 0.4);
-            background-color: #a0aec0; /* Darker gray on hover */
-            color: #ffffff;
-        }
-        .secondary-button:disabled {
-            background-color: #e2e8f0;
-            cursor: not-allowed;
-            box-shadow: none;
-            transform: none;
-            border-color: transparent;
-        }
-
         /* Loading spinner animation */
         .loading-spinner {
-            border: 4px solid rgba(255, 255, 255, 0.4); /* Thicker translucent white border */
+            border: 3px solid rgba(255, 255, 255, 0.3); /* Translucent white border */
             border-left-color: #ffffff; /* Solid white for the spinning part */
             border-radius: 50%; /* Makes it a circle */
-            width: 24px; /* Larger spinner */
-            height: 24px; /* Larger spinner */
+            width: 20px;
+            height: 20px;
             animation: spin 0.8s linear infinite; /* Spin animation */
             position: absolute;
-            left: 2rem; /* Position to the left of button text */
+            left: 1rem; /* Position to the left of button text */
             top: 50%;
             transform: translateY(-50%); /* Vertically center the spinner */
         }
@@ -231,86 +115,92 @@
             0% { transform: translateY(-50%) rotate(0deg); }
             100% { transform: translateY(-50%) rotate(360deg); }
         }
-
-        /* Tab Navigation for Problem and Solution */
-        .tab-navigation {
-            display: flex;
-            width: 100%;
-            background-color: #f0f2f5; /* Light background for tab bar */
-            border-radius: 15px; /* More rounded tab bar */
-            overflow: hidden;
-            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05); /* Inner shadow for depth */
-            padding: 0.5rem; /* Padding inside the tab bar */
+        /* Custom scrollbar for markdown content divs */
+        .markdown-content::-webkit-scrollbar {
+            width: 8px; /* Width of the scrollbar */
         }
+        .markdown-content::-webkit-scrollbar-track {
+            background: #f1f1f1; /* Background of the scrollbar track */
+            border-radius: 10px;
+        }
+        .markdown-content::-webkit-scrollbar-thumb {
+            background: #cbd5e1; /* Color of the scrollbar thumb */
+            border-radius: 10px;
+        }
+        .markdown-content::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0; /* Darker color on hover */
+        }
+
+        /* Tab specific styles */
         .tab-button {
-            flex: 1; /* Distribute tabs evenly */
-            padding: 1.2rem 0; /* More vertical padding */
-            font-weight: 700; /* Bold text for tabs */
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px 8px 0 0; /* Rounded top corners */
+            font-weight: 600;
             color: #64748b; /* Gray text color */
-            background-color: transparent;
-            border: none;
-            border-radius: 12px; /* Rounded individual tabs */
-            transition: all 0.3s ease-in-out;
+            background-color: #e2e8f0; /* Light gray background */
+            transition: all 0.2s ease-in-out;
             cursor: pointer;
-            text-align: center;
-            font-size: 1.05rem;
-            position: relative; /* For active indicator animation */
-            overflow: hidden; /* For hover effect */
+            border-bottom: 2px solid transparent; /* Transparent bottom border for active indicator */
         }
         .tab-button.active {
             color: #1e3a8a; /* Dark blue for active tab text */
             background-color: #ffffff; /* White background for active tab */
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08); /* Stronger shadow for active tab */
-            transform: translateY(-3px); /* Slight lift */
+            border-bottom: 2px solid #3b82f6; /* Blue bottom border for active indicator */
         }
         .tab-button:not(.active):hover {
-            color: #334155; /* Darker gray on hover for inactive tabs */
-            background-color: #e2e8f0; /* Light background on hover for inactive tabs */
-            transform: translateY(-2px); /* Subtle lift on hover */
+            background-color: #dce4ed; /* Slightly darker background on hover for inactive tabs */
         }
-
-        /* Content display divs (where problem/solution appear) */
-        .markdown-content {
-            background-color: #ffffff; /* White background for content */
-            border: 1px solid #e2e8f0; /* Subtle border */
-            padding: 2.5rem; /* Increased padding */
-            border-radius: 18px; /* Consistent rounded corners, larger */
-            font-size: 1.1rem; /* Slightly larger font for readability */
-            line-height: 1.8; /* Increased line height */
-            color: #334155;
-            min-height: 350px; /* Minimum height for content area */
-            max-height: 750px; /* Maximum height before scrolling */
-            overflow-y: auto; /* Enable vertical scrolling */
-            box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.04); /* Deeper inner shadow for content area */
-            border-left: 5px solid #3b82f6; /* Accent border on the left */
-        }
-        /* Tab Content areas */
         .tab-content {
             display: none; /* Hidden by default */
-            padding: 0 1.5rem 1.5rem 1.5rem; /* Padding for content within tabs (top handled by element) */
+            padding: 1.25rem 1.5rem; /* Consistent padding for content within tabs */
+            border-top: 1px solid #e2e8f0; /* Separator from tabs */
             background-color: #ffffff;
-            border-radius: 0 0 25px 25px; /* Match container bottom radius */
+            border-radius: 0 0 16px 16px; /* Match container bottom radius */
             flex-grow: 1; /* Allows content to expand */
             flex-direction: column; /* Content inside tabs flows vertically */
         }
         .tab-content.active {
             display: flex; /* Show active tab content */
         }
+        /* Header styles for the application title and subtitle */
+        .app-header {
+            padding: 1rem 1.5rem; /* Horizontal padding for header content */
+            background-color: #ffffff;
+            border-radius: 16px 16px 0 0; /* Match top border-radius of container */
+            margin-bottom: 0.5rem; /* Space below header */
+            text-align: center;
+        }
+        .app-header .title {
+            font-size: 1.875rem; /* Larger font size for title */
+            font-weight: 800; /* Extra bold */
+            color: #1a202c; /* Dark text color */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem; /* Space between icon and text */
+            margin-bottom: 0.5rem;
+        }
+        .app-header .subtitle {
+            font-size: 0.95rem;
+            color: #4a5568; /* Slightly lighter text color */
+            line-height: 1.5;
+            max-width: 600px;
+            margin: 0 auto; /* Center subtitle text */
+        }
 
-        /* Custom scrollbar for markdown content divs */
-        .markdown-content::-webkit-scrollbar {
-            width: 10px; /* Wider scrollbar */
+        /* Adjust button row and tab navigation margins for alignment within container */
+        /* Removed negative margins for better mobile alignment */
+        .button-row, .tab-navigation {
+            margin: 0 0; /* Reset margins */
+            padding: 0 1.5rem; /* Use padding for inner spacing */
         }
-        .markdown-content::-webkit-scrollbar-track {
-            background: #f0f2f5; /* Background of the scrollbar track */
-            border-radius: 10px;
+        .tab-navigation {
+            border-radius: 8px 8px 0 0;
+            overflow: hidden; /* Hides any overflow from rounded corners */
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05); /* Shadow for the entire tab group */
         }
-        .markdown-content::-webkit-scrollbar-thumb {
-            background: #a0aec0; /* Darker color for thumb */
-            border-radius: 10px;
-        }
-        .markdown-content::-webkit-scrollbar-thumb:hover {
-            background: #718096; /* Even darker color on hover */
+        .tab-navigation .tab-button {
+            box-shadow: none; /* Remove individual button box-shadow */
         }
 
         /* Modal Styles for settings popup */
@@ -320,118 +210,64 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.8); /* Even darker overlay */
+            background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent black background */
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1000; /* Ensure modal is on top */
-            backdrop-filter: blur(12px); /* More blur effect */
-            -webkit-backdrop-filter: blur(12px); /* Safari compatibility */
+            backdrop-filter: blur(5px); /* Blur effect for background */
+            -webkit-backdrop-filter: blur(5px); /* Safari compatibility */
         }
         .modal-content {
             background-color: #ffffff;
-            padding: 3rem; /* Even more padding */
-            border-radius: 25px; /* More rounded corners */
-            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4); /* Stronger shadow for modal */
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); /* Stronger shadow for modal */
             width: 90%;
-            max-width: 550px; /* Slightly wider modal */
+            max-width: 400px; /* Max width for modal */
             max-height: 90vh; /* Max height for modal content */
             overflow-y: auto; /* Enable scrolling if content overflows */
             position: relative;
-            animation: fadeInScale 0.4s ease-out forwards; /* Slightly slower fade in and scale animation */
-        }
-        @keyframes fadeInScale {
-            from { opacity: 0; transform: scale(0.9) translateY(30px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
         }
         .modal-close-button {
             position: absolute;
-            top: 1.8rem; /* Adjusted position */
-            right: 1.8rem; /* Adjusted position */
+            top: 1rem;
+            right: 1rem;
             background: none;
             border: none;
-            font-size: 2rem; /* Even larger close button */
+            font-size: 1.5rem;
             cursor: pointer;
             color: #64748b; /* Gray close button */
-            transition: color 0.2s ease-in-out;
         }
         .modal-close-button:hover {
             color: #334155; /* Darker gray on hover */
-            transform: rotate(90deg); /* Spin on hover */
         }
         /* Checkbox group styling within the modal */
         .checkbox-group {
-            margin-bottom: 2.5rem; /* More space below checkboxes */
+            margin-bottom: 1.5rem;
         }
         .checkbox-group label {
             display: flex;
             align-items: center;
-            margin-bottom: 1rem; /* More space between checkboxes */
-            font-weight: 500; /* Medium weight for labels */
+            margin-bottom: 0.5rem;
+            font-weight: 400;
             color: #334155;
             cursor: pointer;
-            font-size: 1.1rem;
-            transition: color 0.2s ease-in-out;
-        }
-        .checkbox-group label:hover {
-            color: #3b82f6; /* Blue on hover */
         }
         .checkbox-group input[type="checkbox"] {
-            margin-right: 1.25rem; /* More space for checkbox */
-            width: 1.5rem; /* Larger checkbox */
-            height: 1.5rem; /* Larger checkbox */
+            margin-right: 0.75rem;
+            width: 1.25rem;
+            height: 1.25rem;
             accent-color: #3b82f6; /* Blue accent color for checkboxes */
-            border-radius: 6px; /* More rounded checkbox */
-            cursor: pointer;
         }
-        .modal-footer-buttons {
-            display: flex;
-            flex-direction: column; /* Stack buttons on small screens */
-            gap: 1rem; /* Space between buttons */
-            margin-top: 2rem;
-        }
-        @media (min-width: 480px) {
-            .modal-footer-buttons {
-                flex-direction: row; /* Buttons side-by-side on larger modal sizes */
-                justify-content: flex-end; /* Align to the right */
-            }
-        }
-        .modal-footer-buttons button {
-            flex-grow: 1; /* Allow buttons to fill space */
-            padding: 0.85rem 1.75rem; /* Adjust button padding */
-            font-size: 1.1rem; /* Adjust button font size */
-            border-radius: 12px; /* Slightly less rounded than main buttons */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Subtle shadow for modal buttons */
-            transform: none; /* No lift for modal buttons */
-            transition: all 0.2s ease-in-out;
-        }
-        .modal-footer-buttons button:hover {
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
-            transform: translateY(-2px); /* Slight lift */
-        }
-        .modal-footer-buttons .save-button {
-            background-color: #3b82f6;
-            color: white;
-        }
-        .modal-footer-buttons .save-button:hover {
-            background-color: #2563eb;
-        }
-        .modal-footer-buttons .cancel-button {
-            background-color: #e2e8f0;
-            color: #334155;
-        }
-        .modal-footer-buttons .cancel-button:hover {
-            background-color: #cbd5e1;
-        }
-
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container px-4"> <!-- Added px-4 for horizontal padding on all screen sizes -->
         <!-- Application Header Section -->
         <div class="app-header">
             <h1 class="title">
-                <i data-lucide="solar-panel" class="w-12 h-12 text-blue-600"></i> <!-- Larger icon -->
+                <i data-lucide="solar-panel" class="w-8 h-8 text-blue-600"></i>
                 Solar Sizing Assistant
             </h1>
             <p class="subtitle">
@@ -440,18 +276,22 @@
         </div>
 
         <!-- Action Buttons: Generate Problem and Settings -->
-        <div class="button-group">
-            <button id="generateProblemBtn" class="primary-button">
+        <!-- Changed to flex-col for mobile, sm:flex-row for larger screens, added space-y for vertical spacing -->
+        <div class="flex flex-col sm:flex-row justify-center mb-4 space-y-4 sm:space-y-0 sm:space-x-4 button-row">
+            <button id="generateProblemBtn"
+                    class="relative bg-blue-600 text-white font-bold py-3 px-8 rounded-full shadow-lg flex items-center justify-center text-lg w-full sm:w-auto">
                 <span id="buttonText">Generate New Problem</span>
                 <div id="loadingSpinner" class="loading-spinner hidden"></div>
             </button>
-            <button id="settingsBtn" class="secondary-button">
+            <button id="settingsBtn"
+                    class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-full shadow-lg text-lg w-full sm:w-auto">
                 Settings
             </button>
         </div>
 
         <!-- Tab Navigation for Problem and Solution -->
-        <div class="tab-navigation">
+        <!-- Adjusted margins to use padding from parent container -->
+        <div class="flex border-b border-gray-200 justify-center tab-navigation">
             <button id="problemTabBtn" class="tab-button active">
                 Problem Statement
             </button>
@@ -465,7 +305,7 @@
             <label for="problemDisplay" class="sr-only">Problem Statement:</label>
             <div id="problemDisplay"
                          class="markdown-content"
-                         >Welcome to the Solar Sizing Assistant! Use this tool to generate problems and solutions related to solar system design. <br><br>Click <b>"Generate New Problem"</b> to get started with a random problem, or click <b>"Settings"</b> to customize which components of a solar system you'd like to include in the problem (e.g., loads, inverter, battery, breaker, or solar panels).</div>
+                         >The generated problem will appear here...</div>
         </div>
 
         <!-- Tab Content - Solution Display Area -->
@@ -483,8 +323,8 @@
             <button class="modal-close-button" id="closeSettingsBtn">&times;</button>
             <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Problem Type Settings</h2>
             
-            <h3 class="text-xl font-semibold text-gray-700 mb-4">Include in Problem:</h3>
-            <div class="checkbox-group grid grid-cols-1 gap-2">
+            <h3 class="text-xl font-semibold text-gray-700 mb-3">Include in Problem:</h3>
+            <div class="checkbox-group grid grid-cols-1 gap-2 mb-6">
                 <label><input type="checkbox" id="includeLoads" checked> Total Daily Energy Consumption (Load)</label>
                 <label><input type="checkbox" id="includeInverter" checked> Inverter Size</label>
                 <label><input type="checkbox" id="includeBattery" checked> Battery Bank Capacity</label>
@@ -492,11 +332,11 @@
                 <label><input type="checkbox" id="includeSolar" checked> Solar Panel Sizing</label>
             </div>
             
-            <div class="modal-footer-buttons">
-                <button id="saveSettingsBtn" class="save-button">
+            <div class="flex justify-end">
+                <button id="saveSettingsBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg mr-2">
                     Save Settings
                 </button>
-                <button id="cancelSettingsBtn" class="cancel-button">
+                <button id="cancelSettingsBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-6 rounded-lg">
                     Cancel
                 </button>
             </div>

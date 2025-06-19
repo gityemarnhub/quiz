@@ -181,7 +181,7 @@
               solutionTextElement.innerHTML = ''; // Clear previous solution
               solutionTitle.style.display = 'none'; // Hide title until solution is loaded
 
-              const prompt = `Provide a step-by-step solution to the following solar sizing problem: ${problem}. Break down each step clearly and show the calculations. Use Markdown for formatting and LaTeX for any mathematical equations. For example: "Step 1: Calculate voltage. $V = IR$". Provide only the solution text, no extra text.`;
+              const prompt = `By using Markdown for formatting and LaTeX for any mathematical equations, provide a step-by-step solution to the following solar sizing problem: ${problem}. Break down each step clearly and show the calculations. For example: "Step 1: Calculate voltage. $V = IR$". Provide only the solution text, no extra text.`;
               const apiKey = "AIzaSyDx1ZjGvvA5N-HGyfqYSX_sbtyb23ZIrjE"; // Provided API key
               const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 

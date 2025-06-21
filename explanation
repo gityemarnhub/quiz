@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link
+      rel="stylesheet"
+      as="style"
+      onload="this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Space+Grotesk%3Awght%40400%3B500%3B700"
+    />
+    <title>Electrical Calculation Explanation</title>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+      // MathJax configuration
+      MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        },
+        svg: {
+          fontCache: 'global'
+        }
+      };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+      /* Existing styles from explanation.html */
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+      
+      :root {
+        --primary-color: #2563eb;
+        --primary-hover: #1d4ed8;
+        --text-primary: #1e293b;
+        --text-secondary: #475569;
+        --bg-color: #f8fafc;
+        --card-bg: #ffffff;
+        --border-color: #e2e8f0;
+      }
+      
+      body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        line-height: 1.7;
+        color: var(--text-primary);
+        background-color: var(--bg-color);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+        padding-top: 60px; /* Added padding to account for the fixed header */
+      }
+      
+      /* Styles for the autohiding header */
+      .autohide-header {
+        position: fixed; /* Makes the header stay at the top */
+        top: 0; /* Initial position at the very top */
+        width: 100%;
+        background-color: white; /* Header background */
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); /* Subtle shadow */
+        transition: top 0.3s ease-in-out; /* Smooth transition for the 'top' property */
+        z-index: 1000; /* Ensures the header stays on top of other content */
+        height: 60px; /* Explicitly set header height for calculation */
+        display: flex;
+        align-items: center;
+        justify-content: space-between; /* Space out items */
+        padding: 0 1.5rem; /* Padding for content inside header */
+      }
+
+      .autohide-header h1 {
+        margin: 0;
+        font-size: 1.25rem; /* Example font size for title */
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      /* Content container */
+      #explanationText {
+        max-width: 768px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+        background: var(--card-bg);
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        transition: all 0.3s ease;
+      }
+      
+      @media (min-width: 768px) {
+        #explanationText {
+          padding: 3rem 4rem;
+          margin: 2rem auto;
+        }
+      }
+      
+      #explanationText p {
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: var(--text-secondary);
+        letter-spacing: -0.01em;
+      }
+      
+      #explanationText h1,
+      #explanationText h2,
+      #explanationText h3,
+      #explanationText h4,
+      #explanationText h5,
+      #explanationText h6 {
+        margin-top: 2.5rem;
+        margin-bottom: 1.25rem;
+        font-weight: 700;
+        line-height: 1.25;
+        color: var(--text-primary);
+        letter-spacing: -0.02em;
+      }
+      
+      #explanationText h1 { font-size: 2.25rem; }
+      #explanationText h2 { font-size: 1.875rem; }
+      #explanationText h3 { font-size: 1.5rem; }
+      #explanationText h4 { font-size: 1.25rem; }
+      
+      #explanationText ul,
+      #explanationText ol {
+        margin: 1.5rem 0;
+        padding-left: 1.75rem;
+      }
+      
+      #explanationText li {
+        margin-bottom: 0.75rem;
+        padding-left: 0.5rem;
+        line-height: 1.7;
+        color: var(--text-secondary);
+      }
+      
+      #explanationText li::marker {
+        color: var(--primary-color);
+      }
+      
+      #explanationText pre {
+        background: #1e293b;
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        margin: 2rem 0;
+        overflow-x: auto;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      }
+      
+      #explanationText code {
+        font-family: 'Fira Code', 'Courier New', monospace;
+        background: rgba(99, 102, 241, 0.1);
+        color: #6366f1;
+        padding: 0.2em 0.4em;
+        border-radius: 0.25rem;
+        font-size: 0.9em;
+      }
+      
+      #explanationText blockquote {
+        border-left: 4px solid #e2e8f0;
+        padding-left: 1rem;
+        margin: 1.25rem 0;
+        color: #4a5568;
+      }
+      
+      /* Add some interactive elements */
+      #explanationText a {
+        color: var(--primary-color);
+        text-decoration: none;
+        border-bottom: 1px dashed var(--primary-color);
+        transition: all 0.2s ease;
+      }
+      
+      #explanationText a:hover {
+        color: var(--primary-hover);
+        border-bottom-style: solid;
+      }
+      
+      /* Add subtle animations for better engagement */
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      
+      #explanationText > * {
+        animation: fadeIn 0.4s ease-out forwards;
+      }
+      
+      .btn {
+        border-radius: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.2s ease-in-out;
+        font-weight: 500;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      
+      .btn:hover {
+        background: var(--primary-hover);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+      }
+      
+      .btn:active {
+        transform: translateY(0);
+      }
+      
+      /* Ensure MathJax rendered content is properly spaced */
+      #explanationText .MathJax {
+        margin: 1em 0;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Autohiding Header -->
+    <header id="mainHeader" class="autohide-header">
+      <button id="backButton" class="flex items-center text-slate-700 hover:text-blue-600 p-2 rounded-full hover:bg-blue-50 transition-colors duration-200">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256" class="w-5 h-5">
+          <path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"></path>
+        </svg>
+        <span class="ml-2 text-sm font-medium">Back</span>
+      </button>
+      <h1 id="topicHeader">Loading...</h1>
+      <a href="#" id="tryProblemBtn" class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-700 text-white transition-colors duration-200 shadow-sm" title="Try Problem">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </a>
+    </header>
+
+    <div class="min-h-screen bg-gradient-to-b from-slate-50 to-blue-50">
+      <!-- Main content container, now with adjusted margin to prevent overlap -->
+      <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div id="explanationText" class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden transition-all duration-300 hover:shadow-md">
+          <div class="text-center py-16 px-4">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-50 mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h3 class="text-lg font-medium text-slate-900 mb-2">Select a Topic</h3>
+            <p class="text-slate-500 max-w-md mx-auto">Choose a topic from the home page to see its detailed explanation and related problems.</p>
+          </div>
+        </div>
+        <!-- Placeholder content to enable scrolling -->
+        <div class="h-[1000px] bg-blue-50 mt-8 rounded-lg flex items-center justify-center text-slate-400 text-lg">
+          Scroll down to see the header disappear and scroll up to make it reappear!
+        </div>
+      </main>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const explanationText = document.getElementById('explanationText');
+        const mainHeader = document.getElementById('mainHeader'); // Get the new header element
+        const headerHeight = mainHeader.offsetHeight; // Get the header's height
+        let prevScrollpos = window.pageYOffset; // Store initial scroll position
+        
+        // Handle back button click
+        document.getElementById('backButton').addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (window.history.length > 1) {
+            window.history.back();
+          } else {
+            window.location.href = 'index.html';
+          }
+          return false;
+        });
+        
+        // Get the topic from URL parameters and format it
+        const urlParams = new URLSearchParams(window.location.search);
+        let topic = urlParams.get('topic');
+        const topicHeader = document.getElementById('topicHeader');
+        const tryProblemBtn = document.getElementById('tryProblemBtn');
+        
+        if (topic) {
+          // Set up the Try Problem button
+          tryProblemBtn.href = `problem&solution.html?topic=${encodeURIComponent(topic)}`;
+          // Format the topic name (replace hyphens with spaces and capitalize words)
+          const formattedTopic = topic
+            .split('-')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+          
+          // Set the header text
+          topicHeader.textContent = formattedTopic;
+          
+          // Generate the explanation
+          generateExplanation(formattedTopic); // Pass the formatted topic
+        } else {
+          topicHeader.textContent = 'Topic Not Found';
+          explanationText.innerHTML = '<p class="text-red-500">Please select a topic from the home page first.</p>';
+        }
+        
+        async function generateExplanation(topic) {
+          try {
+            // Show generating message
+            explanationText.innerHTML = '<p class="text-gray-500 text-center py-10">Generating explanation...</p>';
+            
+            // Define the API key
+            const apiKey = ""; // API Key will be provided by the Canvas runtime
+
+            // Construct the prompt for the AI
+            const prompt = `Construct a simple explanation about ${topic} in electrical concepts. Make it easy for a beginner to understand. Use analogies if helpful. Use markdown formatting and include equations if needed.`;
+
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+            const payload = { contents: chatHistory };
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            // Make the API call to Gemini
+            const response = await fetch(apiUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+            
+            const result = await response.json();
+            
+            if (result.candidates && result.candidates.length > 0 &&
+                result.candidates[0].content && result.candidates[0].content.parts &&
+                result.candidates[0].content.parts.length > 0) {
+              const markdownText = result.candidates[0].content.parts[0].text;
+              // Convert Markdown to HTML using marked.js
+              const htmlContent = marked.parse(markdownText);
+              // Only update if we got valid content
+              if (htmlContent && htmlContent.trim() !== '') {
+                explanationText.innerHTML = htmlContent;
+              } else {
+                throw new Error('No content was generated.');
+              }
+
+              // Re-render MathJax after content is loaded
+              if (window.MathJax) {
+                MathJax.typesetPromise([explanationText]);
+              }
+
+            } else {
+              throw new Error('No content received from AI.');
+            }
+            
+          } catch (error) {
+            console.error('Error generating explanation:', error);
+            explanationText.innerHTML = `
+              <div class="text-red-500">
+                <p>Error generating explanation. Please try again later.</p>
+                <p class="text-sm mt-2">${error.message}</p>
+              </div>
+            `;
+          } finally {
+
+          }
+        }
+
+        // JavaScript for autohide header functionality
+        window.onscroll = function() {
+          let currentScrollPos = window.pageYOffset;
+          if (prevScrollpos > currentScrollPos) {
+            // Scrolling up: show the header
+            mainHeader.style.top = "0";
+          } else {
+            // Scrolling down: hide the header by moving it up by its height
+            // We use headerHeight to ensure it's fully hidden regardless of exact padding/borders
+            mainHeader.style.top = "-" + headerHeight + "px";
+          }
+          prevScrollpos = currentScrollPos; // Update the previous scroll position
+        };
+      });
+    </script>
+  </body>
+</html>

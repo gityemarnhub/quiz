@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link
+      rel="stylesheet"
+      as="style"
+      onload="this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Space+Grotesk%3Awght%40400%3B500%3B700"
+    />
+    <title>Problem & Solution</title>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+      // MathJax configuration
+      MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        },
+        svg: {
+          fontCache: 'global'
+        }
+      };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif; /* Using Inter for consistency */
+        padding-top: 60px; /* Added padding to account for the fixed header height */
+      }
+      .loading-indicator {
+        display: none; /* Hidden by default */
+        text-align: center;
+        margin-top: 20px;
+        color: #49709c;
+        font-weight: bold;
+      }
+      .btn {
+        border-radius: 0.5rem; /* rounded-md */
+        padding: 0.75rem 1.5rem;
+        transition: background-color 0.2s ease-in-out;
+      }
+      .btn:hover {
+        background-color: #3b82f6; /* Blue 500 */
+      }
+
+      /* Styles for the autohiding header */
+      .autohide-header {
+        position: fixed; /* Makes the header stay at the top */
+        top: 0; /* Initial position at the very top */
+        width: 100%;
+        background-color: white; /* Header background */
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); /* Subtle shadow */
+        transition: top 0.3s ease-in-out; /* Smooth transition for the 'top' property */
+        z-index: 1000; /* Ensures the header stays on top of other content */
+        height: 60px; /* Explicitly set header height for calculation */
+        display: flex;
+        align-items: center;
+        justify-content: space-between; /* Space out items */
+        padding: 0 1.5rem; /* Padding for content inside header */
+      }
+
+      .autohide-header h2 {
+        margin: 0;
+        font-size: 1.25rem; /* Example font size for title */
+        font-weight: 700;
+        color: #0d141c;
+      }
+
+      /* Content container styling */
+      #problemText, #solutionText {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 1rem;
+      }
+
+      /* Paragraph and text elements */
+      #problemText p, #solutionText p {
+        margin-bottom: 1.25rem;
+        line-height: 1.6;
+      }
+
+      /* Headings */
+      #problemText h1, #problemText h2, #problemText h3,
+      #solutionText h1, #solutionText h2, #solutionText h3 {
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+        line-height: 1.3;
+      }
+
+      /* Lists */
+      #problemText ul, #problemText ol,
+      #solutionText ul, #solutionText ol {
+        margin-bottom: 1.25rem;
+        padding-left: 1.5rem;
+      }
+
+      #problemText li, #solutionText li {
+        margin-bottom: 0.5rem;
+      }
+
+      /* Code blocks */
+      #problemText pre, #solutionText pre {
+        background: #f5f7fa;
+        padding: 1rem;
+        border-radius: 0.375rem;
+        margin: 1.25rem 0;
+        overflow-x: auto;
+      }
+
+      #problemText code, #solutionText code {
+        font-family: 'Courier New', monospace;
+        background: #f0f2f5;
+        padding: 0.2em 0.4em;
+        border-radius: 0.25rem;
+        font-size: 0.9em;
+      }
+
+      /* Blockquotes */
+      #problemText blockquote, #solutionText blockquote {
+        border-left: 4px solid #e2e8f0;
+        padding-left: 1rem;
+        margin: 1.25rem 0;
+        color: #4a5568;
+      }
+
+      /* MathJax elements */
+      #problemText .MathJax, #solutionText .MathJax {
+        display: inline-block;
+        vertical-align: middle;
+      }
+      
+      #problemText .MathJax_Display, #solutionText .MathJax_Display {
+        display: block !important;
+        text-align: center;
+        margin: 1em 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="relative flex size-full min-h-screen flex-col bg-slate-50 justify-between group/design-root overflow-x-hidden"
+      style='font-family: "Space Grotesk", "Noto Sans", sans-serif;'
+    >
+      <!-- Autohiding Header -->
+      <header id="mainHeader" class="autohide-header">
+        <button id="backButton" class="flex items-center text-slate-700 hover:text-blue-600 p-2 rounded-full hover:bg-blue-50 transition-colors duration-200">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256" class="w-5 h-5">
+            <path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"></path>
+          </svg>
+          <span class="ml-2 text-sm font-medium">Back</span>
+        </button>
+        <h2 id="topicHeader" class="text-[#0d141c] text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12">Problem & Solution</h2>
+      </header>
+
+      <div>
+        <h2 class="text-[#0d141c] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5 mt-4">Problem</h2> <!-- Added mt-4 for spacing below header -->
+        <div class="loading-indicator" id="problemLoading">Generating problem...</div>
+        <div class="text-[#0d141c] text-base font-normal leading-normal pb-3 pt-1 px-4" id="problemText">
+          <!-- Problem text will be inserted here by JavaScript -->
+        </div>
+
+        <div class="flex justify-center mt-4">
+          <button
+            id="showSolutionButton"
+            class="bg-[#4285F4] hover:bg-[#3b82f6] text-white font-bold py-2 px-4 rounded-md btn"
+            style="display: none;"
+          >
+            Show Solution
+          </button>
+        </div>
+
+        <h2 class="text-[#0d141c] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5" id="solutionTitle" style="display: none;">Solution</h2>
+        <div class="loading-indicator" id="solutionLoading">Generating solution...</div>
+        <div class="text-[#0d141c] text-base font-normal leading-normal pb-3 pt-1 px-4 space-y-3" id="solutionText">
+          <!-- Solution text will be inserted here by JavaScript -->
+        </div>
+      </div>
+      <div><div class="h-5 bg-slate-50"></div></div>
+
+      <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+          const problemTextElement = document.getElementById('problemText');
+          const solutionTextElement = document.getElementById('solutionText');
+          const showSolutionButton = document.getElementById('showSolutionButton');
+          const problemLoading = document.getElementById('problemLoading');
+          const solutionLoading = document.getElementById('solutionLoading');
+          const backButton = document.getElementById('backButton');
+          const mainHeader = document.getElementById('mainHeader'); // Get the new header element
+          const headerHeight = mainHeader.offsetHeight; // Get the header's height
+          let prevScrollpos = window.pageYOffset; // Store initial scroll position
+
+
+          document.getElementById('backButton').addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (window.history.length > 1) {
+              window.history.back();
+            } else {
+              window.location.href = 'index.html';
+            }
+            return false;
+          });
+
+          // Get component type from URL and update header
+          const urlParams = new URLSearchParams(window.location.search);
+          const topicType = urlParams.get('topic');
+          
+          if (topicType) {
+            const formattedTopic = topicType
+              .split('-')
+              .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(' ');
+            document.getElementById('topicHeader').textContent = formattedTopic;
+          }
+
+          // Initialize Marked.js to render Markdown
+          marked.setOptions({
+            gfm: true, // Use GitHub Flavored Markdown
+            breaks: true, // Convert line breaks to <br>
+          });
+
+          // Function to generate problem
+          const generateProblem = async (topic) => {
+            problemLoading.style.display = 'block'; // Show loading
+            problemTextElement.innerHTML = ''; // Clear previous problem
+            const prompt = `Generate a practice problem about ${topic} in electrical concepts with a scenario. Follow these requirements:
+            
+            1. Use Markdown for formatting (headings, lists, bold/italic)
+            2. Include realistic parameters and ask for specific calculations
+            3. Follow Myanmar standards (but don't mention this explicitly)
+            4. Provide only the problem text, no solution or extra text
+            
+            Example structure:
+            # Problem Title
+            
+            Calculate the total energy using the formula $E = mc^2$.
+            
+            \`\`\`python
+            # Example code for energy calculation
+            def calculate_energy(mass, c=3e8):
+                return mass * (c ** 2)
+            \`\`\`
+            
+            Now, solve for a mass of 5kg.`;
+            const apiKey = ""; // API Key will be provided by the Canvas runtime
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+              const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+              const payload = { contents: chatHistory };
+
+              const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+              });
+
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+
+              const result = await response.json();
+              console.log("Problem API Response:", result); // Log the full response for debugging
+
+              if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                const text = result.candidates[0].content.parts[0].text;
+                problemTextElement.innerHTML = marked.parse(text); // Render Markdown
+                if (typeof MathJax !== 'undefined') {
+                  MathJax.typesetPromise([problemTextElement]).then(() => {
+                    console.log('MathJax typeset for problemTextElement');
+                  }).catch((err) => console.error('MathJax typeset error:', err));
+                }
+                showSolutionButton.style.display = 'block'; // Show solution button after problem is loaded
+              } else {
+                problemTextElement.textContent = 'Could not generate a problem. Please try again.';
+                console.error('Problem generation failed: Unexpected API response structure', result);
+              }
+            } catch (error) {
+              problemTextElement.textContent = 'Failed to generate problem. Please check your network connection or try again later.';
+              console.error('Error generating problem:', error);
+            } finally {
+              problemLoading.style.display = 'none'; // Hide loading
+            }
+          };
+
+            // Function to generate solution
+          const generateSolution = async (problem) => {
+            solutionLoading.style.display = 'block'; // Show loading
+            solutionTextElement.innerHTML = ''; // Clear previous solution
+            solutionTitle.style.display = 'none'; // Hide title until solution is loaded
+
+            const prompt = `By using Markdown for formatting and LaTeX for any mathematical equations, provide a step-by-step solution to the following problem: ${problem}. Break down each step clearly and show the calculations. Provide only the solution text, no extra text.`;
+            const apiKey = ""; // API Key will be provided by the Canvas runtime
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+              const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+              const payload = { contents: chatHistory };
+
+              const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+              });
+
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+
+              const result = await response.json();
+              console.log("Solution API Response:", result); // Log the full response for debugging
+
+              if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                const text = result.candidates[0].content.parts[0].text;
+                solutionTextElement.innerHTML = marked.parse(text); // Render Markdown
+                if (typeof MathJax !== 'undefined') {
+                  MathJax.typesetPromise([solutionTextElement]).then(() => {
+                    console.log('MathJax typeset for solutionTextElement');
+                  }).catch((err) => console.error('MathJax typeset error:', err));
+                }
+                solutionTitle.style.display = 'block'; // Show title after solution is loaded
+              } else {
+                solutionTextElement.textContent = 'Could not generate a solution. Please try again.';
+                console.error('Solution generation failed: Unexpected API response structure', result);
+              }
+            } catch (error) {
+              solutionTextElement.textContent = 'Failed to generate solution. Please check your network connection or try again later.';
+              console.error('Error generating solution:', error);
+            } finally {
+              solutionLoading.style.display = 'none'; // Hide loading
+            }
+          };
+
+          // Generate problem on page load
+          if (topicType) {
+            await generateProblem(topicType);
+
+            // Add event listener for show solution button
+            showSolutionButton.addEventListener('click', async () => {
+              showSolutionButton.style.display = 'none'; // Hide button after click
+              const currentProblem = problemTextElement.textContent; // Get the raw text content for the prompt
+              if (currentProblem) {
+                await generateSolution(currentProblem);
+              } else {
+                solutionTextElement.textContent = 'No problem to solve. Please generate a problem first.';
+              }
+            });
+          } else {
+            problemTextElement.textContent = 'No component selected. Please go back and choose a component.';
+          }
+
+          // JavaScript for autohide header functionality
+          window.onscroll = function() {
+            let currentScrollPos = window.pageYOffset;
+            if (prevScrollpos > currentScrollPos) {
+              // Scrolling up: show the header
+              mainHeader.style.top = "0";
+            } else {
+              // Scrolling down: hide the header by moving it up by its height
+              mainHeader.style.top = "-" + headerHeight + "px";
+            }
+            prevScrollpos = currentScrollPos; // Update the previous scroll position
+          };
+        });
+      </script>
+    </div>
+  </body>
+</html>
